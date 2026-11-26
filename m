@@ -1,95 +1,80 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=185.203.200.13
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795714280;
-	b=iRHL33FO0Sg9uXMOSJm/m7D9e0gEUkScqC0phY9Gwyu/zRGDNGUV7fy6j5DZKWMp4D7P
-	 vP3COZVN2HJPQMWzRuGaGOdVKF2LQS+qgC2Xmw4BUSojViZHmvYsRf+l+m1lW9c+Kguqd
-	 Q0Wf/RRPpLVa0i820KCyeravwk/iP39Z6/jSeP+AR4m6A+yCZmJL/WN8/V0eZoXIuij0t
-	 ipef8vBD7ITqn45fRuyOZFZ/ZV+QmwYtYOvUzxwyVlIGQ1R5UfXklOwYDtDI4rlVkaAmV
-	 4rAF2gzrqcL5Brsl7Pg4siQt8/LrEtCIaxvBgvb2F8KQK+a4r6ZtHhKZjyQZeVRNl4Q==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795714280;
-	h=DMARC-Filter:Received:DKIM-Signature:Message-ID:Subject:From:To:Cc:
-	 Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:
-	 User-Agent:MIME-Version;
-	bh=YecqGseBcL1cLP7lyFoMvHPfnwoS0Rz/GtlvIjCbwD8=;
-	b=h2/u9Ui6hYZ4oGglT8NfY/baRL+zbm/U476A+yo+kWmhxYSxvl3LQ1jQLzj4KXZ2COrK
-	 Up+AlUjcjS1ypgZ49PaUfrQZ/yolDTY1yTSo1aIVenPx+aF1uxIHkaCyZ9TjaRgof9hSe
-	 zz/MoAPBIV4XkJa/PzBE84JgBoUNvtefreQccpuIJS0s2M+pnMmmbJSysxm9E9RxExwDf
-	 n+Hi1m38jVayzrBLCN4Wmsgw6YHGTLyLJuDZ7BR2sXRVXWUCqpYe6kotxlBDpjsJQxBcy
-	 0MeFMYczvDTmbyikOx4AjBR4/bSoExuHM7rlLPyiJ1nssLl9fsLmDnF1L+s2Al+OLlQ==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=none header.from=pengutronix.de;
-	spf=pass smtp.mailfrom=pengutronix.de;
-	dkim=pass header.d=pengutronix.de header.i=@pengutronix.de header.a=rsa-sha256 header.s=20260414 header.b=CVJi9Lec;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=185.203.200.13
-Received: from mx1.white.stw.pengutronix.de (mx1.white.stw.pengutronix.de [185.203.200.13])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=203.254.224.33
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1795714528;
+	b=lHHs/Gj1WyjXz42H4StDPK6LKleME6nmZ6rp71Z1P2ulpZIU9ROJa+HOAMJ9thY7J6Xx
+	 WGW+NnelXawAqnevtlaj28vReZd5AxtzsvzcaoyHJ7hEYF/FGWsBNrWnmvyQ7SvxH3FXc
+	 1ZWbphfzphYCKl6u3miORWjR+U8A06mdZQRYRtZAS7r6eQl0pAAJDfo/ZisAAWHFJIT0g
+	 BVW2lIDZhmfpfAnvqJDMixI5DLZWRkjOdOxumjRYzI3H7l8R1KHVfHwApLUGNFbTaVxHr
+	 PxTw07MLv+LZLm5AY3i8vaQJndeo4+ocraEkZbI+YrCNjh573M2LF2uxM1hT91cF4zg==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795714528;
+	h=DMARC-Filter:Received:DKIM-Filter:DKIM-Signature:Received:Received:
+	 Received:Received:From:To:Cc:In-Reply-To:Subject:Date:Message-ID:
+	 MIME-Version:Content-Transfer-Encoding:X-Mailer:Thread-Index:
+	 Content-Language:X-CMS-MailID:X-Msg-Generator:Content-Type:CMS-TYPE:
+	 cpgsPolicy:X-CFilter-Loop:X-CMS-RootMailID:References;
+	bh=14yM+1Yamm5IaEsMmCuWFx4OfLA0U2vaBLRIMDPYO1U=;
+	b=chFOkCbm5fgo5knybUD08OWRDK4lV32OB7MPmNBLTyNcdwUk+Wwuxo/+MLtNwKVZs0Vz
+	 veMvI7Bs5T9IvL3XbOkDfZAg7OiYxys7YApx2txZgQLEf/4AmE1PLyLmKD9kMIBNZAMHF
+	 NGoDRohX7NoJaG9z0fTgroCFVMrgzqWHIy1+FrDuDbyXN4Ne/+auFNNr9YxKW/P106Chs
+	 Pqz5FH92zxVL71aDV2nHAV42lgO/jKS9cVxlJjXA48q4vaVkZ3S80K7pzAUa3q92oaEwb
+	 ivZsW7KYqfkTJBekhNsHR9wxCDBiQZ2r5nQ5K9ujcU+6UfBQq/DIu1aavKzxjNtECxw==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=samsung.com;
+	spf=pass smtp.mailfrom=samsung.com;
+	dkim=pass header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=aLJJauJS;
+	arc=none smtp.remote-ip=203.254.224.33
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0046C606A31C;
-	Thu, 26 Nov 2026 17:31:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 0046C606A31C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14658606A31C
+	for <linux-clk@vger.kernel.org>; Thu, 26 Nov 2026 17:35:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 14658606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pengutronix.de header.i=@pengutronix.de header.a=rsa-sha256 header.s=20260414 header.b=CVJi9Lec
-Received: from [IPv6:2a0a:edc0:0:900:1d::4e] (lupine.office.stw.pengutronix.de [IPv6:2a0a:edc0:0:900:1d::4e])
-	(Authenticated sender: pza@pengutronix.de)
-	by mx1.white.stw.pengutronix.de (Postfix) with ESMTPSA id 6C609201909;
-	Thu, 26 Nov 2026 18:31:12 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
-	s=20260414; t=1795714272;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YecqGseBcL1cLP7lyFoMvHPfnwoS0Rz/GtlvIjCbwD8=;
-	b=CVJi9LecqnAIynvoCNi4PVLz06PiH1kQLR7c0g2CxIdDcLmuWz5tScB7wKMpjXkbsxtGtr
-	o9/Y26uOe5q8g+cKgw++O38yO3Q4PH8AkhtILzykhmakoaAcUdh/sykp77WpLjuFYrBcWh
-	CcYsAOMnoZ+xykpzI+5V3gGcA9a9KR/xWpPr1tNmaFrU6wIRvOhOn0BuXK/YmqTyoH23l9
-	RrOkOrHv8x6UUs/EfMHC1pB3+NeKtKug/ID5AaeEsKxhnDjfP3L/ut9zUb3ypTpwMyC/Z9
-	CY7Qa/z02hIlzhmyeDTdMrBBD0Z0KyYhA4IdnMxIXWlV2+yOm1zOnimrxbLF0Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=pengutronix.de;
-	s=20260414; t=1795714272;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YecqGseBcL1cLP7lyFoMvHPfnwoS0Rz/GtlvIjCbwD8=;
-	b=Wotd9c05rFte9SLUhCwc2p14oxzsW5Xrf1PCNq0CzaXaNKhHTtJNzVR3cfK00Cbsb0MD/T
-	wZWUTY/TuOA38A03qlRtPJnIu9EOzn1wZy7rPGt4CwpOK6QxCIRTAI3G74ReXiJOaHhi74
-	mLYKeKwdEzTts8X8NU2Z6lJashQW2aOJ+8lEGj13/lZEPnf3Ao5rHP3MZurkio5iaRqit8
-	WS5x5GKQnbIO3DXDLOK7cXREGx5HibCZ8Ba2HmcNO2LKC0xF3Qz9zS24x9jBM6PuJTTpB0
-	RIg0gJGZxwHDdmH+zjfARcQs8iWikEHPlj6wYko6fG7/s4JecrmEach33/EKVw==
-ARC-Authentication-Results: i=1;
-	ORIGINATING;
-	auth=pass smtp.auth=pza@pengutronix.de smtp.mailfrom=p.zabel@pengutronix.de
-ARC-Seal: i=1; s=20260414; d=pengutronix.de; t=1795714272; a=rsa-sha256;
-	cv=none;
-	b=DAIIYWkTa0GYOk7/j6YB0WAa6tUGay30YvNjCagutVuOA/ccgv7af6FlHJ88dravr0YUg/
-	qWYmXF/8fTt2QhqZuB9CvdHngG3LT8+y/M+R+bJOzNUnLFK4zx/QJi7nge6yrF2y/J8NT3
-	4AD5XYi8pZLMtzp1cZgKtb3lXPXIvTMyZ86bNXiiEjtmqMyEf8n0J0oZ2fHpZFE9IYefuX
-	5eXGcpzUjgnn+CQN+Mh8LQKVCYyPGk9/WHQi39g+Reycwd17LSxxkTiV0Wo5K6bD8Xbdos
-	hXV1tMhORSemiCvI7e4FZMiblNLyy8JRIY/CGQmkKC3SGZSVfq36+a7OUAe81w==
-Message-ID: <e63d24261b2e544c1e295d845163b33b3ea36869.camel@pengutronix.de>
-Subject: Re: [PATCH v4 2/3] clk: renesas: r9a06g032: Add reset controller
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: khendry@reliablecontrols.com, Geert Uytterhoeven
- <geert+renesas@glider.be>,  Stephen Boyd <sboyd@kernel.org>, Brian Masney
- <bmasney+clk@redhat.com>, Jerome Brunet	 <jbrunet+clk@baylibre.com>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski	 <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, Magnus Damm	 <magnus.damm@gmail.com>,
- Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Thu, 26 Nov 2026 18:31:12 +0100
-In-Reply-To: <20261126-rzn1-miic-resets-v4-2-4f73af81d779@reliablecontrols.com>
-References: 
-	<20261126-rzn1-miic-resets-v4-0-4f73af81d779@reliablecontrols.com>
-	 <20261126-rzn1-miic-resets-v4-2-4f73af81d779@reliablecontrols.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-0+deb13u1 
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.a=rsa-sha256 header.s=mail20170921 header.b=aLJJauJS
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20261126173525epoutp037c2e638ac75cb27bcc813b98eacafd41~rqNiu0R7t1145311453epoutp03d
+	for <linux-clk@vger.kernel.org>; Thu, 26 Nov 2026 17:35:25 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20261126173525epoutp037c2e638ac75cb27bcc813b98eacafd41~rqNiu0R7t1145311453epoutp03d
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1795714525;
+	bh=14yM+1Yamm5IaEsMmCuWFx4OfLA0U2vaBLRIMDPYO1U=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=aLJJauJSeqNDvNfBVu7tJRuYcVRWtjCl9qTUTv6yaZlIeTnaQsGAH0h9SweogNWFD
+	 iQVNy0fibJLCWMMlj1c7UXw5VIOHG/QSIEUdAVy8pV4ZNv353EKf2btaNIN/8q2DQB
+	 FjPuc/68bCae5mGTjeGQVQKP9DRKv0/KJxBKoX70=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
+	20261126173524epcas5p46903feb70672bfbdf94648993741fb9a~rqNh0hkSC2895928959epcas5p44;
+	Thu, 26 Nov 2026 17:35:24 +0000 (GMT)
+Received: from epcas5p3.samsung.com (unknown [182.195.38.89]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4jb3bb175gz2SSKX; Thu, 26 Nov
+	2026 17:35:23 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20261126173522epcas5p2518c8da061331e3cc701a8049530da95~rqNgRjAAK2027520275epcas5p2q;
+	Thu, 26 Nov 2026 17:35:22 +0000 (GMT)
+Received: from INBRO002756 (unknown [107.122.3.168]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20261126173520epsmtip11149f069be0767a3d84426c2390cf8eb~rqNeGBwwj2823428234epsmtip1g;
+	Thu, 26 Nov 2026 17:35:19 +0000 (GMT)
+From: "Alim Akhtar" <alim.akhtar@samsung.com>
+To: "'Peter Griffin'" <peter.griffin@linaro.org>, "'Raghav Sharma'"
+	<raghav.s@samsung.com>
+Cc: <krzk@kernel.org>, <s.nawrocki@samsung.com>, <cw00.choi@samsung.com>,
+	<sboyd@kernel.org>, <bmasney+clk@redhat.com>, <jbrunet+clk@baylibre.com>,
+	<robh@kernel.org>, <conor+dt@kernel.org>,
+	<linux-samsung-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <is.gandhi@samsung.com>,
+	<ts.amit@samsung.com>, <pokala.reddy@samsung.com>
+In-Reply-To: <CADrjBPrzHP_97OgAYacJKKqeCcp9FURoi6=Dmopk6nisTdEbdA@mail.gmail.com>
+Subject: RE: [PATCH v3 08/14 RESEND] clk: samsung: exynos8855: add block
+ peris clock support
+Date: Thu, 26 Nov 2026 23:05:18 +0530
+Message-ID: <000101dd7dcc$835c0830$8a141890$@samsung.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -99,24 +84,206 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQHlWUtnqVICpCIeTIEFEh+EoBRnawGxlKqAArMGWkMCaFOU4Lb6fmOA
+Content-Language: en-us
+X-CMS-MailID: 20261126173522epcas5p2518c8da061331e3cc701a8049530da95
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-543,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20261113104853epcas5p175c566a1ced2547e533c21b21e60e993
+References: <CGME20261113104853epcas5p175c566a1ced2547e533c21b21e60e993@epcas5p1.samsung.com>
+	<20261113110612.3265841-1-raghav.s@samsung.com>
+	<20261113110612.3265841-9-raghav.s@samsung.com>
+	<CADrjBPrzHP_97OgAYacJKKqeCcp9FURoi6=Dmopk6nisTdEbdA@mail.gmail.com>
 
-On Do, 2026-11-26 at 08:11 -0800, Kyle Hendry via B4 Relay wrote:
-> From: Kyle Hendry <khendry@reliablecontrols.com>
->=20
-> The rzn1 system controller has two resets that need to be cleared for the
-> mii converter to work. They are not directly associated with any clocks
-> so they need a reset controller to set them.
->=20
-> They are documented in the PWRCTRL_SWITCHCTRL (0x4000C188) register as:
->=20
-> Bit 3: RSTN_CLK25 - Active low Reset for Timestamp signal selection logic
-> Bit 4: RSTN_ETH - Active low Reset for RGMII/RMII Converter (50 MHz).
->=20
-> Add a reset controller and add resets for those bits.
->=20
-> Signed-off-by: Kyle Hendry <khendry@reliablecontrols.com>
 
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
 
-regards
-Philipp
+> -----Original Message-----
+> From: Peter Griffin <peter.griffin=40linaro.org>
+> Sent: Friday, November 13, 2026 6:24 PM
+> To: Raghav Sharma <raghav.s=40samsung.com>
+> Cc: krzk=40kernel.org; s.nawrocki=40samsung.com; cw00.choi=40samsung.com;
+> alim.akhtar=40samsung.com; sboyd=40kernel.org; bmasney+clk=40redhat.com;
+> jbrunet+clk=40baylibre.com; robh=40kernel.org; conor+dt=40kernel.org; lin=
+ux-
+> samsung-soc=40vger.kernel.org; linux-clk=40vger.kernel.org;
+> devicetree=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org; lin=
+ux-
+> kernel=40vger.kernel.org; is.gandhi=40samsung.com; ts.amit=40samsung.com;
+> pokala.reddy=40samsung.com
+> Subject: Re: =5BPATCH v3 08/14 RESEND=5D clk: samsung: exynos8855: add bl=
+ock
+> peris clock support
+>=20
+> Hi Raghav,
+>=20
+> On Fri, 13 Nov 2026 at 10:54, Raghav Sharma <raghav.s=40samsung.com>
+> wrote:
+> >
+> > Register compatible and cmu_info data to support clocks.
+> > CMU_PERIS, this provides clocks for PERIS
+> >
+> > Co-developed-by: Alim Akhtar <alim.akhtar=40samsung.com>
+> > Signed-off-by: Alim Akhtar <alim.akhtar=40samsung.com>
+> > Signed-off-by: Raghav Sharma <raghav.s=40samsung.com>
+> > ---
+> >  drivers/clk/samsung/clk-exynos8855.c =7C 97
+> > ++++++++++++++++++++++++++++
+> >  1 file changed, 97 insertions(+)
+> >
+> > diff --git a/drivers/clk/samsung/clk-exynos8855.c
+> > b/drivers/clk/samsung/clk-exynos8855.c
+> > index dcf58f2459b0..12b5ae54b560 100644
+> > --- a/drivers/clk/samsung/clk-exynos8855.c
+> > +++ b/drivers/clk/samsung/clk-exynos8855.c
+> > =40=40 -18,7 +18,9 =40=40
+> >  /* NOTE: Must be equal to the last clock ID increased by one */
+> >  =23define CLKS_NR_TOP                     (CLKCMU_DOUT_G3D_HTU + 1)
+> >  =23define CLKS_NR_PERIC                   (CLK_GOUT_USI_PERIC + 1)
+> > +=23define CLKS_NR_PERIS                   (CLK_GOUT_WDT1_PERIS + 1)
+> >
+> > +=23define EXYNOS8855_PERIS_GATE_DBG_OFFSET      0x2004
+> >  =23define EXYNOS8855_PERIC_GATE_DBG_OFFSET      0x2024
+> >  =23define EXYNOS8855_TOP_GATE_DBG_OFFSET      0x20A0
+> >
+> > =40=40 -1092,6 +1094,98 =40=40 static const struct samsung_cmu_info
+> peric_cmu_info __initconst =3D =7B
+> >         .memclk_offset          =3D EXYNOS8855_MEMCLK_OFFSET,
+> >  =7D;
+> >
+> > +/* ---- CMU_PERIS
+> > +--------------------------------------------------------- */
+> > +
+> > +/* Register Offset definitions for CMU_PERIS (0x10030000) */
+> > +=23define CMU_PERIS_PLL_CON0_MUX_CLKCMU_PERIS_NOC_USER
+> 0x600
+> > +=23define CMU_PERIS_CLK_CON_MUX_CLK_PERIS_GIC                    0x100=
+0
+> > +=23define CMU_PERIS_PLL_CON0_MUX_CLK_PERIS_GIC_USER
+> 0x610
+> > +=23define CMU_PERIS_CLK_CON_DIV_CLK_PERIS_NOCP                   0x180=
+0
+> > +=23define CMU_PERIS_CLK_CON_DIV_CLK_PERIS_OTP                    0x180=
+4
+> > +=23define
+> CMU_PERIS_CLK_CON_GAT_BLK_PERIS_UID_CMU_PERIS_IPCLKPORT_PCLK
+> 0x201c
+> > +=23define
+> CMU_PERIS_CLK_CON_GAT_BLK_PERIS_UID_SYSREG_PERIS_IPCLKPORT_P
+> CLK  0x2040
+> > +=23define
+> CMU_PERIS_CLK_CON_GAT_BLK_PERIS_UID_WDT0_IPCLKPORT_PCLK
+> 0x2048
+> > +=23define
+> CMU_PERIS_CLK_CON_GAT_BLK_PERIS_UID_WDT1_IPCLKPORT_PCLK
+> 0x204c
+> > +=23define CMU_PERIS_CONTROLLER_OPTION0_CMU_CTRL                  0x800
+> > +
+> > +static const unsigned long peris_clk_regs=5B=5D __initconst =3D =7B
+> > +       CMU_PERIS_PLL_CON0_MUX_CLKCMU_PERIS_NOC_USER,
+> > +       CMU_PERIS_CLK_CON_MUX_CLK_PERIS_GIC,
+> > +       CMU_PERIS_PLL_CON0_MUX_CLK_PERIS_GIC_USER,
+> > +       CMU_PERIS_CLK_CON_DIV_CLK_PERIS_NOCP,
+> > +       CMU_PERIS_CLK_CON_DIV_CLK_PERIS_OTP,
+> > +
+> CMU_PERIS_CLK_CON_GAT_BLK_PERIS_UID_CMU_PERIS_IPCLKPORT_PCLK,
+> > +
+> CMU_PERIS_CLK_CON_GAT_BLK_PERIS_UID_SYSREG_PERIS_IPCLKPORT_P
+> CLK,
+> > +
+> CMU_PERIS_CLK_CON_GAT_BLK_PERIS_UID_WDT0_IPCLKPORT_PCLK,
+> > +
+> CMU_PERIS_CLK_CON_GAT_BLK_PERIS_UID_WDT1_IPCLKPORT_PCLK,
+> > +       CMU_PERIS_CONTROLLER_OPTION0_CMU_CTRL,
+> > +=7D;
+>=20
+> Same comment about preserving register state from the bootloader when
+> powering off/on PERIS block.
+>=20
+> > +
+> > +/* List of parent clocks for Muxes in CMU_PERIS */
+> > +PNAME(mout_clkcmu_peris_noc_user_p) =3D =7B =22oscclk=22,
+> > +=22dout_clkcmu_peris_noc=22 =7D;
+> > +PNAME(mout_clk_peris_gic_p) =3D =7B =22oscclk=22,
+> > +=22mout_clkcmu_peris_gic_user=22 =7D;
+> > +PNAME(mout_clkcmu_peris_gic_user_p) =3D =7B =22oscclk=22,
+> > +=22dout_clkcmu_peris_gic=22 =7D;
+> > +
+> > +static const struct samsung_mux_clock peris_mux_clks=5B=5D __initconst=
+ =3D =7B
+> > +       MUX(CLK_MOUT_PERIS_NOC_USER, =22mout_clkcmu_peris_noc_user=22,
+> > +           mout_clkcmu_peris_noc_user_p,
+> CMU_PERIS_PLL_CON0_MUX_CLKCMU_PERIS_NOC_USER, 4, 1),
+> > +       MUX(CLK_MOUT_PERIS_GIC, =22mout_clk_peris_gic=22,
+> > +           mout_clk_peris_gic_p,
+> CMU_PERIS_CLK_CON_MUX_CLK_PERIS_GIC, 0, 1),
+> > +       MUX(CLK_MOUT_PERIS_GIC_USER, =22mout_clkcmu_peris_gic_user=22,
+> > +           mout_clkcmu_peris_gic_user_p,
+> > +CMU_PERIS_PLL_CON0_MUX_CLK_PERIS_GIC_USER, 4, 1), =7D;
+> > +
+> > +static const struct samsung_div_clock peris_div_clks=5B=5D __initconst=
+ =3D =7B
+> > +       DIV(CLK_DOUT_PERIS_NOCP, =22dout_clkcmu_peris_nocp=22,
+> > +           =22mout_clkcmu_peris_noc_user=22,
+> CMU_PERIS_CLK_CON_DIV_CLK_PERIS_NOCP,
+> > +           0, 4),
+> > +       DIV(CLK_DOUT_PERIS_OTP, =22dout_clkcmu_peris_otp=22,
+> > +           =22oscclk=22, CMU_PERIS_CLK_CON_DIV_CLK_PERIS_OTP,
+> > +           0, 4),
+> > +=7D;
+> > +
+> > +static const struct samsung_gate_clock peris_gate_clks=5B=5D __initcon=
+st =3D =7B
+> > +       GATE(CLK_GOUT_CMU_PERIS, =22gout_cmu_peris=22,
+> > +            =22dout_clkcmu_peris_nocp=22,
+> > +
+> CMU_PERIS_CLK_CON_GAT_BLK_PERIS_UID_CMU_PERIS_IPCLKPORT_PCLK,
+> > +            21, 0, 0),
+> > +       GATE(CLK_GOUT_SYSREG_PERIS, =22gout_sysreg_peris=22,
+> > +            =22dout_clkcmu_peris_nocp=22,
+> > +
+> CMU_PERIS_CLK_CON_GAT_BLK_PERIS_UID_SYSREG_PERIS_IPCLKPORT_P
+> CLK,
+> > +            21, 0, 0),
+> > +       GATE(CLK_GOUT_WDT0_PERIS, =22gout_wdt0_peris=22,
+> > +            =22dout_clkcmu_peris_nocp=22,
+> > +
+> CMU_PERIS_CLK_CON_GAT_BLK_PERIS_UID_WDT0_IPCLKPORT_PCLK,
+> > +            21, 0, 0),
+> > +       GATE(CLK_GOUT_WDT1_PERIS, =22gout_wdt1_peris=22,
+> > +            =22dout_clkcmu_peris_nocp=22,
+> > +
+> CMU_PERIS_CLK_CON_GAT_BLK_PERIS_UID_WDT1_IPCLKPORT_PCLK,
+> > +            21, 0, 0),
+>=20
+> The Linux clock name strings look wrong here. It looks like you've genera=
+lly
+> followed the clk-gs101 clock name mangling in this series so it should be
+> =22gout_<block-name>_<IP-clock-name>, but you have =22gout_IP-
+> clock_name>-<block-name>=22. I know there is some =22name diversity=22 in=
+-tree
+> for various SoCs, but with new SoCs using auto clocks I would like to kee=
+p the
+> naming scheme following a similar style to clk-gs101.
+>=20
+> Also I guess with auto clocks now enabled from the start you may never
+> need to expose all the CMU bus clocks, but I worry a bit you may have
+> mangled the names here a bit too much. If you do need to expose extra
+> gates you might get name collisions. For example in clk-gs101 we have bot=
+h
+>=20
+> gout_apm_apm_usi0_uart_ipclk
+> gout_apm_apm_usi0_uart_pclk
+>=20
+> So we kept the _pclk suffix in the Linux name to avoid a name collision.
+>=20
+Thanks for review, will change to gout_<block-name>_<IP-clock-name> convent=
+ion=20
+> Thanks,
+>=20
+> Peter
+
