@@ -1,55 +1,55 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=45.254.49.198
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795681615;
-	b=kehQb2u9GIDjLgYQuxdHIhySm4RWuB1n8/v5r+voWti6XhWmR0ijpZXP7HR6oDVsce6w
-	 CAH2u+KzxZeXwaiYBV56m7dOsPtnhM1zmsRZwapr2BJPECGbOU+b7dafTY0dYJJh8UPAn
-	 FjDQ4sFzxG0gSqVp7gkbejpoODEcJMqMeAkf/ERs8xL7ynKbPaGeOHrmEdu9xozHgXmiW
-	 G/nswCLijZk8xlM92700fglXoarqG1fsao31Z0GNseKagnKsT4Hcv5ivbV95D+USWWAlt
-	 zUZ0+NdG5YvBqjaQZJIJ8J7qOsB5dGclCLPECRs2+/hRx0yfq0FhAa1Wda8xil/ui2w==
+	t=1795681875;
+	b=0czw701ppVrJLA4MKX+g1hoYLJ6ePMRnMNh2pLG4NWcMRixu+CEZyfKCZXaGHtXzYY++
+	 TbDvGOYsWQG9P8wHk2tNsURGM3RcVpdWfAy95vn33ZvWvaa5o9vfCvV6Am7ncoRvQHS+m
+	 Ppi/3r9EnVaFqcqI6hpLGhdbzjg67NFYB4+dUOz36EnCu9OzDEAMU7XM5DnYGH/NEJJ5M
+	 badzQ9ssYwiF9+ZT8yC+HWkbTeypd8OlMR6pyiIZg7orrXUGnI7ojJpzdtLG4gHIZqJHE
+	 woFkxdR3GRrdeq15Y1Flixyq1Upk/Wosp6mx8JjN4whY/DrslL99AWhzhlsqkAqmv/w==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795681615;
-	h=DMARC-Filter:Received:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
-	 MIME-Version:Content-Transfer-Encoding:X-HM-Tid:X-HM-MType:
-	 X-HM-Spam-Status:DKIM-Signature;
-	bh=f5BoHCYmI3AueGUF8gtZThk/HSnjp4gpzVbfV1gUkLc=;
-	b=T6eHMlinDrPkrvh11dyvGOnSTx02zDf7z3VpWw6PzMRdsNyoIVKKfI+F5DVfGFfA5L5d
-	 xims4Ac93tBGQq51PdFcJmpadV6mYWcC6ftg8pjvXAMiJQRLymfvSN7HQyOE15Mb1HbGq
-	 anHZobL3FimwsciXjTmmpyzsaUwCByFcAMsWWc334IYN1OpL2+LENQYZOFZnFvugZM7gK
-	 Rz4Ljgy4hjhSLru+2InykV9ao6DRCVzElgp90DzXdQFqinI8TDMaP48xvKZsNZ0C7dSgv
-	 IqAX918g1j9pau8BIj3kcpvwCq3KsizIHjxRxhNyTn3IpnD7NCfzPPv+kFHUmt45XCw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795681875;
+	h=Received:DKIM-Signature:Received:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Received:MIME-Version:References:In-Reply-To:
+	 Reply-To:From:Date:X-Gmail-Original-Message-ID:X-Gm-Features:
+	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
+	bh=EOFVyGyYJqU+rNVdExuIa/A4KCVvlE3VjOnDJf/GLKc=;
+	b=gm10rKU8BK5rPJfJeh6PhHcCs2UapeXqnwU5mDakqt7339mBNPB3W8WnalysvRzaF1/H
+	 kT3SIRp7XQYHqv1gj+EKCczQ9xF8vHFB/Z9NA0tyRR8dFc4cTCP/+n2kxb+ubEgxXifqa
+	 MHYxFGfUzKKpV5c7v/oVGX3wIRvWImHAjHfVbmF+ESRHRCAeQ0G0QMOom+pP8SoQibdfV
+	 0qvvCYtgIPZ9NXh50Wf+BgkYj2KkPilDBNw2ybNzldiDS56BxjTVU87gMtf8Lz7oDE1bu
+	 uaM9x1qvc67NRHNh3u4joDWhQ/RETYZBTP7SJbyjUbhj/0Cz1qjxHMmUlmcdIYSqhxw==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=mail.sdu.edu.cn;
-	spf=pass smtp.mailfrom=mail.sdu.edu.cn;
-	dkim=pass header.d=mail.sdu.edu.cn header.i=@mail.sdu.edu.cn header.a=rsa-sha256 header.s=default header.b=cnSjooVO;
-	arc=none smtp.remote-ip=45.254.49.198
-Received: from mail-m49198.qiye.163.com (mail-m49198.qiye.163.com [45.254.49.198])
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Kos7nORo;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CE06606A31E
-	for <linux-clk@vger.kernel.org>; Thu, 26 Nov 2026 08:26:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7CE06606A31E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mail.sdu.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.sdu.edu.cn
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 051DE606A31C
+	for <linux-clk@vger.kernel.org>; Thu, 26 Nov 2026 08:31:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mail.sdu.edu.cn header.i=@mail.sdu.edu.cn header.a=rsa-sha256 header.s=default header.b=cnSjooVO
-Received: from lgs.. (unknown [101.76.249.61])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 561726936;
-	Thu, 26 Nov 2026 16:26:49 +0800 (GMT+08:00)
-From: Guangshuo Li <liguangshuo@mail.sdu.edu.cn>
-To: ychuang3@nuvoton.com,
-	schung@nuvoton.com,
-	sboyd@kernel.org,
-	bmasney+clk@redhat.com,
-	jbrunet+clk@baylibre.com,
-	arnd@arndb.de,
-	krzk@kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Subject: [PATCH] clk: nuvoton: Manage MA35D1 mux clocks with the controller
-Date: Thu, 26 Nov 2026 16:26:48 +0800
-Message-ID: <20261126-a35bb25eb5-u10-0@mail.sdu.edu.cn>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Kos7nORo
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B491C1F000D8
+	for <linux-clk@vger.kernel.org>; Thu, 26 Nov 2026 08:31:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795681874;
+	bh=EOFVyGyYJqU+rNVdExuIa/A4KCVvlE3VjOnDJf/GLKc=;
+	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc;
+	b=Kos7nORo2W5ieReE58LGqeTwKL9Ui9j7e+fXVsWObncWqZQF/zyQDNDtPMsu7kZot
+	 4JaTUQlT2vA+9rauHVdYM37L4AzzMcxwvzgiVZ6Lr/1CXh3ts5xvvE1v/Yx7Dh6sRD
+	 MWm3iPQ4OHwDJ2eDJBIwch+4m+e+FKW69UNVzbIm3bRIMm2S1SoMMP8oSXsXTDSFtR
+	 EXH2PWF4G5zXtRYrMSVl4bOPodP88IS7GnWnYPcev2FO+oDKdWn1sXiLBC+A8bhvoZ
+	 0jmGgK6flR/THCtKPLIkUq2ugs8dIEMgnyQ8e7wWI9e/ZhStZKd+nxTTiIrV/rSZa6
+	 LsAW2PBDn8KsQ==
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-3ae85e3685cso45651421fa.2
+        for <linux-clk@vger.kernel.org>; Thu, 26 Nov 2026 00:31:14 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AL+hErEMYXtsfVlUb6aSJVmvTnYT7WqAqGDf9QGEsbx8KLVSU7CkEDEpTqVUkTEblasN0kLxBSCb8bmgDhg=@vger.kernel.org
+X-Gm-Message-State: APuU4Z9nanFVXHc2D3DfN+Aqvte6+ZinK37ShZl7sVdJwcUPnEtKbgBp
+	vyTWVKS19ZI7npGuzzaAMDzze+sWdqVuc7mL0sMvA9IGK9RQzK4lNwqufiV79GHzEqHJrh+v6YA
+	QvHKyeLbMalYm+ecnL1j/0BfWJ9fV8A0=
+X-Received: by 2002:a05:6512:2255:b0:5c1:ace3:131a with SMTP id
+ 2adb3069b0e04-5c1bc8661damr5652240e87.48.1795681873045; Thu, 26 Nov 2026
+ 00:31:13 -0800 (PST)
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -59,62 +59,52 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0aa216f6e77703a1kunm282c61bd3c2aef
-X-HM-MType: 10
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWRgWCB1ZQUpXWS1ZQUlXWQ8JGhUIEh9ZQVlCSUhPVkMZHh4dT0gfGEIfQlYeHw
-	5VEwETFhoSFyQUDg9ZV1kYEgtZQVlKS0pVTE1VSU9CVU1KWVdZFhoPEhUdFFlBWU9LSFVKS0lCQ0
-	NMVUpLS1VLWQY+
-DKIM-Signature: a=rsa-sha256;
-	b=cnSjooVOuMpS5jSUAo2Q5Hrqdg//m1kQY4FuXYpcCxIbDlRanWJf7LgpXmz1eP7q+UciBNoy2BXvf/nZSY2FfvIbeHt42SsTCfTs326fcVJpN5S4XtJUEU6qU8+hZQoMedXGctyOSKKoyY6RQFd8DdyGTr1DeDbizfQoV2oGsqA=; c=relaxed/relaxed; s=default; d=mail.sdu.edu.cn; v=1;
-	bh=f5BoHCYmI3AueGUF8gtZThk/HSnjp4gpzVbfV1gUkLc=;
-	h=date:mime-version:subject:message-id:from;
+References: <20261126-a35bb25eb5-u14-0@mail.sdu.edu.cn>
+In-Reply-To: <20261126-a35bb25eb5-u14-0@mail.sdu.edu.cn>
+Reply-To: wens@kernel.org
+From: Chen-Yu Tsai <wens@kernel.org>
+Date: Thu, 26 Nov 2026 16:30:58 +0800
+X-Gmail-Original-Message-ID: <CAGb2v65-HypXGomrmDzq6fK2sbF5NwCXmGDgfKsJ_UhBu18YLw@mail.gmail.com>
+X-Gm-Features: Aa3M54o43cu-6A0TaGG1ukqNIvNBVoMGzQ0_0epz3dGZK25t85Du9OaBaHJIHPA
+Message-ID: <CAGb2v65-HypXGomrmDzq6fK2sbF5NwCXmGDgfKsJ_UhBu18YLw@mail.gmail.com>
+Subject: Re: [PATCH 0/4] clk: mediatek: Unregister apmixedsys clocks on unbind
+To: Guangshuo Li <liguangshuo@mail.sdu.edu.cn>
+Cc: angelogioacchino.delregno@collabora.com, sboyd@kernel.org, 
+	bmasney+clk@redhat.com, jbrunet+clk@baylibre.com, matthias.bgg@gmail.com, 
+	wenst@chromium.org, drinkcat@chromium.org, weiyi.lu@mediatek.com, 
+	msp@baylibre.com, fparent@baylibre.com, linux-clk@vger.kernel.org, 
+	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The MA35D1 muxes remain registered after the platform device releases
-their register mapping. Use managed registration so both mux helpers
-unregister their clocks before the registers are unmapped.
+On Thu, Nov 26, 2026 at 4:27=E2=80=AFPM Guangshuo Li
+<liguangshuo@mail.sdu.edu.cn> wrote:
+>
+> Pair apmixedsys clock registration with removal on four MediaTek SoCs.
 
-This issue was found by our static analysis tool under development.
+You are checking the wrong tree.
 
-Fixes: 691521a367cf ("clk: nuvoton: Add clock driver for ma35d1 clock controller")
-Signed-off-by: Guangshuo Li <liguangshuo@mail.sdu.edu.cn>
----
- drivers/clk/nuvoton/clk-ma35d1.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+This series is mostly obsoleted by the following commits:
 
-diff --git a/drivers/clk/nuvoton/clk-ma35d1.c b/drivers/clk/nuvoton/clk-ma35d1.c
-index e95f72bb8103..4428556b64ad 100644
---- a/drivers/clk/nuvoton/clk-ma35d1.c
-+++ b/drivers/clk/nuvoton/clk-ma35d1.c
-@@ -380,9 +380,9 @@ static struct clk_hw *ma35d1_clk_mux_parent(struct device *dev, const char *name
- 					    const struct clk_parent_data *pdata,
- 					    int num_pdata)
- {
--	return clk_hw_register_mux_parent_data(dev, name, pdata, num_pdata,
--					       CLK_SET_RATE_NO_REPARENT, reg, shift,
--					       width, 0, &ma35d1_lock);
-+	return devm_clk_hw_register_mux_parent_data_table(dev, name, pdata, num_pdata,
-+							  CLK_SET_RATE_NO_REPARENT, reg, shift,
-+							  width, 0, NULL, &ma35d1_lock);
- }
- 
- static struct clk_hw *ma35d1_clk_mux(struct device *dev, const char *name,
-@@ -390,9 +390,9 @@ static struct clk_hw *ma35d1_clk_mux(struct device *dev, const char *name,
- 				     const struct clk_parent_data *pdata,
- 				     int num_pdata)
- {
--	return clk_hw_register_mux_parent_data(dev, name, pdata, num_pdata,
--					       CLK_SET_RATE_NO_REPARENT, reg, shift,
--					       width, 0, &ma35d1_lock);
-+	return devm_clk_hw_register_mux_parent_data_table(dev, name, pdata, num_pdata,
-+							  CLK_SET_RATE_NO_REPARENT, reg, shift,
-+							  width, 0, NULL, &ma35d1_lock);
- }
- 
- static struct clk_hw *ma35d1_clk_divider(struct device *dev, const char *name,
+c9c2fd1a53a4 clk: mediatek: mt8516-apmixedsys: Switch to common
+probe/remove helpers
+68d1fa487766 clk: mediatek: mt8183: Switch to common probe/remove helpers
+9421b0b085c0 clk: mediatek: mt8167-apmixedsys: Switch to common
+probe/remove helpers
 
-base-commit: 4dce97c6c265544342e716e62fd24bbb232590c5
--- 
-2.43.0
+> Guangshuo Li (4):
+>   clk: mediatek: mt8167: Unregister apmixedsys clocks on unbind
+>   clk: mediatek: mt8183: Unregister apmixedsys clocks on unbind
+>   clk: mediatek: mt8365: Unregister apmixedsys clocks on unbind
 
+This is the only one that applies. But we probably want to convert it to
+the common helpers as well.
+
+
+ChenYu
+
+>   clk: mediatek: mt8516: Unregister apmixedsys clocks on unbind
+>
+> base-commit: 4dce97c6c265544342e716e62fd24bbb232590c5
+>
