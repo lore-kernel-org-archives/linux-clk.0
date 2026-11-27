@@ -1,114 +1,88 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.195.107
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795806254;
-	b=JCLOI/7s1EFlXbsJvGOwti4fjaE33TjCVQQbh9QpJ0NxYqiqW8y/f2NaaUP5VgEla2TT
-	 avy68jZROunKNCDleXmg7SKa08/txOfAD39Gq1gkzShXXrXjx68aEOAySfFFPbkTtUz7g
-	 vLt2kkezWQh89OJ9EuYin5JWBj2mnOHCl8tf6tjmjMQ6EUgd1TD2O7gZvIpnxOndZCm3C
-	 9H2zCwO/XlFGzHwbObT2pJWqvw56GxaS6vHjzarpIwrUFtQH09goMN6zM+DeDzA9s5H/g
-	 mttbIrMhyk5lX1yqWAh6Z5aQa60ilY5ajeLF70/ok/VvuFS4HsBteM+WKZDfTYqOLQw==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795806254;
-	h=DMARC-Filter:DKIM-Signature:Received:Received:
-	 Content-Transfer-Encoding:Content-Type:Date:Message-Id:Cc:Subject:
-	 From:To:X-Mailer:References:In-Reply-To:X-ClientProxiedBy:
-	 MIME-Version:X-MS-PublicTrafficType:X-MS-TrafficTypeDiagnostic:
-	 X-MS-Office365-Filtering-Correlation-Id:X-MS-Exchange-SenderADCheck:
-	 X-MS-Exchange-AntiSpam-Relay:X-Microsoft-Antispam:
-	 X-Microsoft-Antispam-Message-Info:X-Forefront-Antispam-Report:
-	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
-	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
-	 X-MS-Exchange-CrossTenant-Network-Message-Id:
-	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
-	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
-	 X-MS-Exchange-CrossTenant-FromEntityHeader:
-	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
-	 X-MS-Exchange-CrossTenant-UserPrincipalName:
-	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
-	bh=OFSb81OH1Zc71qNeNLUeZqQDChDNpTk4G9+KLoHuDH4=;
-	b=nzPZIryHC0S7pmJv0kwoYeio7ltuWmKgO34nt8TvvgW0JAZfidBQyKn78ED5RVu1X7iT
-	 hEfJzQ2W527X+DozmB0PdeMnIo/hLyUoG4JuUtC7+ow4kJFI8PIEqgV4oYcDHRIvPOlnW
-	 PYTMekEJ5G1jpZyu/fQKQyfE+e0c3Da0uNielMxUNqqc2XwzTDrylvdcodfOng3vmOc/R
-	 Iw/E6U5KcHpvwzkBG2o/kz8TMeVD/WWxD3R9nv6eSLQRD5trcAiz0xLxXl9rFhhhDifR+
-	 xeQbIrwXVpPcTvqwBD77qib0WsqfCVo8qSSgEwpFwiEuULhEhC/zexpajj+7RcRMnVQ==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=garyguo.net;
-	spf=pass smtp.mailfrom=garyguo.net;
-	dkim=pass header.d=garyguo.net header.i=@garyguo.net header.a=rsa-sha256 header.s=selector1 header.b=havZJhh4;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.195.107
-Received: from CWXP265CU008.outbound.protection.outlook.com (mail-ukwestazon11020107.outbound.protection.outlook.com [52.101.195.107])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.160.50
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1795807259;
+	b=rk8EcH9+uszDrErkg5mVsaaB/+F4VpdWHfp18GrWdP4fX3/8HcL70RJzL/Tv0zNvivI7
+	 OgQfJkGrmOr6H7MuhqxsJHqQvrXHRnuQFU8DC5s7otL4UXYwRffDF4cJzWimbN4jQCmrz
+	 xRze82JEA9eWcFggHeul4tcsiybcUiFqVMred/jllMwvMN6teq4l/LFtafnpGxpu/hqm4
+	 I3+hQEl8bhl3a1jSZwPcxbz09ahQZQqpqlbc/L6LNY8OodXArpi9WM5laXhzdsMFs68kO
+	 /fmocgfjRJVWYbcr7JV17q8tVzfmzzhnvokd3Jip+/YZ6yJSjSy9Xsy/VVBw7YftGIA==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795807259;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 Message-ID:Date:MIME-Version:User-Agent:Subject:To:Cc:References:
+	 Content-Language:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding;
+	bh=spMqGTfvnGebTBmWprGkb0+x7mXa+78W7iVJ0EOMLGA=;
+	b=vZmetGz/MhqePtKaldSztAIVyMTI4I+jb2+a9GSz3UB8Lkbx4n2G7uB4/8bc7KASuchR
+	 TWHuFaSb/tbD3Byo000J9IKxt7ZXL2rBtEBptp5+vXTGnrO1nJXZdXSue67PnE+9ZF5js
+	 7WdeGfyGF9a86XhKihi29jPeZJ8LGyqgaSmH1yFVJP+RTITeNqQ7w9ZXv8nEiyQY3m6z7
+	 nDuRe+85UykhdlxZwF8ztlJV4XO6L7O1xrvfnzeTFPNXi0MgfM0jsYP67wd1nIFlgmMf5
+	 Sf+QE6+7bPd+T+ru1R07elKhzQVbYAE7U5b0S7vv+qzddpFLB6RULjMP8hJCk/eqtRg==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=riscstar.com;
+	spf=pass smtp.mailfrom=riscstar.com;
+	dkim=pass header.d=riscstar.com header.i=@riscstar.com header.a=rsa-sha256 header.s=google header.b=zpxwhrjq;
+	arc=none smtp.remote-ip=209.85.160.50
+Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47F0A606A32D;
-	Fri, 27 Nov 2026 19:04:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 47F0A606A32D
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=garyguo.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=garyguo.net
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45DF3606A321
+	for <linux-clk@vger.kernel.org>; Fri, 27 Nov 2026 19:20:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 45DF3606A321
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key, unprotected) header.d=garyguo.net header.i=@garyguo.net header.a=rsa-sha256 header.s=selector1 header.b=havZJhh4
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=gk05Hrdqu3mcCERVDexZkkAxUj4xuZlo6nw+dk/SRIaCUKoCnqojxRUnwYt6EjAfNV91gl8WelsmOlkwweNfx7zTE8kW4llfhX62767qfKePwsM0Uqkz1kdKgN3C1Ka0iQ3uy9iHKiepnGKGGFnOSN+rROlMT4nPVZ+nLC3WFWh+Xgsqp9g3WA7xDcYqz/avKPb3kMahB9vZCj6PYHWhQrpAzm58BRuiMjPT62dRyWVPXqDH9bZ+wqM+su9o3rSFiTHX4Hkgl/BXfl5iM6nTEjWlV7yY98HLGQ3HJVerXtzISW9tbF4EywZIJCfLgLcRuhkZrMCFnXv66zihttNGtw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=OFSb81OH1Zc71qNeNLUeZqQDChDNpTk4G9+KLoHuDH4=;
- b=ioHT3gDC4MBN3FJkiefhlxeuJ4cMT/PGKRQk6BXtpZM9/9ogSKYcRXLvjAif8ruc3QlifDVFV8tXaZ0FgG7i5Cete3rlE95vTw0CuignA/nUonmfHHvMKAsE3q+DVFebif6XsLEGfgf8KcBWpabvnEfo2Y7OcGCmaJtLAlyYHmdN5IZu69+YXaYi+niw+3Ynsyw4fACYqwQTBrD7c0whdlE3qrc3GdX170IWj38aQH3oZo6P5kOj0MAKQGlzM4Mezq6qwpyuqk545n/VvkmXUUeEVdEgfkT7pDadO5pAD93Ft74yW2PkUMCaMljStz7nMP9pn2zwGPK66i04yWUsHA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=garyguo.net; dmarc=pass action=none header.from=garyguo.net;
- dkim=pass header.d=garyguo.net; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=garyguo.net;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=OFSb81OH1Zc71qNeNLUeZqQDChDNpTk4G9+KLoHuDH4=;
- b=havZJhh4XzbG73Mz22agzUkKoDfuJ+xaaM1PmLDjzGwuN2tDLLmG+Y4fmnguIGm3Kx1zVcG7hjB6wO3Kfz4lrJOW0vC0GOrNY7yCNLTdHWUbW8d4rwXJJlQaBuwIeEAcYTdpxrDvqF2TfMiktdKj8Y9Ggk0b66F32Tar4gYFCwY=
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=garyguo.net;
-Received: from CWLP265MB6051.GBRP265.PROD.OUTLOOK.COM (2603:10a6:400:1cb::9)
- by CWLP265MB6976.GBRP265.PROD.OUTLOOK.COM (2603:10a6:400:1fa::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.662.9; Fri, 27 Nov
- 2026 19:04:09 +0000
-Received: from CWLP265MB6051.GBRP265.PROD.OUTLOOK.COM
- ([fe80::55f6:f98b:7fad:c6e3]) by CWLP265MB6051.GBRP265.PROD.OUTLOOK.COM
- ([fe80::55f6:f98b:7fad:c6e3%2]) with mapi id 15.21.0662.007; Fri, 27 Nov 2026
- 19:04:09 +0000
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 27 Nov 2026 19:04:08 +0000
-Message-Id: <DN686PEEVSKX.2U3UDJGLRJCQZ@garyguo.net>
-Cc: "Gary Guo" <gary@garyguo.net>, "Rafael J. Wysocki" <rafael@kernel.org>,
- "Viresh Kumar" <viresh.kumar@linaro.org>, "Danilo Krummrich"
- <dakr@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>, "David Airlie"
- <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Michal Wilczynski"
- <m.wilczynski@samsung.com>, "Drew Fustini" <fustini@kernel.org>, "Guo Ren"
- <guoren@kernel.org>, "Fu Wei" <wefu@redhat.com>,
- =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, "Stephen Boyd"
- <sboyd@kernel.org>, "Brian Masney" <bmasney+clk@redhat.com>, "Jerome
- Brunet" <jbrunet+clk@baylibre.com>, "Miguel Ojeda" <ojeda@kernel.org>,
- "Boqun Feng" <boqun@kernel.org>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Trevor Gross" <tmgross@umich.edu>,
- "Tamir Duberstein" <tamird@kernel.org>, "Alexandre Courbot"
- <acourbot@nvidia.com>, <linux-pm@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
- <linux-riscv@lists.infradead.org>, <linux-pwm@vger.kernel.org>,
- <linux-clk@vger.kernel.org>, <rust-for-linux@vger.kernel.org>, "Boris
- Brezillon" <boris.brezillon@collabora.com>, =?utf-8?q?Onur_=C3=96zkan?=
- <work@onurozkan.dev>, "Maurice Hieronymus" <mhi@mailbox.org>
-Subject: Re: [PATCH v6 5/7] rust: clk: add devres-managed clks
-From: "Gary Guo" <gary@garyguo.net>
-To: "Jerome Brunet" <jbrunet@baylibre.com>, "Daniel Almeida"
- <daniel.almeida@collabora.com>
-X-Mailer: aerc 0.22.0
-References: <20261013-clk-type-state-v6-0-a5e9977b3509@collabora.com>
- <20261013-clk-type-state-v6-5-a5e9977b3509@collabora.com>
- <DMYELN5M09W3.1SYPKW7DZ70E1@garyguo.net>
- <189F36A9-D1C1-478A-A195-F94D037E4376@collabora.com>
- <179580269373.2809466.3866997464599192193.b4-reply@b4>
-In-Reply-To: <179580269373.2809466.3866997464599192193.b4-reply@b4>
-X-ClientProxiedBy: LO4P123CA0341.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:18c::22) To CWLP265MB6051.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:400:1cb::9)
+	dkim=pass (2048-bit key) header.d=riscstar.com header.i=@riscstar.com header.a=rsa-sha256 header.s=google header.b=zpxwhrjq
+Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-483c607ccb4so4289683fac.0
+        for <linux-clk@vger.kernel.org>; Fri, 27 Nov 2026 11:20:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=riscstar.com; s=google; t=1795807258; x=1796412058; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=spMqGTfvnGebTBmWprGkb0+x7mXa+78W7iVJ0EOMLGA=;
+        b=zpxwhrjqox6YfuCTWrzRVOWk/4CVM967EA+Cngu4+HkdwOwzD5v5CkTuX26trlmyRz
+         cnUAca3Rt+Xic1vR7J4cW8ymBJKXorlJT2fB8tHIUHNIWykz+EvzjlLrta+B2wZjzxnd
+         n0MOnfiLYicEwWeVjayTpdmUd5EwFTV7INcfzr1aBCm6Fs7wCL5Ef12OC6ZuN0dQge06
+         XnYz1i0+1huzx96eJIdp6bsuYUReBtu323z/4W9JnVJ3PlZ1m35gXvqbbKIKs9P0emlJ
+         //KkKxeamwWNRf2xLYSJKMkJ8JZCpPCPz82sNL88rq64bISmxAbq234Hh38fVoTf7pW1
+         TsFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795807258; x=1796412058;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=spMqGTfvnGebTBmWprGkb0+x7mXa+78W7iVJ0EOMLGA=;
+        b=qUgryqAEnbnpgTX01t73YcIyLs9dz6mkpKiWkaExofrudPcv75IVfhkE0GQK7K80CM
+         cWQLIZTxv434mo/CmzlZ9OOGDzfBtgcnDDTxQpUalqxAYF5t3ku5AAdcWjKeBhRUAB75
+         iugSbPCgHCWFAFQ7Tmgwkqkh2N/YhhqQ2bGXvasyKUaiQctTTSrl+Y7sBP5Uih/S/SmK
+         ir2mF4IU5WSJBs1sWcAPsrCrcQhi4/bHJO7zwphR7PUWtSIsA90TpEDpf09St/U1AjeZ
+         gyZpVNY0MAWF/WRNwlsV7/CD/nOfbjCEV7A/9sL5Sjc4KNBtJfL5X7M3DCiZlnoeJgce
+         u4Rw==
+X-Forwarded-Encrypted: i=1; AL+hErEhH5qx/BRow+jTsfB6sT0SJlvWwm+cM5c1t93ffMIdF2FIaOuUSEKTq+Jfj0CNrzLMcUyaB+Jjb1A=@vger.kernel.org
+X-Gm-Message-State: APuU4Z+r92JRTh17ZMQs4hyKaGeB9MwXfKRKgL35eK9rtuurbYB4l9N3
+	0RoGC+4arBbcij2dMMHtgOFRYvhr+HEG2F1O8RVQocisMqX86FlbqFFgqdbhqY38dGE=
+X-Gm-Gg: AZFdTZerF4BG1ObpSvjgwdkOnPhdP2tWKVWThRVPgX8ZO1qLS3oVSa6JsC7Ij0qWdSU
+	6W83f+BVrAc74QlwLeCoBCHVvu34+SRJa0fxrGyj28ILv0+LELqkAWbij56UBO45R/bo9L2dAag
+	jVqvoTM11Y+F5oAHVaR2w0oL9+S1oW4788iqxFUMOUA/T0523GiA5XmUFkbW+fpvWCgSi53nxqc
+	8jHK9SLKAToWUihF/oCNXUOAmvLh8F/C5MRq6ho0e/DYkmTdj7Fy5qIzg3sM/K9Ex6oIwMtxhkI
+	wpd59DbTWTiyIz1PH9j9bSdeRLjvHTkxSazpvPRe/5SfG0/vJ35Zk0FZe61drWKCWqclWTCGPtb
+	oqogm1m+5k3pTFvXN+8EH7cYVALDJjNaBWgneM8oaPQe6rVbCjNqq7AN8ngC/V54ZvEYN+vDDtQ
+	yvWt4YPezPKWDHf6x/ldx182F0pT0H3Xnsp8CsdB5+Iz+Ft6vYMlSqSvLnehKt9Vv+YYrF9g1Jd
+	u1Q131SBNiCgFmgc4bq8PLVFH0NDxfOEbF6KXE2YMKUjrtRraMdEPeuQv0ftInvt3Dax+kN+eMg
+	EOT4ZdP0MNeZ9pkdLy2thSeb+bTyzs+9
+X-Received: by 2002:a05:6870:6b8b:b0:4ba:35b1:7227 with SMTP id 586e51a60fabf-4bc7782a116mr20876208fac.0.1795807258018;
+        Fri, 27 Nov 2026 11:20:58 -0800 (PST)
+Received: from [172.22.22.28] ([76.156.233.211])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-4bc5ebdc0acsm24208446fac.3.2026.11.27.11.20.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 27 Nov 2026 11:20:57 -0800 (PST)
+Message-ID: <5f389412-a036-4792-bdd9-e86377ee7e44@riscstar.com>
+Date: Fri, 27 Nov 2026 13:20:56 -0600
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -118,123 +92,149 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CWLP265MB6051:EE_|CWLP265MB6976:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9973d7c5-72a9-477d-e8cc-08df4cb9375d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|10070799003|366016|23010399003|1800799024|376014|7416014|261022115727099003|10067099003|56012099006|261026121527099003|261026140227099003|261026130827099003|261028144727099003|261022075727099003|261022105027099003|261022113327099003|261021121427099003|261021130227099003|261021123027099003|261021135927099003|261102123227099003|261009223027099003|22082099003|18002099003|5023799004|4143699003|6133799003;
-X-Microsoft-Antispam-Message-Info:
-	Lnw/uQx4mrgbG7UJVrJk0LV/6FqozJxO7YuL38mO0+5VM/L5jRjXXPzr7TLmzRjdSdMu3zwiKGBBRR1/Bxizyf6f3qdsBCH6yv8o0shPu7WKZLJfBZFAsWodUrdqfE0AxaS72sdj+j8mX5lqNXEHGxRdAada89OQ/xTSWXVWH3M1GmG9D4aAHNPqJWQyxolsk/ljeaKXDnL2i4hCaYV1syJr4C4YrpaWvS4y96bxJ10XW/+b5GmSnAraJ40yH0omle9oqSWYmTwSIRCj0ZWQNtVVIrUh3VyDXL2tFuyGYHx+KEu/MsQN/8oDxBP2DXudkv+vaAtd6gchLzesYsskECu1U0iyZvh6BHeNwvAUSbOkDSF+N3unlKrFkPZoECcTSNLTlm77e1D54qs9bp1qgvxFSFqjI+n9fhmMKd6ZZmK64KO3MBWQn7euG5F8TB05Qg/hWkbt1M5Z/eE+8yZJpcuIEvVVi/znYWRqGtXg1S78RfFkld/wF6agTVqZ4sOpWzVbwaqsXUVUVarbfwU3qabqKMOXLmydl1sNwEMNwL9hqay4vOt1rrkYt4N3bLjzQtuRFKL8hD5bvdau+Nto0TwKkTtNSUF19QX7fMEyzh/v8X0PoUuhfmaxFgdv1+td4r5PD5Lb1ZOdYtABzhFn9TD78jxWUJZN1R4+0T/9XWE=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CWLP265MB6051.GBRP265.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(366016)(23010399003)(1800799024)(376014)(7416014)(261022115727099003)(10067099003)(56012099006)(261026121527099003)(261026140227099003)(261026130827099003)(261028144727099003)(261022075727099003)(261022105027099003)(261022113327099003)(261021121427099003)(261021130227099003)(261021123027099003)(261021135927099003)(261102123227099003)(261009223027099003)(22082099003)(18002099003)(5023799004)(4143699003)(6133799003);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?TVdKSHVrb1VtOEs3clBQS2czSEt3azdNNVNIazNwK0hJcE9UVFE1Y09TYzVs?=
- =?utf-8?B?MGpoNUtIaEtJMkgxN3hqTkxEeE4rSmYxR0JSWjYzRWxkNmI0NlNYeThWcjZn?=
- =?utf-8?B?N2Y2T1luWitEalNHYzFPYlVqK1pkNGg3YmN3UDVkeWdpaytNc1ZGVTR6YXdt?=
- =?utf-8?B?ckxCU0RNNkVBTTV4cUc3VFN5dGRwK244RnQ1NkhNTlg5dkNBTzhPOGdHcTY1?=
- =?utf-8?B?WUx3TnUrMzIvdE42YnoxMGFXZmFNWCtvczk4STByUytEWmw0eC8wT0VpdGkv?=
- =?utf-8?B?RExrdHp0S1VETGVQUFlzczJ1bm5QMjlJblM3UDB3b0ptK1Y5SGdWUGNFRmdD?=
- =?utf-8?B?dDFzV3NSRzExaERtWXgzL0piZ1BPQUdzNnBhZlVTTHJTQkIvSUxnQ3RCYW9M?=
- =?utf-8?B?NDh4MGdOSGR4MFZITytsWks0SHBWbnVEazNOS0xoWU5hTm9hc3h2THVJazdY?=
- =?utf-8?B?N1ByQjVrYTFZeGhLcy9Ga0Q0NythVFphYS8zU01qd0wwbzZQN0pBN2NRMDI4?=
- =?utf-8?B?a0VtSGtxOUVVL21CRWoxY28yRWVKckVEdXY0NDVPSGdnZU90ZU1JZXRyazU3?=
- =?utf-8?B?Tk1ydmhsOWo2b3k1c0w4Tm1FT2tpa01ZNXAxMXo5SDB2Mi9lRXlMaXU4ZkFq?=
- =?utf-8?B?NkJtYXFVK0NKNmhVOVFSbDkwcTF5K0lvN0JqMitPT0RscjR3dE11MjhNQzYr?=
- =?utf-8?B?TWxrMTZpSXlya01YdHg0QlFzckYwRHFTQWVsOHNpT2trTFJjc3V5ZVRybXVi?=
- =?utf-8?B?TFRtb2VoK3FzalQ3eXd5bFZmSklmZ3VnNm44Y1hnZ3hnUXhkU09VRVBWZmNr?=
- =?utf-8?B?SnZ5ZUU0ZEtHZmhzRlVHVkxRUEpDVm9KeXhkTHZ3U0EvUHdBYnF1dFFqN05k?=
- =?utf-8?B?b2k3QTZQUTIyOHJ2YmRFY01mbm9jbTM5aHRUQnd5aThzdkp0OGNzUER4WWVU?=
- =?utf-8?B?NWdhMUhyOWNsbzFETVF1VGlxVTVxTUZWa2lCS3V2aEgwcWVmS2p0Q3JVUUVV?=
- =?utf-8?B?ZEhHUEFIV1lKcTQ3clRDOUljaEltTHhBWnNpNWdKbjhYdmppM3BPNGEzL1hZ?=
- =?utf-8?B?OWF0WHVuN285NkoyNEU1eDUzNWxLNVovOGhxcC9FbGlSVi9EbHFDOWhVVmlD?=
- =?utf-8?B?OW1hNStMRHJwSGRpTHdieGhvcVB6QjV3ZTJ4cWZwMTl3YTBEeGtvd3BZcWpy?=
- =?utf-8?B?SHowbmRyRDg3WDd5RlhJTXY1QmJNWUFXbjBYb2kya0hZbUx3dkJsSmwwNmx4?=
- =?utf-8?B?NEZZdXhXMUFvamVka0gyTk5TeGxLS284aEFJZjNCQXhOVThvRmNpejFXSkdS?=
- =?utf-8?B?dkx2K3BpcnFtVCtZemZEYWUrVFhMM3hjZnpYbzVwQTJaNmlNVnZNclFDVGMr?=
- =?utf-8?B?SU1ONHp6MzJzOHVsV2ZDc0ErVmRIOVJGUVhIbzJiT011K3JUNWFxNWVydlha?=
- =?utf-8?B?a0xTMWJ5SUhLQlduVTBIdmpaRHpjQkwwdTBMM0VuUTNKVW5TNU53NVQyZ0Vz?=
- =?utf-8?B?Q2Vvd1BqeUUyaDdiTnNlTjlvYjBERll3cHUzSE9OQ2cwRmtJbE9TbTNuc2VZ?=
- =?utf-8?B?dVc3ZGNsNkRVYnlEL3o5eUNOMFJXMjVTckFoMVZaSWRBY0Vkc092OGZRUk1G?=
- =?utf-8?B?RHNMdkVtbiszbUg1blUrVDNRTDRGNzk3MzZ3eWd4SFJlQkE3UGRlMzlxYmVx?=
- =?utf-8?B?MHlkQUdIY29ETmoxYzFSU1VuNDBPb3ljck5wd2E2SHJmYmpzRGp1ekxLZlFw?=
- =?utf-8?B?WWxqRzl0d3oyWEgvK0Q1YjNqUkRpYnFDd2FyN0dkaUFuYVZSemxMb0FQRG9m?=
- =?utf-8?B?WjlyMlpWQUErMFhvc2h2eFNGMklJY0xwbkU4TkYwYk9XUGZFd1M3Tm9wMmRB?=
- =?utf-8?B?em1SUXhjcTZyK210aFJ4RElEL0xpYVgwQVhVVEgvS0pJZ0FJS0xwZDc2OXN4?=
- =?utf-8?B?d0h6UjlRaWlpM3VsSHBCbzdoNlVBa3FrKzlEb3J0R1I2QnN2TU9EZWFKQmts?=
- =?utf-8?B?cWtBRGFwMmVPL21QZUZqOXJRQy9HT2ZvbHJKRVNlaVhONXJBb0FNbHhKcWp5?=
- =?utf-8?B?eVRHckdtWXNzeDZEL0ZTdFNrTUtJUlhLZVNiMmlleHAvUy81Y0JRMnBFYmdn?=
- =?utf-8?B?VnVSUEkrcjQzYXhtSnZFa3ZsNy9GM2xZdDRyZnJmNm1QSWZUOU1QT2c0ZFBL?=
- =?utf-8?B?cUNBbHpselZVcXR6ZnFTZ1JhMEV0NFZFVUNzZmh4U3pNQWduQThOM0xIOEhJ?=
- =?utf-8?B?d240RjZBZzJiQ0NQZnM1TThpd3BidXhXRVlCcTdhbVROb281aGpUdmtacXlG?=
- =?utf-8?B?TGhtYlU2S1ZHeHVvTjRaZHJGcVFSOUlsR3dzQUJIcTRnME9ZSktadTAva0lt?=
- =?utf-8?Q?NgvGJNNgiNRawyyromhEci0tWI8fCPCcRbjRk?=
-X-OriginatorOrg: garyguo.net
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9973d7c5-72a9-477d-e8cc-08df4cb9375d
-X-MS-Exchange-CrossTenant-AuthSource: CWLP265MB6051.GBRP265.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Nov 2026 19:04:09.2773
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: bbc898ad-b10f-4e10-8552-d9377b823d45
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: /EY0eRcwxpBYstF6ur23rY0qYyix/AetWbYpOT7P5LmCisjrkZdJAkhZxYRhpWbQ98gGKmwMBo2RlZiV72YsXw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CWLP265MB6976
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/3] clk: toshiba: introduce a TC9564 clock/reset
+ driver
+To: Lorenzo Bianconi <lorenzo.bianconi@oss.qualcomm.com>
+Cc: sboyd@kernel.org, bmasney+clk@redhat.com, jbrunet+clk@baylibre.com,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ p.zabel@pengutronix.de, andersson@kernel.org, konradybcio@kernel.org,
+ abelvesa@kernel.org, daniel@riscstar.com, mohd.anwar@oss.qualcomm.com,
+ fabrice.gasnier@foss.st.com, alexandre.torgue@foss.st.com,
+ marex@nabladev.com, changhuang.liang@starfivetech.com,
+ devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20261125202141.1288493-1-elder@riscstar.com>
+ <20261125202141.1288493-3-elder@riscstar.com> <awgCFMH6xerE510f@lore-desk>
+Content-Language: en-US
+From: Alex Elder <elder@riscstar.com>
+In-Reply-To: <awgCFMH6xerE510f@lore-desk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri Nov 27, 2026 at 6:04 PM GMT, Jerome Brunet wrote:
-> On 2026-11-18 11:47 -0300, Daniel Almeida wrote:
->>=20
->>=20
->> > On 18 Nov 2026, at 11:24, Gary Guo <gary@garyguo.net> wrote:
->> >=20
->> > On Tue Oct 13, 2026 at 6:07 PM BST, Daniel Almeida wrote:
->> >> Many drivers only need a clock running for as long as the device is
->> >> bound and never touch it afterwards. In C, devm_clk_get_enabled() and
->> >> devm_clk_get_optional_enabled() cover this case.
->> >>=20
->> >> Add devm_enable(), devm_enable_optional() and
->> >> devm_enable_optional_with_rate(), which wrap the C helpers. They retu=
-rn
->> >> no handle, so the driver keeps nothing in its data and cannot change =
-the
->> >> state of the clock. The clock is disabled, unprepared and put when th=
-e
->> >> device is unbound.
->> >>=20
->> >> This mirrors regulator::devm_enable() and devm_enable_optional().
->> >>=20
->> >> Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
->> >> Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
->> >=20
->> > Given all the device resource lifetime changes, do we still need this =
-now, or
->> > would putting a guard in driver private data to be dropped automatical=
-ly upon
->> > unbind be sufficient?
->>=20
->> I think we should still provide this. Many drivers only care that the cl=
-ock be
->> enabled at a given rate, and do not care about the handle. I think this =
-has
->> little to do with C or Rust and should be supported in Rust too.
->>=20
->> =E2=80=94 Daniel
->
-> Gary, is this OK with you ? if it is, I can take as it is.
+On 11/26/26 3:55 AM, Lorenzo Bianconi wrote:
+> On Nov 25, Alex Elder wrote:
+>> Define a new platform driver that manages clocks and resets implemented
+>> by the Toshiba TC9564 SoC.  There are 21 gate clocks that can be enabled
+>> and disabled, but currently only the clocks that are (or will soon be)
+>> used are defined to be controllable.  There are also 13 resets that can
+>> be asserted or deasserted, but support for some of these is omitted as
+>> well.
+>>
+>> Two registers manage the state of the clocks, and two others manage
+>> the state of the resets.  All four registers are found in a region
+>> mapped for MMIO.  The region is provided via a BAR on one of the PCI
+>> functions embedded in the TC9564 SoC.
+>>
+>> The I2C and PCIE clocks and resets are treated as CRITICAL, meaning their
+>> state should never be changed (and a warning is issued if changing their
+>> state is attempted).
+>>
+>> Co-developed-by: Daniel Thompson <daniel@riscstar.com>
+>> Signed-off-by: Daniel Thompson <daniel@riscstar.com>
+>> Signed-off-by: Alex Elder <elder@riscstar.com>
+>> ---
+>> v3: - Fixed problems/garbage in the patch header
+>>      - The Kconfig option now depends on RESET_CONTROLLER, and can now
+>>        be enabled if COMPILE_TEST is enabled
+>>      - The generic gate clock controller code is now used rather than
+>>        implementing a custom one
+>>      - The PLL and internal fixed clocks IDs are no longer available
+>>        outside "clk-tc9564.c"
+>>      - The PLL is initialialized, followed by all fixed rate clocks,
+>>        followed by the gate clocks, to ensure each clock's parent is
+>>        initialized before the clock is
+>>      - Updating the reset registers (read/modify/write) is now protected
+>>        by a spinlock
+>>      - "Unnecessary newlines" have been removed
 
-It's a bit against the trend that we're doing elsewhere where things that a=
-re
-managed APIs are changed to become guards that gets embedded in drivers (so=
- the
-lifetime relationship is tracked by the type system). That said, clk/regula=
-tors
-usually don't interact with other device resources, so probably keeping dev=
-m is
-fine, so not a blocking concern from me.
+. . .
 
-That said, I'd like to hear Danilo's thought on this one.
+>> +struct tc9564_clock {
+>> +	void __iomem *ioaddr;	/* Mapped clock/reset registers */
+>> +	spinlock_t lock;	/* Protects reset register updates */
+>> +	struct clk_hw_onecell_data *clk_data;
+> 
+> I think it would be more readable to have 3 different pointers here:
+> - struct clk_hw_onecell_data *clk_pll_data;
+> - struct clk_hw_onecell_data *clk_fixed_rate_data;
+> - struct clk_hw_onecell_data *clk_gate_data;
+> 
+> (using the same logic you implemented for fixed_init, gate_init stucts).
+> 
+> Doing so, I guess the code that is allocating the clock data would be
+> easier to manage.
 
-Best,
-Gary
+I don't know that it's easier but it would avoid keeping
+track of the difference between array indexes and identifiers.
+I think I was trying to avoid registering three different
+providers, but I think you're right, the result will be
+simpler and more readable.
+
+The PLL is a single clock, so it will be more like:
+
+	struct clk_hw *pll_hw;
+
+So I will implement your suggestion.
+
+> 
+>> +	struct reset_controller_dev rcdev;
+>> +};
+>> +
+>> +/* Indexes into the fixed_init[] array */
+>> +enum fixed_clock {
+>> +	CLOCK_62_5M,
+>> +	CLOCK_125M,
+>> +	CLOCK_250M,
+>> +	CLOCK_312_5M,
+>> +};
+
+. . .
+
+>> +/* Caller must free the returned pointer if non-null */
+>> +static const char *clock_name(struct device *dev, const char *name)
+>> +{
+>> +	return kasprintf(GFP_KERNEL, "%s-%s", dev_name(dev), name);
+>> +}
+> 
+> nit: clock_name() is running just during probe, I would prefer to use
+> dev_kasprintf() instead and get rid of the related kfree(). Moreover,
+> clock_name() is just a wrapper around kasprintf(), do we really need it?
+
+I think you mean devm_kasprintf(), but I still don't like keeping
+that allocated memory around for every clock for the entire life
+of the device.  It's just a waste.
+
+What I'll do, to get rid of what seems like a weird kfree() call,
+*and* avoid having the allocated memory hang on longer than needed
+is have all the callers do something like this:
+
+         const char *name __free(kfree) = clock_name(dev, "pll");
+
+I do agree it's a simple wrapper but it's used in three places to
+create a consistent name, so I prefer to keep it.
+
+>> +/* Initialize the PLL (parent is the input oscillator); called from probe */
+>> +static int pll_init(struct device *dev, struct tc9564_clock *clock)
+>> +{
+>> +	struct clk_hw *hw;
+>> +	const char *name;
+>> +
+>> +	/* Initialize the PLL clock first (input oscillator is parent) */
+>> +	name = clock_name(dev, "pll");
+>> +	if (!name)
+>> +		return -ENOMEM;
+>> +
+>> +	hw = devm_clk_hw_register_fixed_factor_index(dev, name, 0, 0, 50, 1);
+>> +	kfree(name);
+>> +	if (IS_ERR(hw))
+>> +		return dev_err_probe(dev, PTR_ERR(hw),
+>> +				     "failed to register pll\n");
+>> +
+>> +	clock->clk_data->hws[CLOCK_PLL] = hw;
+>> +
+>> +	return 0;
+>> +}
+Thanks for the review.
+
+					-Alex
