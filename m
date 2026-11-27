@@ -1,56 +1,85 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.208.52
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795808173;
-	b=MGiX8sshD0vVssK+tY3KNcNsOWA0LYar4Ui+mtRMPZ3LkcryZReqGEzRd57M2bspB/lA
-	 jsPFilSb07bdPTYf7hXH4Owej6hUEnCw/ZC4bmCnfFSXj7AqJN9teLaFrZ83oIhD2njzm
-	 AsR+mc3G9yVRc4vY6Q+3n2yVdUkmbAYgMWc9XU8KRGuR2Ck3n8b08pKwi5iOC2DcS6IHv
-	 RN5ogGJ40G6CPJPBONpF1pdBWEq6nG/qWatFkv4U8LIHzv0huhabopbSfE7x3PuzKs8Sh
-	 iBXlQeP4CseeiYOvg7rMI5/S3I8+TVyxgwrQHXAc2cqAuQZnm+SIheDdBhXUaSpN08g==
+	t=1795809787;
+	b=J9UM49im/O59g6DUcizsYmxERkuFYgrOfM0boWpq+UREZrGgLrFFyPo7dukwk4PB88v5
+	 xRFnTRxcfM2EAOZFN3O/B3ilaGqx0JTiog7+C+d+mwMGc/3YqcAA+PJG2E6zkMBFKtZbc
+	 7g5Hl+U79yTSuOzYKnr28R67W6HOTfUHB+xFAqSWiBmbbASuh9oQ5KfELQXreEV3A8ewo
+	 L7KB+yEJrgeBZvE9Eopp/CYzB3Byq6atQz7kTZso6Z21O3GHUBW72JU7JJL5ajmxO+w5w
+	 +BjIaNF+dfr9r8Rx4creGdjxSecAHIJYSiTEhB4RGrgiEqyZurDc7XoWv/mnk46K0Pw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795808173;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=GcDHG/YAA8MMTf2ppOcjIw3VpsY3HUsKpmmpJJMNEbc=;
-	b=GsLL6A7ClRMr3j1g8QwWymR59Rqm0huC8bCL/OqdabEPKcSjskmWsOxmnbWKR/LuQB1T
-	 NCG+m2iVR7+y6TXv5oG4insofNW25oCVSnisUGvXahU4yT04C9YXPq6aGkZjn/FgPFOzE
-	 9t1OsJ7H7zutbJiq9ah9WHwaahHt/YINhOYddQ7ohWC5lCTVQqRBL1JOBHMN+khUt6TpL
-	 DDF6+PCZAZdkd4eq5b4D3il7Oa2JlWRPtsPnjr9uJpJH2FTgdRJBF9pCMom0p0CDMJEqu
-	 HvQz0tEIYl7qbcJvYDPgi2GmjjGDYLzZ52Mda8+lBdswa4Ecogg2AhNdhO09DXYQXFA==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795809787;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding:Subject:From:To:
+	 Cc:In-Reply-To:References:Date:Message-Id:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key;
+	bh=L/E3JJyk32BLVSmJPSu88QD4Xx3KecbTtSFMtKZvIaA=;
+	b=gu80C+IBZkky9TM3MJ98vn3xtDlG8QS5KAyJgn51RSD+HzsRWNcIKZY5huAi+f9IOpmc
+	 b3TSd4b0hvRS9T0uqcCEBuyB2mLWzKTuuTTIe5tUjOTvSdMyvDdPnNijkY7sGb+YlGDMk
+	 6qH8gq4XWyGUiiKtay358wPrrFpwsLXho26qM61kl/GyDUzb8uNPGr4JGTjJLBk37Zw37
+	 AG6d6zLilGLfc7GjfKjOQXwj9mNsgiq1nrjaau9s+GKlJQGSJDp9r6BkR17fzfBZ/ph5K
+	 V7dRaU1z60ewUp8LAkQSU1JKjelf1lZaOSmKtF5dqv682USp3Jm5tyQxU1YHDMxT3Ow==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=V2z4HcZ3;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=baylibre.com;
+	spf=pass smtp.mailfrom=baylibre.com;
+	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=USVugUGJ;
+	arc=none smtp.remote-ip=209.85.208.52
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E292606A31C
-	for <linux-clk@vger.kernel.org>; Fri, 27 Nov 2026 19:36:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67185606A31E
+	for <linux-clk@vger.kernel.org>; Fri, 27 Nov 2026 20:03:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 67185606A31E
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=V2z4HcZ3
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1F6B1F00893;
-	Fri, 27 Nov 2026 19:36:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795808172;
-	bh=GcDHG/YAA8MMTf2ppOcjIw3VpsY3HUsKpmmpJJMNEbc=;
-	h=From:Subject:Reply-To:To:In-Reply-To:References:Date;
-	b=V2z4HcZ38fV5vHb0VzIbwye+QLU2RAlDe+qAIGYM3gufhZd9BhOSRwz594ZlREwjK
-	 AMZRE8RhGIKwAwGwh7l5bsj+ojTL3n/PPxJMLWGFRWBliLDBnjYkTRVyqHgCcbGnkJ
-	 gQ6WnUKILQJzTTh4uJqyLQbycc0eYfFRkt1I6w8FnJdbQchk6OWPPOTy+XIAVw1vI0
-	 F6cgWi+wt/3ozwu/rE7UDdeTL6mItxIaO50REGlAZjo2CwBoXsDuQtw9f5Fx64vnMN
-	 rqJ2MRj7iTfgcrWJzn+Kx/eWr7W41Lb/UxpwjFJcf2OfIDmcLM+5XTQs5YNnOc8zw0
-	 kAgVWjXPBpcPg==
-Message-ID: <sashiko-outbox-238171@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH 02/10] clk: tegra: bpmp: Drop manual clock unregister on
- provider failure
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Lee Jones" <lee@kernel.org>, linux-clk@vger.kernel.org
-In-Reply-To: <20261127192620.3443537-3-lee@kernel.org>
-References: <20261127192620.3443537-1-lee@kernel.org>
- <20261127192620.3443537-3-lee@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Fri, 27 Nov 2026 19:36:12 +0000
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=USVugUGJ
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-6bab10842f8so9959506a12.0
+        for <linux-clk@vger.kernel.org>; Fri, 27 Nov 2026 12:03:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre.com; s=google; t=1795809785; x=1796414585; darn=vger.kernel.org;
+        h=message-id:date:references:in-reply-to:cc:to:from:subject
+         :content-transfer-encoding:content-type:mime-version:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=L/E3JJyk32BLVSmJPSu88QD4Xx3KecbTtSFMtKZvIaA=;
+        b=USVugUGJ0OGFei1oWOv3ixK8kXmdxW89ohPqYbYPFavNwb4jr4xK/cCB4y9hnjKBRM
+         aMOvkgqxflag6ZhfKgZn6Crc/Q0pKn6tBIJr46jAuxAaLmM6loQMdtPdlzh1ApFcCcIo
+         B9aE8+dPxpxuHlLdrD194YCNFEvbZV3F+cl0P53tTPOcbIF6UF8cTL4S14CNVv4DUmuA
+         AEgFaEREQj2bq+B/IQqtj2BIkyBdW4uRS3Y7P0eYNo5+b5iJKu53Sp17WIb/C/drqg3q
+         +O8oCjm7LKaIgd6H5wW5LXl6/Pd9/2GoHH9kdvrEAwaYwOXV+667Uk+wJ1cWl86UfOSi
+         Xo6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795809785; x=1796414585;
+        h=message-id:date:references:in-reply-to:cc:to:from:subject
+         :content-transfer-encoding:content-type:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=L/E3JJyk32BLVSmJPSu88QD4Xx3KecbTtSFMtKZvIaA=;
+        b=yJ4ftoJdE7qYrJ+hC+rFXiyJR962viNTpPCs9JB5JGkysioV4j1cAqjnvN9FeM+dcF
+         7pvwk9Calshhgpxwkh0UBBoD3jRkmQ3GK1vKPPSgYWVPbaGGNdwQ7ni0Qjv55eScSoZt
+         7XxBDU1tjJ8tLkoMqHh+rUr8F36auPDiFxO3hs6GgRZcz7ZwOjPiLU9Eo8t5kDM9H7wr
+         Z9h4y94MaQUTR4XMbCxShp72hBKYMXv8gO23GyaGKs76uXRX9uSjYOGAWvyoQr9Rm8/g
+         VdzHG6U0TPkanE7Xz25UITgzJB+CL/vhZ8hIPBs/XOBPISPWf9PXV/aU2MAteLguxtTa
+         l42A==
+X-Forwarded-Encrypted: i=1; AL+hErHvkRmJj8GHxMz+I5tcdjJV9AGUVyoIxD9kRGVIxPOb9v+Nwvrg7H9UGI5Yi8wAi+WglrX27+F1eMY=@vger.kernel.org
+X-Gm-Message-State: APuU4Z83qR/Q7VhV8fw7r3JSQ5VnTYrANI4R47lUO8QnC43bHknAPM4J
+	1abfK58G0CXbE/+6ajC+jGDnElOzB0GgWoUULePjLapuhDrXLMc0YfOhs8CpF3rEywk=
+X-Gm-Gg: AZFdTZeIFm2BHQZkdCK6GsS67W9+iSRXg/Kd33LDYr0+NuolrybiIf9WoiqRccY6eUJ
+	lUAEbR8Ff6l62ZJ82vfvxYvTgu1LlSg33mzu5jfF3Vd6cwbCfPxPhPNJ+9VWQyZT14MzDgp185M
+	Bp/MY5C47/zav9j2iwCfwCmwkwatAmXuH3NZWObww2BwRt177gItoRuccomSDQVf3ZNcK+aWesp
+	2m9UnQTm0F16BsnfMMNdG/9pgItZWDFYhga0gSN1a7dYFIqwjxbRajV/sjieSMdVzjIeEp8uxbV
+	KHVK0Ro+hlrKB7/IdPqvzLx+82FFv1g9n2CXJl5Gk2pB3AAeRyoqr3OzCPXMYRmGJbNF9eCYO3+
+	Wu3+utWbrYRhThFDlqbfhVyneyOgFayVnxJqe82F1K4BtgSOhg3TbHOpfWdTrgf511RYu+yZzPZ
+	zVGd3A1OtinEiBV9Xi0SMOSnYQzc2MWjpcuY5x8uhgi3HQwe3Lx2cFDYrDKCEOfbkKjDGRnEqXV
+	qFx25ISIek+IjGGErQE6WsuOubv8jQz+q/kNWsNIpCg2nm8qnykNtEgedwyopLkjTXESOKur6xZ
+	uXMeMr3YzOa0qVxGbq0MyPFJ4wYUODAMPVmfTXZKoEbkCCyS
+X-Received: by 2002:aa7:d402:0:b0:6a9:8863:ada4 with SMTP id 4fb4d7f45d1cf-6ba1fae103fmr14763271a12.3.1795809784883;
+        Fri, 27 Nov 2026 12:03:04 -0800 (PST)
+Received: from localhost (82-67-6-57.subs.proxad.net. [82.67.6.57])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6ba6f8fa5b9sm9906969a12.37.2026.11.27.12.03.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 27 Nov 2026 12:03:03 -0800 (PST)
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -59,71 +88,51 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH 1/6] clk: Remove unused clk.dev
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Aaro Koskinen <aaro.koskinen@iki.fi>, 
+ Andreas Kemnade <andreas@kemnade.info>, Kevin Hilman <khilman@baylibre.com>, 
+ Roger Quadros <rogerq@kernel.org>, Tony Lindgren <tony@atomide.com>, 
+ Russell King <linux@armlinux.org.uk>, Paul Walmsley <paul@pwsan.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>, Sandy Huang <hjc@rock-chips.com>, 
+ =?utf-8?q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
+ Andy Yan <andyshrk@163.com>, Ulf Hansson <ulfh@kernel.org>, 
+ linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+ linux-rockchip@lists.infradead.org, linux-omap@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org, 
+ linux-pm@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>
+In-Reply-To: <a896e5bdb29c7c6de39df9b28b11d55614f2ec2d.1795094688.git.geert+renesas@glider.be>
+References: <cover.1795094688.git.geert+renesas@glider.be>
+ <a896e5bdb29c7c6de39df9b28b11d55614f2ec2d.1795094688.git.geert+renesas@glider.be>
+Date: Fri, 27 Nov 2026 21:02:59 +0100
+Message-Id: <179580977968.3028968.220600254133838233.b4-review@b4>
+X-Mailer: b4 0.17-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=438; i=jbrunet@baylibre.com;
+ h=from:subject:message-id; bh=1x7I9OxtWjxbS+wEVDFGimHZA2zKBIWqfRJtzMCbXkE=;
+ b=owGbwMvMwCW2VtK+WnvWU3HG02pJDNmcD7/5dtokM+ZkaTF6K2ZGVttk1rMrH2fK8un5tvb9D
+ fstDRc7SlkYxLgYZMUUWWq4q8XfSWp9mTVd5zbMHFYmkCEMXJwCMJH4Q4wMmxfdaay4eymZS6GK
+ Z55007ypBev3ur2PCN636eTcxxoMGYwMv2pstwfXV9w7/0GsKypkd/dKC/bAd4cr1ViY1xxhVqj
+ nAgA=
+X-Developer-Key: i=jbrunet@baylibre.com; a=openpgp;
+ fpr=F29F26CF27BAE1A9719AE6BDC3C92AAF3E60AED9
 
-Thank you for your contribution! Sashiko AI review found no new issues
-in this patch, but noticed 1 related pre-existing issue it does not
-introduce:
-- [High] clk: tegra: error pointer dereference in
-  tegra_bpmp_clk_of_xlate() [1]
---
+On Thu, 19 Nov 2026 14:40:34 +0100, Geert Uytterhoeven <geert+renesas@glider.be> wrote:
+> This basically reverts commit efa850487a6b6742 ("clk: Inform the core
+> about consumer devices").
+> 
+> This commit added a struct device pointer member to struct clk and a
+> parameter to clk_hw_create_clk(), but the new member was never used
+> beyond setting.
+> 
+> [...]
 
-commit 44882aa0bdd34b806a054776ef80a0aa5e952e08
-Author: Lee Jones <lee@kernel.org>
+Reviewed-by: Jerome Brunet <jbrunet@baylibre.com>
 
-clk: tegra: bpmp: Drop manual clock unregister on provider failure
+-- 
+Jerome
 
-This commit removes tegra_bpmp_unregister_clocks() and its call on
-of_clk_add_hw_provider() failure so devres handles clock cleanup without
-dereferencing error pointers or double-unregistering clocks.
-
-> diff --git a/drivers/clk/tegra/clk-bpmp.c b/drivers/clk/tegra/clk-bpmp.c
-> index 3649324e2e1fd..e4b4f3eec7773 100644
-> --- a/drivers/clk/tegra/clk-bpmp.c
-> +++ b/drivers/clk/tegra/clk-bpmp.c
-> @@ -648,14 +648,6 @@ static int tegra_bpmp_register_clocks(struct tegra_b=
-pmp *bpmp,
->  	return 0;
->  }
-> =20
-> -static void tegra_bpmp_unregister_clocks(struct tegra_bpmp *bpmp)
-> -{
-> -	unsigned int i;
-> -
-> -	for (i =3D 0; i < bpmp->num_clocks; i++)
-> -		clk_hw_unregister(&bpmp->clocks[i]->hw);
-> -}
-> -
->  static struct clk_hw *tegra_bpmp_clk_of_xlate(struct of_phandle_args *cl=
-kspec,
->  					      void *data)
->  {
-
-[Severity: High]
-This problem wasn't introduced by this patch, but can
-tegra_bpmp_clk_of_xlate() also dereference an error pointer in
-bpmp->clocks[i] [1]?
-
-drivers/clk/tegra/clk-bpmp.c:tegra_bpmp_clk_of_xlate() {
-    ...
-	for (i =3D 0; i < bpmp->num_clocks; i++) {
-		struct tegra_bpmp_clk *clk =3D bpmp->clocks[i];
-
-		if (!clk)
-			continue;
-
-		if (clk->id =3D=3D id)
-			return &clk->hw;
-	}
-    ...
-}
-
-Because tegra_bpmp_register_clocks_one() stores ERR_PTR values in
-bpmp->clocks[i] when a clock fails to register, checking only !clk before
-reading clk->id will crash during device tree clock lookup. Should this
-check IS_ERR_OR_NULL(clk)?
-
-[1] https://sashiko.dev/#/bug/linux-3d54138a-c3d2-4466-952a-f7e44259adfe
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261127192620.3443=
-537-1-lee@kernel.org?part=3D2
