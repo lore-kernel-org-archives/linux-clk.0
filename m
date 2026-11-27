@@ -1,61 +1,59 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=119.15.109.137
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795774103;
-	b=H8LVZiEk1Y8SGLNWYf7jMI7/6dJn+ATgrMzd6hHluGQjG6LBPSDcFfuSeI+FSa7ceCAz
-	 FM3XYhiFbFnshpSz0c7WRNrK1JihAMSsuQTZt7Cj4ID+tIWkog9Me+Er8dtgclKasv/g+
-	 TECfOZSa9tMVXfzkn3GXcNo26jPidt8366lAdADJ0Jtb0m9d/s1L3b199gHknw7uHPrr0
-	 5RZDv3XgHqYk51tcjqugeEG1KW+ZWMKjWIuaEF4GuAAneG54HDRTrd2Sr+4fBJGZgWGXw
-	 uM5anJfZ3Pqxjqkv6zLinhoMNs2wFH6HHKx0OXXJla6d0xZrlnP7JnF9CBAT4ao0Bnw==
+	t=1795774113;
+	b=kDjw1EBkSfgAgk/2qUXkT+rafp0QJ7XMo44MQmMmhTtH+dV6T84yueaqULPRxFfT4d8m
+	 gOFoOSzL0JyMe+gfsHc4TzbU1V26kcbOOfpmaqhotPpobvTnAPXbwvzIS5Jtnq2Iv0dp+
+	 jTcBWdHrhM+4wFsdIFiIhE9u0bxObW6g/OX3tlBBLFw5ffU299aWS9Ec8/E9yZ1Atmdpj
+	 rBY3dgLkq7lfQuSjJuo801flYSPjfW2V/cP1GfDDdUHmAtRraqIW7yK0Y7xjUnr+89n6v
+	 PSd/t4Sz0WCim2c3v9SXGAIybCdwAG0gNkbJuSs92egOjsfe2av3VQDBvMST9Y2rJaA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795774103;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795774113;
 	h=DMARC-Filter:Received:DKIM-Signature:X-GPT-Reason:From:To:Cc:Subject:
 	 Date:Message-ID:X-Mailer:In-Reply-To:References:MIME-Version:
 	 Content-Transfer-Encoding;
-	bh=TeJd+vwhmTLCgDsuofMV5WXACzIkKKBVhaJxf8JRaIo=;
-	b=cAMoVktGHmjXFkh2vOs28Tegz4x+6XYFv9rKQ51/v0fYpf6jedXPH0Fv2xQtjd28KVSn
-	 pFEicMXVXXdD3JbwHB09OAYvr6a8jjgVNHZaGX8v/1hL8lXCSUJKntUJPqrxJDW1aknIJ
-	 1DbzF1thPKKZPCRFGp5CUGb4PJYiddnPLW+9aazyxwMoGojJTdH7oehDaE/o3rgbJxL46
-	 /vLZKD+ZAb/Sv+zdQyvrvVh5IhEvChBzRDukvWAo4mpg7lj8wp6aGQFC9kf1E1VjVAIp0
-	 tNCAv4/hBLIqAYGn3reNpTVYaoA4BCKhx0gDCbTTTop+ylXoJHDfogUt9zw4FmofEzw==
+	bh=IHS463L7ZJsnVGIh6FhisLGYwFc0FaaTOlQZxZ0FPkQ=;
+	b=wFw68GKrhQJ98CSCPSiQQzso463d85bh9G8JH1TX+bT9ap2kAUcAsNMT35BNFrJjLH0h
+	 lCAU6nffLf277hzwd22JRmD9HjMSLPL8JdkfCT8yA5+ZvwzyRO7bARrvD1VXqF1i3yOG/
+	 NpLR2j+ExbPepEJ4osGbnOLZOr6NEslLb+CPgCtqDX24sxh6zxMJfLsF8iRzlAzrKWD2G
+	 ek1Q4Pm20pMr9XwhI9Maa5TOAyzSH3nV8WohKDm82b0IZV+nFuoP2p7x77m6RcV/V7+Fz
+	 N8nAPYZ7sPGvpDUDctXmcgK1/Nw1FyThQfMD4yAMGF1LA2fgkSXlDuJMbup8fxuijfA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=d-silva.org;
 	spf=pass smtp.mailfrom=d-silva.org;
-	dkim=pass header.d=d-silva.org header.i=@d-silva.org header.a=rsa-sha256 header.s=2025a header.b=uK5FUJ0u;
+	dkim=pass header.d=d-silva.org header.i=@d-silva.org header.a=rsa-sha256 header.s=2025a header.b=R2lKm9Fv;
 	arc=none smtp.remote-ip=119.15.109.137
 Received: from www.nmnhosting.com (watt.d-silva.org [119.15.109.137])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D06CC606A31E;
-	Fri, 27 Nov 2026 10:08:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D06CC606A31E
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1B86606A323;
+	Fri, 27 Nov 2026 10:08:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D1B86606A323
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=d-silva.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=d-silva.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=d-silva.org header.i=@d-silva.org header.a=rsa-sha256 header.s=2025a header.b=uK5FUJ0u
+	dkim=pass (2048-bit key) header.d=d-silva.org header.i=@d-silva.org header.a=rsa-sha256 header.s=2025a header.b=R2lKm9Fv
 Received: from Hawking.lan (hawking.lan [10.0.1.4])
-	by www.nmnhosting.com (Postfix) with ESMTP id 112724C97C;
-	Fri, 27 Nov 2026 21:08:15 +1100 (AEDT)
+	by www.nmnhosting.com (Postfix) with ESMTP id 3BDAD4C97E;
+	Fri, 27 Nov 2026 21:08:21 +1100 (AEDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=d-silva.org; s=2025a;
-	t=1795774095;
+	t=1795774101;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=TeJd+vwhmTLCgDsuofMV5WXACzIkKKBVhaJxf8JRaIo=;
-	b=uK5FUJ0u0C2fHqW2Lyc3xF93LRwkRm3fAYhgg1ZC4HLOMYQrAQVoSIm08yOxUEyWXzq1NL
-	JUx0eJ74BhY4X7ONCy4FcS6S16VOeoN9YRPQz4D4+6FwlGeKcywh7NsJD0aXeHRFBQsmrR
-	UiIzzLguNCswXfFCCKNSDc9R7BFcjX/HdRpLW2lXYoHkPr3MMcs1zs/33MxB/gX9VEaJX4
-	neq7ycZnVh6b0lVj2A6RzoTcrbVpy4CrHoF9rKAZlTig/SQB7rPNXHEILwZclKLB7hHcTb
-	f26tbjl+aPxgKqEeC52+S2JInB3QLma8ucn1liDg4XibPexY8x6G10ZBozOLOA==
-X-GPT-Reason: This is a legitimate technical communication, specifically
-	a kernel patch or system driver update. The content is a professional
-	software change request regarding "dt-bindings: phy" and "Allwinner A733," which
-	aligns perfectly with the personal/professional mailbox of "alastair@d-silva.org." The
-	sender identity (From: alastair@d-silva.org) matches the mailbox
-	owner, there are no phishing indicators or marketing elements, and
-	the lack of URLs is consistent with a standard git-style patch
-	submission.
+	bh=IHS463L7ZJsnVGIh6FhisLGYwFc0FaaTOlQZxZ0FPkQ=;
+	b=R2lKm9Fv8PkvQg/ewGSztcOiQI4UZXZPmUC2YKQC6ywQMibApGivH/O45zacrC+KseXJsG
+	P1NeO1jojdgD7mBvcl1ehd2PXosZciZzG/A29LMG2E4panA+OXsK6ZJQc5+vvWldQ36D1i
+	gwPBBMtm3TRJRlETPaVY6RREKzgrT0La8VAsHnreLAGUik07+Tv8Kx2L4lSlXelrSRkgfo
+	+CeU+RzTmfwCyAxD0eNtLXflcKRJa/yFU4hJNPdRkBy5PltCKJKLGFsC13Yt2nIYv0wHyj
+	vQTDUnvuGPVWrRj3nPJkchLlVKYxVzuoPhu46KeyiasDvpK1KnWRGNKTRcSfbQ==
+X-GPT-Reason: legitimate; the message is a technical software patch
+	(Linux kernel style) that directly aligns with the personal/professional
+	mailbox of the sender (alastair@d-silva.org); the From domain matches
+	the recipient's domain, indicating a known entity; there are no
+	phishing indicators, no URLs, and the content is strictly technical
+	rather than marketing or scam-related.
 From: Alastair D'Silva <alastair@d-silva.org>
 To: Vinod Koul <vkoul@kernel.org>,
 	Neil Armstrong <neil.armstrong@linaro.org>,
@@ -81,9 +79,9 @@ Cc: Maxime Ripard <mripard@kernel.org>,
 	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Alastair D'Silva <alastair@d-silva.org>
-Subject: [PATCH 1/6] dt-bindings: phy: allwinner,sun50i-a64-usb-phy: Add Allwinner A733
-Date: Fri, 27 Nov 2026 21:08:03 +1100
-Message-ID: <20261127100808.2292229-2-alastair@d-silva.org>
+Subject: [PATCH 2/6] dt-bindings: usb: generic-{ehci,ohci}: Add Allwinner A733
+Date: Fri, 27 Nov 2026 21:08:04 +1100
+Message-ID: <20261127100808.2292229-3-alastair@d-silva.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20261127100808.2292229-1-alastair@d-silva.org>
 References: <20261127100808.2292229-1-alastair@d-silva.org>
@@ -98,73 +96,38 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add the Allwinner A733 (sun60i-a733) USB 2.0 PHY compatible string.
-
-The A733 USB PHY requires the OTG/PHY register bus clock (bus) in addition
-to the two PHY reference clocks.
+Add the Allwinner A733 (sun60i-a733) EHCI and OHCI compatible strings.
 
 Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
 ---
- .../phy/allwinner,sun50i-a64-usb-phy.yaml     | 24 +++++++++++++++++++
- 1 file changed, 24 insertions(+)
+ Documentation/devicetree/bindings/usb/generic-ehci.yaml | 1 +
+ Documentation/devicetree/bindings/usb/generic-ohci.yaml | 1 +
+ 2 files changed, 2 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/phy/allwinner,sun50i-a64-usb-phy.yaml b/Documentation/devicetree/bindings/phy/allwinner,sun50i-a64-usb-phy.yaml
-index 580c3296a18d..4892c1766182 100644
---- a/Documentation/devicetree/bindings/phy/allwinner,sun50i-a64-usb-phy.yaml
-+++ b/Documentation/devicetree/bindings/phy/allwinner,sun50i-a64-usb-phy.yaml
-@@ -19,6 +19,7 @@ properties:
-       - enum:
-           - allwinner,sun20i-d1-usb-phy
-           - allwinner,sun50i-a64-usb-phy
-+          - allwinner,sun60i-a733-usb-phy
-       - items:
-           - enum:
-               - allwinner,sun50i-a100-usb-phy
-@@ -38,14 +39,18 @@ properties:
-       - const: pmu1
- 
-   clocks:
-+    minItems: 2
-     items:
-       - description: USB OTG PHY bus clock
-       - description: USB Host 0 PHY bus clock
-+      - description: USB OTG/PHY register bus clock
- 
-   clock-names:
-+    minItems: 2
-     items:
-       - const: usb0_phy
-       - const: usb1_phy
-+      - const: bus
- 
-   resets:
-     items:
-@@ -84,6 +89,25 @@ required:
-   - resets
-   - reset-names
- 
-+allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: allwinner,sun60i-a733-usb-phy
-+    then:
-+      properties:
-+        clocks:
-+          minItems: 3
-+        clock-names:
-+          minItems: 3
-+    else:
-+      properties:
-+        clocks:
-+          maxItems: 2
-+        clock-names:
-+          maxItems: 2
-+
- additionalProperties: false
- 
- examples:
+diff --git a/Documentation/devicetree/bindings/usb/generic-ehci.yaml b/Documentation/devicetree/bindings/usb/generic-ehci.yaml
+index 908b02d9175e..a63dc0eea80f 100644
+--- a/Documentation/devicetree/bindings/usb/generic-ehci.yaml
++++ b/Documentation/devicetree/bindings/usb/generic-ehci.yaml
+@@ -21,6 +21,7 @@ properties:
+               - allwinner,sun50i-h616-ehci
+               - allwinner,sun55i-a523-ehci
+               - allwinner,sun5i-a13-ehci
++              - allwinner,sun60i-a733-ehci
+               - allwinner,sun6i-a31-ehci
+               - allwinner,sun7i-a20-ehci
+               - allwinner,sun8i-a23-ehci
+diff --git a/Documentation/devicetree/bindings/usb/generic-ohci.yaml b/Documentation/devicetree/bindings/usb/generic-ohci.yaml
+index 7a8c3c231815..565f41eb33f7 100644
+--- a/Documentation/devicetree/bindings/usb/generic-ohci.yaml
++++ b/Documentation/devicetree/bindings/usb/generic-ohci.yaml
+@@ -21,6 +21,7 @@ properties:
+               - allwinner,sun50i-h616-ohci
+               - allwinner,sun55i-a523-ohci
+               - allwinner,sun5i-a13-ohci
++              - allwinner,sun60i-a733-ohci
+               - allwinner,sun6i-a31-ohci
+               - allwinner,sun7i-a20-ohci
+               - allwinner,sun8i-a23-ohci
 -- 
 2.53.0
 
