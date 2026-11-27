@@ -1,60 +1,102 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795786203;
-	b=wa5i8kpbVkCKERphlTWqzVfiu449SCz2yPZhgim7zTgQSiTCQTicl5XwrZjumjE7Ax8T
-	 Uf1lWOOpbwO6XNNgMHCECr2eiU/JN+LblDRf6V0LTvmRQrOKeD8n/nBqC5thV5jvZ6GmB
-	 aDfrn2hustqOHGVsb9oE1G5vgcRIlw/sZsUwFEQnB7fC4STyME/dtMbY9rQQyP4AtV7QQ
-	 V03NJjcQCp78apfcsbmKcI0RTVhLanLwzZvc9n3UGFlyc27uyQW4tHpV4mgcROcBEqq6G
-	 grIEXVKXpQ1DKOtFJf4025OBhdWcKCYKEQt87GHeTTzjiYgLJHxdL/ypzQU8sBVv2mw==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795786203;
-	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
-	 MIME-Version:Content-Transfer-Encoding;
-	bh=RhbYBTCFnUIkHjspi7K1/DTnz9+g0EGatlkywDux9+A=;
-	b=WfZnERxGzcS2vzxcSp8+JqbN4e3GR98jNE4EoEKISKzRwX6rYc2NsbWYyIdCkSHg+xMl
-	 d0nYjmlCQMzV+wtC/dWAr8P2dChYjH9CX7Rabsug7p4SspENJ2Y/o2BRqdXZIfyzQwlHD
-	 Xy9rkqw/NsO+zl1LaWid+SEJabRMhjFfPYlAefhEZz5Jk9WBDwUqGAHKzrl7J822BQPZk
-	 iOvyW5Xb4pWB/3pdFxn5Zgu3N4jp3rnp4epJrPAqRTn6RIDUxjKUs0cyfsR3QVUgFAQrL
-	 LZjTX+dtLjzw2JMvz4OfYlb4wlK25YtCB11tZS61JYSsMMOk9aNXcuyb8kp4ayQPpmQ==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=SvPfONrf;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.84.45
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1795786901;
+	b=zOr8JR09cwCLpaU3Ny4ymO8Xtgj1t+8MTuh/q3/ZjrEwf3OYKcXo6xV2ttoMl8k2g2og
+	 3fBRLbrTaK4SlvCKBsQXc07qaDUhDJHXADRlLNY9aq+ORdgh/MauHfcQTaTviXfdvR2rv
+	 PHRPCnNO4KGlY39hJbEAD0N7EaIEDv8CA/u1yYnD8qM2TgrEhHAS/8F1N0b/xXuvlxAKt
+	 x7/rjOndxh0l9ScTShA5HD880D7ncdch1rlRq2hOHqMgAqcsu24CMxuBnf6yIU1Fgs75F
+	 2ZOfMZrIxXZRqDT4J50KrqWLJbLhWyu52vvUK1Q7xvQRgnS62BAnWt2GIfYKPIKe3Ww==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795786901;
+	h=DMARC-Filter:DKIM-Signature:Received:Received:Date:From:To:Cc:
+	 Subject:Message-ID:References:Content-Type:Content-Disposition:
+	 In-Reply-To:X-ClientProxiedBy:MIME-Version:
+	 X-MS-Exchange-MessageSentRepresentingType:X-MS-PublicTrafficType:
+	 X-MS-TrafficTypeDiagnostic:X-MS-Office365-Filtering-Correlation-Id:
+	 X-MS-Exchange-SharedMailbox-RoutingAgent-Processed:
+	 X-MS-Exchange-SenderADCheck:X-MS-Exchange-AntiSpam-Relay:
+	 X-Microsoft-Antispam:X-Microsoft-Antispam-Message-Info:
+	 X-Forefront-Antispam-Report:
+	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
+	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
+	 X-MS-Exchange-CrossTenant-Network-Message-Id:
+	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
+	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
+	 X-MS-Exchange-CrossTenant-FromEntityHeader:
+	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
+	 X-MS-Exchange-CrossTenant-UserPrincipalName:
+	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
+	bh=BnhqSPfzsIh3GPAcl5sjGp4l/2hA/Vww3b3dS5m3YDE=;
+	b=XfvASU+uGzv5f7nsk+pGZ7Qg4toWotpo4pf/NoJBsmoD/7sWQsUv1chPEcEan/Fvjh9/
+	 uSiNXty75qFc8SCKLGa7AndGUgN5iHoPaYbNA8JiO8BPh0HS0F3vERjuPYIX8oVtDSWYT
+	 MpPQPPfOxr9ScMtW57XTC/X79IrgQjdZtU+HbJ93dSP1DEXF0hEtH+f1ljJ0c0VGzvbSi
+	 mBdH9Lb60aZP2+g5MLgrLen5EpLjinuEj+hTDFTQZhvV4BQ64832cyGHqIKHwmvaKpWtm
+	 1tNdnjmuSei3lq7lDZ6y5YmgJ4wnvyj2t0WtaYu7Q7UmNKFE2WjwpSXjgIw9JsBKk3w==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=oss.nxp.com;
+	spf=pass smtp.mailfrom=oss.nxp.com;
+	dkim=pass header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.a=rsa-sha256 header.s=selector1-NXP1-onmicrosoft-com header.b=DrZ3zxSo;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.84.45
+Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010045.outbound.protection.outlook.com [52.101.84.45])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DD29606A327;
-	Fri, 27 Nov 2026 13:30:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D11F5606A31C;
+	Fri, 27 Nov 2026 13:41:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D11F5606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=SvPfONrf
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 568EC1F00919;
-	Fri, 27 Nov 2026 13:30:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795786203;
-	bh=RhbYBTCFnUIkHjspi7K1/DTnz9+g0EGatlkywDux9+A=;
-	h=From:To:Cc:Subject:Date;
-	b=SvPfONrf5kP7D4rgL3bnw5aGbvo6hAGlxLV6MLIWMETk0yFKbwWorN03YZC6W1JH+
-	 M+UTacVhU5suwingZnUH0LopRnMMKOdI+jUgegtfoSLlOuv65nRBm9LzMy6fFgAqXf
-	 2DpUmb4Bth+jk9Eq3iacsJwq4PNo6cTa2hur8FdLj7gBDMmEepQg9NJ9neIc8HYfKF
-	 WGzKg70TV86dpHxeb42EHBO7s8FgChfIf2uDMLOIGzxBDYMXoviOOa3pX6AmCoWIAg
-	 R8bgow/izwm443Oqh3T2QToD0TacF8V2d9pInNSpgjDUzCnupfvUsCSwog6EXcosXH
-	 aJ5GCD2cIjpDQ==
-From: Lee Jones <lee@kernel.org>
-To: lee@kernel.org,
-	Drew Fustini <fustini@kernel.org>,
-	Joel Stanley <jms@oss.tenstorrent.com>,
-	Anirudh Srinivasan <asrinivasan@oss.tenstorrent.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	linux-riscv@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org
-Subject: [PATCH v2] clk: tenstorrent: Use prepare/unprepare ops for Atlantis PLL
-Date: Fri, 27 Nov 2026 13:29:36 +0000
-Message-ID: <20261127132958.2714501-1-lee@kernel.org>
-X-Mailer: git-send-email 2.56.1.839.g22a8290db9-goog
+	dkim=pass (2048-bit key, unprotected) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.a=rsa-sha256 header.s=selector1-NXP1-onmicrosoft-com header.b=DrZ3zxSo
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=r9RCcBEY6Nt3kNmSqu/EcnKAqU2RbigAUoaPMP1XF0KpsBmfz0f/saQWy77NEy4uufs6KpBYh9uFAmW4pqpf3BLt7bPcpO2m//debqCoSGlPCUs+3oJAjCKnTOg+kckJ8H6KSl5Zx8V7mjHcYXTMzOQGWijQENPmkQECpbHzgWZc0ZsF4V8Zs4KByx41e89V/CZZAG1IaZk5hx5nXaP9EAZXnZS7c08RA4ckfBsMJpLcWURsxsmuHTnhMWi9ojY9GTK7uhd3SFz4mKKpPeFO9CVr5r5AB8CSMAn6+NXOntb6beOerjaXHngYrG60KfmV68I8N3cAgQAvlTcZ7Rlpow==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=BnhqSPfzsIh3GPAcl5sjGp4l/2hA/Vww3b3dS5m3YDE=;
+ b=MVzfSf1rGePr3yfj06VH1nPMJj5Ubsn2fXP2SSdV7+xn4l8lElLfOkuBd5FbBdg+lwnH7yVhIQKCJX3c9wXexwMU520GfZu8WuxDP4fHHrebBfiYzmFfRaEo/e+zhQCkrxXxBuUBoB6pZnPZ4ZSm5fSKcfjqOqdPNRRztEFtg8GIBJsM4zV0fbFQEJUrk5JNxO7nW55bfsPdjyhP96CVQbe1UniUHNyildeFeqQ50joLOcAWWWlgSwdv7IbEX831OQ5km6XSzFbgzpxMjDgHUHFn/XTizymeNpyKSN1jPs0j/vhxUK5KBeBHD2X71GWfFuVDHtkYlRUAez7JxJ7H6w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=BnhqSPfzsIh3GPAcl5sjGp4l/2hA/Vww3b3dS5m3YDE=;
+ b=DrZ3zxSo6VzNqJjfQECzEOgmxCgHYwyGzV+3FAzWajvA9bZTmoNgCb+TjCDkfk5pnkZRL6jci24floqgY1MEa/euVdSrBKL69Q6VMzXKysFdhMWnTT3sqNGzAvR+rjJBA9H9ka/Ote3ENYbb8pYtIrCFCASF1adUGJKyXwUwXXWHgEhEeDYmf0GtdCujq8X68zM0jWQ3ysyDlPaPI1Vk3+BHwF2QK5yzH65Tn3EfxUh4S2Tfjd74+G3nenKNRaCP9PqoQ7ka2Hj0QEz4NXAFiuN1XZ2ygUdxZXwCh8npyF0muGc6qVpSsD749UrRG+RscWhG4jsn79sJ9evg1kR+UQ==
+Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from GV2PR04MB12318.eurprd04.prod.outlook.com
+ (2603:10a6:150:32b::19) by PAXPR04MB8351.eurprd04.prod.outlook.com
+ (2603:10a6:102:1c4::14) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.662.10; Fri, 27 Nov
+ 2026 13:41:36 +0000
+Received: from GV2PR04MB12318.eurprd04.prod.outlook.com
+ ([fe80::a498:2b5a:cbdb:d6fa]) by GV2PR04MB12318.eurprd04.prod.outlook.com
+ ([fe80::a498:2b5a:cbdb:d6fa%3]) with mapi id 15.21.0662.004; Fri, 27 Nov 2026
+ 13:41:36 +0000
+Date: Fri, 27 Nov 2026 15:41:31 +0200
+From: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
+To: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+	Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Frank Li <Frank.Li@nxp.com>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc: linux-clk@vger.kernel.org, imx@lists.linux.dev, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v13 0/5] Add support for i.MX94 DCIF
+Message-ID: <awmGCp4e2pgtxsqr@vm>
+References: <20261120-dcif-upstreaming-v13-0-966ac248773f@oss.nxp.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20261120-dcif-upstreaming-v13-0-966ac248773f@oss.nxp.com>
+X-ClientProxiedBy: AS4P250CA0002.EURP250.PROD.OUTLOOK.COM
+ (2603:10a6:20b:5df::20) To GV2PR04MB12318.eurprd04.prod.outlook.com
+ (2603:10a6:150:32b::19)
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -64,78 +106,319 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: GV2PR04MB12318:EE_|PAXPR04MB8351:EE_
+X-MS-Office365-Filtering-Correlation-Id: 88bf5f08-d03f-4b4d-8794-08df4c8c2810
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|376014|1800799024|7416014|23010399003|19092799006|921020|10067099003|56012099006|261026121527099003|261026140227099003|261028144727099003|261022105027099003|261022113327099003|261022075727099003|261021123027099003|261021121427099003|261102123227099003|261009223027099003|22082099003|18002099003|11063799006|6133799003|3023799007;
+X-Microsoft-Antispam-Message-Info:
+	J0jwZfhDLG93xM2pY/mAGWixKTRcm7Mln0YkA+9H+a4PmXldcH+YtWXt3VyagsblAbiotiNkbEoIOkXObBleob5bZ/wY2dKsd3zAityy1LbPoe4SByh4tyO4ds/2R4Ow7YHFMw0smT4kdP2xkOs55YoWSnW5YJLxxIi2t7Ady62CgsHvvR03Xru0u9In+2lvwHGVblKZiI1Ijvlhx/IdZeZ7rjx3XBT0/XbryzbPNxDG6QN0Sz4jSKwQ/l46mOqDwiK8uyMBHS4ANptGMCg5EE6PnpIn96xiO5WWa4XR24zzuCmtYSyKjwVZxwQI7dz48ObBQv9tCKdacYyR7KpyKgnPDpYP/PRUttmgFwcHUX5HRKUO9ESV9rA+pmUq41UskIXtK0Zph7umKJdVFURqDxePnEewSOoqPuSEDgMipjPmKITRRlDcbsun5gunLJPqeSn8qDhkDKG21ZsTWawsx5SFwlNLc8AbcK3begSN0K2wjQ3TaeABra+bwujAbSpgzUk4qKl0ZghojM83Bj/TivMS7EZEEDZOg89SRXpyJgnK5Wa+bKcRCQkAB29p7V4yva5GRZQeZtXsaJr39zUVXvAJGDn2SJZ5txyWKm1xSyqlxSi7L5dQEtPOCqK8xLstTGo63Flz1Ael9VP37caRZpCF/1cv82+Rd/DFbgrwyvU=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV2PR04MB12318.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(7416014)(23010399003)(19092799006)(921020)(10067099003)(56012099006)(261026121527099003)(261026140227099003)(261028144727099003)(261022105027099003)(261022113327099003)(261022075727099003)(261021123027099003)(261021121427099003)(261102123227099003)(261009223027099003)(22082099003)(18002099003)(11063799006)(6133799003)(3023799007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?h7HsB4GwfRlNei9elrBtdJfT1l33n4jG0mzlp4iu/tfqNoVDDqz0bSbZeL30?=
+ =?us-ascii?Q?VxtIUgCk5iFOK79zL9Cp258FukNBeXhOF2/gq3FZMC8wHGAxvNvxxZBNcGzs?=
+ =?us-ascii?Q?SBmsWX06lVFSBRqjK8Ic8FpS2t9BBRutMaMR0BE6k7v6opfkph/H5GaHiAGl?=
+ =?us-ascii?Q?EUSWaU/9AmIhq/lTeohO0Z4N/6BtIE34sQUg5B31pQGdAWGo5aPHtIKyg6FW?=
+ =?us-ascii?Q?gM4w58hcij1wtiFL0lzwoGuQcmrKmY+OMntTpyn+eyascmySWTKxxcjgxXqJ?=
+ =?us-ascii?Q?HF1Q1JJVSqmR3z67kdy383/8H0KaqWLoTUZyVg25vp1mBZPKIeGD/YV+oU2w?=
+ =?us-ascii?Q?g7PkHgN8RstAwBoRtLx9cjskTDMy6Xhlpm9Eb8ZNKgZnuXWsNzfEBKy1rtq3?=
+ =?us-ascii?Q?L7Sv/DygvJ1/oSWIP5SFzA0bmRHGjeMc5VYpddP2aG6i7RVOfSYVD4TBubu5?=
+ =?us-ascii?Q?hXxdUeQiDjyFZPmlFG9r0nKkkrnbkK+IB4fC1hYIh/jk2u9n7CKj2WqBIDez?=
+ =?us-ascii?Q?5BGVWoPHdogzLtQI8w3I+WxqDUDA1tIkgjmqPVjJ7JfKbdlrSHUAl2iL+K0j?=
+ =?us-ascii?Q?8GRFyGAF+1ye/PLcgFDPhJoi3jhE7V7ht3R1kDd7lJyPfvvohrX83mW2F5yj?=
+ =?us-ascii?Q?OKKhzSmxBGeOP12kW/dzomJwscpXUzedOVWkysuu3031Ew+8t0NWiVsjxCij?=
+ =?us-ascii?Q?X+w6ffAiiPh1ARWiQ5aVxwIHP8ViFwLsEvUc+3YknbsOxOPikT8kkPv1Dz0G?=
+ =?us-ascii?Q?asiPtfziTySdNmKNROHKCrbsFAlW0frNtNs38p6TBeuaO+CEbh/myC76sEVQ?=
+ =?us-ascii?Q?10/POzWYLTfbzI/JHixOORXTyWIfwu7qJDiE8mIsk+6zgH/VKC9UWw4f6yEM?=
+ =?us-ascii?Q?2LTi2MRHoAzNrMrUN92cKSEn0P28Y09+4QSozg8xSKhdoSO8MZVTGEUm60xR?=
+ =?us-ascii?Q?mBLVeTCCDgjX2GVZTYfQEx0r6dWfeasOej3ixDBIHHs6ZN2o+y+mnJ1TPEC6?=
+ =?us-ascii?Q?+GvJp8NmT+xA02KNLkNTNogQAUiRyi3I8EE3DXtgQ3jvqxh5Ci+7Ctx5P27w?=
+ =?us-ascii?Q?9mwf5Wrx0WoqMsxqc9A/saGzlwtFxQzmkD32bup+1RoyAtfdAAZq+e6EsBSj?=
+ =?us-ascii?Q?GjMBLtUnzhZ4F9amsOOpHlzGYsiugTPSgFhTn7ee3SXx0X9026WyFaTLAuXg?=
+ =?us-ascii?Q?xmSfUKPZH+3DLVHj/rX3fZ9gS4dxhZlzfE6tZLSVG2Rueu8y9LfxDhEGus1N?=
+ =?us-ascii?Q?yxMWNLinpzMiV2EZY6wyqCDG3o9Wf/uLxrAEh/nxNxV3o2HrwtjtI6B9/JOK?=
+ =?us-ascii?Q?3X9h/5m3vAYho3i4JAr9ShK8QAPl57qVcstB72TP1wkxnCN/n0nKw1HVCI7z?=
+ =?us-ascii?Q?V0dP+Ikfx7XTsy7yVvGmqRUM4WEBLCZYqLR8JOGtYHc8GcVeuHZGtiPuLUAk?=
+ =?us-ascii?Q?ws75Y/KqXKYs464Tjd4Govk5Bl4OoULz6xHH05jM5Hhv9ZixPXyAhyrh4bGw?=
+ =?us-ascii?Q?dJ4lg1ulIgx/R278HG9gpFc3Fk452cR+g/UznD0oZsYd9hnkgIOb0L/1aSxr?=
+ =?us-ascii?Q?9PLkgFhkLbts7XVPoDOrCJUDasYf06AC389Ft65lQxLdYCvXQYi8/WTjwJae?=
+ =?us-ascii?Q?OFLv8r1YwRNvlkIJnPaGIAIPMO0T+/pwERtd6ZwSzGhjZSzupFaSUgXuIGRa?=
+ =?us-ascii?Q?6SCH95QFwtzJ7HRje6bzu4iyCfd6YAs8esWloPpOR1tSV/qklX/mWdErvZ/j?=
+ =?us-ascii?Q?QAy4xz3WkmY4Jr3ZIymBwXtbsuQqo+4=3D?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 88bf5f08-d03f-4b4d-8794-08df4c8c2810
+X-MS-Exchange-CrossTenant-AuthSource: GV2PR04MB12318.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Nov 2026 13:41:36.4015
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: wtbq+E0D5niIVdlInUgpnUX1Gwwc15cVp/QW3Clgt77KNIeMf+4urVbuj1XcDKsGFa618E3BX1vX97HEHt7HPA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8351
 
-The Common Clock Framework invokes .enable callbacks in atomic context
-with interrupts disabled and enable_lock held.  In atlantis_clk_pll_ops,
-atlantis_clk_pll_enable() is registered as the .enable callback yet
-waits for PLL lock using regmap_read_poll_timeout() with a 500 us sleep
-interval, triggering a sleep-in-atomic bug via usleep_range().
+Hi Luca, Frank,
 
-Convert atlantis_clk_pll_ops to use .prepare, .unprepare, and
-.is_prepared instead of .enable, .disable, and .is_enabled so that the
-PLL lock wait executes under the sleeping prepare_lock rather than
-atomic enable_lock.
+All patches in v13 now have review tags. Since we are approaching -rc6,
+would it be possible to pick this up for 7.5?
 
-Fixes: 23c8ebc95284 ("clk: tenstorrent: Add Atlantis clock controller driver")
-Closes: https://sashiko.dev/#/bug/linux-980395a6-f282-478a-bf18-b5695a725735
-Cc: stable@vger.kernel.org
-Signed-off-by: Lee Jones <lee@kernel.org>
----
-v1 => v2:
- - Switch from .enable/.disable/.is_enabled to .prepare/.unprepare/.is_prepared so PLL lock polling runs under the sleeping prepare_lock instead of enable_lock, per Brian Masney's review.
- - Keep regmap_read_poll_timeout() rather than switching to the atomic variant.
- - Drop Anirudh Srinivasan's v1 Reviewed-by tag due to the implementation change.
- - Drop the other patches from v1 that were already applied or superseded.
+Luca: could you apply 1/5 and 2/5 to drm-misc-next?
+Frank: could 3/5-5/5 go through i.MX tree?
 
- drivers/clk/tenstorrent/atlantis-prcm.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+Thanks,
+Laurentiu
 
-diff --git a/drivers/clk/tenstorrent/atlantis-prcm.c b/drivers/clk/tenstorrent/atlantis-prcm.c
-index eccc8015da23..ee7044e3f1df 100644
---- a/drivers/clk/tenstorrent/atlantis-prcm.c
-+++ b/drivers/clk/tenstorrent/atlantis-prcm.c
-@@ -269,7 +269,7 @@ static const struct clk_ops atlantis_clk_fixed_factor_ops = {
- 	.recalc_rate = atlantis_clk_fixed_factor_recalc_rate,
- };
- 
--static int atlantis_clk_pll_is_enabled(struct clk_hw *hw)
-+static int atlantis_clk_pll_is_prepared(struct clk_hw *hw)
- {
- 	struct atlantis_clk_pll *pll = hw_to_atlantis_pll(hw);
- 	u32 val, en_val, cg_val;
-@@ -284,7 +284,7 @@ static int atlantis_clk_pll_is_enabled(struct clk_hw *hw)
- 	       !(val & PLL_CFG_BYPASS_BIT);
- }
- 
--static int atlantis_clk_pll_enable(struct clk_hw *hw)
-+static int atlantis_clk_pll_prepare(struct clk_hw *hw)
- {
- 	struct atlantis_clk_pll *pll = hw_to_atlantis_pll(hw);
- 	u32 val, en_val, cg_val;
-@@ -332,7 +332,7 @@ static int atlantis_clk_pll_enable(struct clk_hw *hw)
- 				  pll->config.cg_reg_enable);
- }
- 
--static void atlantis_clk_pll_disable(struct clk_hw *hw)
-+static void atlantis_clk_pll_unprepare(struct clk_hw *hw)
- {
- 	struct atlantis_clk_pll *pll = hw_to_atlantis_pll(hw);
- 
-@@ -378,10 +378,10 @@ static unsigned long atlantis_clk_pll_recalc_rate(struct clk_hw *hw,
- }
- 
- static const struct clk_ops atlantis_clk_pll_ops = {
--	.enable = atlantis_clk_pll_enable,
--	.disable = atlantis_clk_pll_disable,
-+	.prepare = atlantis_clk_pll_prepare,
-+	.unprepare = atlantis_clk_pll_unprepare,
- 	.recalc_rate = atlantis_clk_pll_recalc_rate,
--	.is_enabled = atlantis_clk_pll_is_enabled,
-+	.is_prepared = atlantis_clk_pll_is_prepared,
- };
- 
- static int atlantis_clk_gate_shared_enable(struct clk_hw *hw)
+On Fri, Nov 20, 2026 at 12:50:35PM +0000, Laurentiu Palcu wrote:
+> Hi,
+> 
+> This patch-set adds support for the i.MX94 Display Control Interface.
+> 
+> Thanks,
+> Laurentiu
+> 
+> ---
+> Changes in v13:
+> - Rebased to latest linux-next (next-20261119);
+> - 1/5: No change;
+> - 2/5: When disabling the CRC, also clear CRC_TRIG and set
+>   CRC_SHADOW_LOAD_EN. CRC_EN is shadowed, so the disable was never
+>   latched, and CRC_TRIG is not self-clearing in continuous mode, so a
+>   later re-enable did not write the register (Sashiko). Sashiko's
+>   comments about register access and unbalanced clock disable when
+>   runtime PM resume fails were not addressed: the only failure point
+>   is clk_bulk_prepare_enable() and the clocks are managed by the SCMI
+>   firmware, so extra checks would only add noise. See:
+>   https://lore.kernel.org/r/awAgaVs4LLwqVA57@vm
+> - 3/5: No change;
+> - 4/5: No change;
+> - 5/5: No change;
+> - Link to v12: https://patch.msgid.link/20261118-dcif-upstreaming-v12-0-29b35e27a1cc@oss.nxp.com
+> 
+> Changes in v12:
+> - Rebased to latest linux-next (next-20261116);
+> - Dropped the fsl-ldb patches (v11 1/7 and 2/7) since they were applied
+>   to drm-misc-next by Luca and are now in linux-next;
+> - 1/5: No change;
+> - 2/5: Take a vblank reference while the CRC is enabled, otherwise the
+>   VS_BLANK interrupt gets masked on a static screen and reads from the
+>   debugfs crc/data file block forever; always stop the CRC when the CRTC
+>   is disabled (Sashiko); in the IRQ handler, only handle the status bits
+>   that are enabled in IE0/IE1 and return IRQ_NONE when none is pending
+>   (Sashiko); reject negative ROI coordinates in the CRC source parser
+>   (Sashiko); propagate runtime PM resume failures from
+>   dcif_hw_probe_init() and call it after KMS init, so the hardware is
+>   not touched before the bridge lookup can defer and before the
+>   supplier device links are created (Sashiko); reject framebuffers whose
+>   pitch does not fit in the 16-bit CTRLDESC3 pitch field (Sashiko); use
+>   of_drm_get_bridge_by_endpoint() instead of the deprecated
+>   devm_drm_of_get_bridge(), and drop the DRM_PANEL_BRIDGE select and the
+>   unused drm_panel.h include (Luca); declare and initialize the __free()
+>   bridge pointers in one statement (Luca, Sashiko); allow COMPILE_TEST;
+>   update the copyright year to 2026 (Luca);
+> - 3/5: Collected Rob's r-b tag;
+> - 4/5: No change;
+> - 5/5: No change;
+> - Link to v11: https://patch.msgid.link/20261110-dcif-upstreaming-v11-0-9e13c85ae0d8@oss.nxp.com
+> 
+> Changes in v11:
+> - Rebased to latest linux-next (next-20261109);
+> - Dropped "drm/bridge: fsl-ldb: Get the next non-panel bridge" since the
+>   driver already gets the next bridge after upstream commit 802372cf316a
+>   ("drm/bridge: fsl-ldb: don't create a panel_bridge") (Luca). The
+>   remaining cleanups suggested by Luca were sent as a separate patch,
+>   not needed by this series:
+>   https://lore.kernel.org/r/20261030163254.3175671-1-laurentiu.palcu@oss.nxp.com
+> - Dropped the standalone MAINTAINERS patch. The entry is now added
+>   together with the DCIF binding (3/7) and the driver (4/7) to make
+>   checkpatch happy;
+> - 1/7: No change;
+> - 2/7: Collected Luca's r-b tag;
+> - 3/7: Add the MAINTAINERS entry;
+> - 4/7: Program the plane registers (format, size, pitch, base address,
+>   layer enable) only from the plane update path, no longer from CRTC
+>   enable; arm the vblank event with drm_crtc_arm_vblank_event() in
+>   atomic_flush and drop the driver-private event caching, which fixes
+>   the vblank refcount and early-event issues; on probe, mask and ack the
+>   interrupts left enabled by the bootloader, and request the IRQ only
+>   after KMS init to avoid a NULL CRTC dereference; dropped the unneeded
+>   mod_devicetable.h and drm_fb_dma_helper.h includes; style fixes in
+>   the of_device_id table and platform_driver initializer (Uwe); follow
+>   the reference manual software reset sequence: wait for the DPI to go
+>   idle after clearing DISP_ON and hold the AXI fetches (AXI_RD_HOLD)
+>   until the pending reads are done before pulsing SW_RST; stop the
+>   controller at probe if the bootloader left it running; add device
+>   links to the display CSR and the LDB to enforce the suspend/resume
+>   ordering, which fixes a vblank timeout after system resume; include
+>   <linux/bitfield.h> in dcif-reg.h; in mode_valid, reject modes larger
+>   than the mode_config max_width/max_height and modes whose porches or
+>   sync widths overflow the 12-bit DPI timing fields;
+> - 5/7: Renamed the 'ldb' child node to the generic 'bridge' node name
+>   (Conor);
+> - 6/7: Renamed the ldb@4 node to bridge@4 accordingly;
+> - 7/7: No change;
+> - Link to v10: https://patch.msgid.link/20261006-dcif-upstreaming-v10-0-bcfb28de0aae@oss.nxp.com
+> 
+> Changes in v10:
+> - Rebased to latest linux-next (next-20261005);
+> - 1/9: No functional change;
+> - 2/9: Switch to using of_drm_get_bridge_by_endpoint() helper for
+>   fetching the next bridge;
+> - 3/9: No functional change;
+> - 4/9: No functional change;
+> - 5/9: Fixed a pixel-clock unit mismatch bug, ROI now derived from mode
+>   at program time, CRC reprogrammed on ROI/source change, bus-format
+>   validated with a whitelist, forced modeset on CRTC activation
+>   (dcif_atomic_check), vblank event flushed on disable to avoid hangs,
+>   dropped PREMULTI blend support since PREMULTI is not mandatory anymore
+>   and the display controller does not support it, probe error paths
+>   checked, shared dcif_set_csc()/dcif_plane_disable_layer() helpers
+>   introduced;
+> - 6/9: restructured to reuse the existing conditional schema pattern for
+>   the new nxp,imx94-lvds-csr compatible, instead of unconditional
+>   properties. Dropped Krzysztof r-b tag as it needs reviewed;
+> - 7/9: No functional change (context shift);
+> - 8/9: regulator nodes relocated/renamed (reg_1v8_ext/reg_3v3_ext ->
+>   reg_1p8v_ext/reg_3p3v_ext) to match existing naming convention;
+> - 9/9: No functional change (context shift);
+> - Link to v9: https://patch.msgid.link/20260612-dcif-upstreaming-v9-0-8d0ff89aa3c5@oss.nxp.com
+> 
+> Changes in v9:
+> - Rebased to latest linux-next (next-20260611);
+> - 2/9: Reworked to store the next bridge in fsl_ldb->bridge.next_bridge
+>   (taking a reference with drm_bridge_get()) instead of adding a new
+>   dedicated field. Removed the r-b tags for this patch since it needs a
+>   fresh review;
+> - 3/9: Fixed the i.MX94 LDB max_clk_khz limit (165 MHz -> 148.5 MHz) to
+>   match the actual hardware limit. Removed the r-b tags for this patch
+>   since it needs a fresh review;
+> - 4/9: Added a 'required:' properties list to the binding. Removed
+>   Krzysztof's r-b tag for this patch since it needs a fresh review;
+> - 5/9: Renamed the CRC source helpers (dcif_crc_source_*) and made them
+>   unconditionally available, dropping the CONFIG_DEBUG_FS stubs;
+>   improved CRC source parsing (auto ROI for the full-frame source,
+>   unsigned params, safer string handling); rebased onto the
+>   drm_atomic_state -> drm_atomic_commit rename in linux-next; reworked
+>   CRC/modeset gating with new has_crc and crtc_pm_enabled flags and
+>   proper PM error handling; switched event_lock to spinlock_irq; removed
+>   a redundant connector-attach call and fixed an error format string;
+>   added new pixel formats and full alpha/blend-mode support;
+> - 6/9: YAML quoting style fix only, no functional change;
+> - 7/9: Combined the former "arm64: dts: imx943: Add LVDS/DISPLAY CSR
+>   nodes" prerequisite and the "arm64: dts: imx943: Add display pipeline
+>   nodes" patch into a single new patch targeting the shared imx94.dtsi
+>   instead of imx943.dtsi, removing the dependency on Peng Fan's
+>   not-yet-merged patch;
+> - 8/9: Renamed the IT6263 bridge node to 'hdmi@4c' and fixed its
+>   reset-gpios polarity to GPIO_ACTIVE_LOW;
+> - Link to v8: https://lore.kernel.org/r/20260304-dcif-upstreaming-v8-0-bec5c047edd4@oss.nxp.com
+> 
+> Changes in v8:
+> - Rebased to latest linux-next (next-20260303). Patch 2/9 had a minor
+>   conflict bacause of a patch introduced recently;
+> - 8/9: Fixed CHECK_DTBS errors reported by Rob's bot due to missing
+>   regulators. Removed the r-b tag for this patch because it needs a
+>   fresh review;
+> - Link to v7: https://lore.kernel.org/r/20260122-dcif-upstreaming-v7-0-19ea17eb046f@oss.nxp.com
+> 
+> Changes in v7:
+> - Rebased to latest linux-next;
+> - Addressed some new checkpatch warnings: kzalloc -> kzalloc_obj;
+> - Fixed a couple of static check warnings in probe();
+> - Added Luca's r-b tag for bridge refcounting;
+> - Link to v6: https://lore.kernel.org/r/20251103-dcif-upstreaming-v6-0-76fcecfda919@oss.nxp.com
+> 
+> Changes in v6:
+> - 2/9: Collected r-b tag from Francesco;
+> - 3/9: Removed ch_max_clk_khz variable as suggested by Luca and added
+>   his r-b tag;
+> - 4/9: Collected r-b tag;
+> - 5/9: Call drm_bridge_put() automatically in
+>   dcif_crtc_query_output_bus_format() by using a cleanup action (Luca);
+> - 6/9: Moved allOf: block after required: block (Krzysztof). Collected
+>   r-b tag;
+> - Link to v5: https://lore.kernel.org/r/20250911-dcif-upstreaming-v5-0-a1e8dab8ae40@oss.nxp.com
+> 
+> Changes in v5:
+> - 4/9: Removed "bindings for" from the title, changed the port
+>   definition and simplified the example;
+> - 6/9: Fixed the way 'ldb' child node is declared: declare the
+>   'ldb' child node out of if:then: block and set the property
+>   to false for compatibles other than nxp,imx94-lvds-csr;
+> - Link to v4: https://lore.kernel.org/r/20250903123332.2569241-1-laurentiu.palcu@oss.nxp.com
+> 
+> Changes in v4:
+> - Addressed remaining DCIF driver comments from Frank;
+> - Limit the 'ldb' child node only to CSRs compatible with 'nxp,imx94-lvds-csr'
+>   in the binding file. Since LVDS CSRs are a minority, I chose to
+>   use the if:then: construct instead of if:not:then:;
+> - Remove the '#address-cells' and '#size-cells' from the ldb node, in
+>   imx94.dtsi, as they're not needed;
+> - Link to v3: https://lore.kernel.org/r/20250806150521.2174797-1-laurentiu.palcu@oss.nxp.com
+> 
+> Changes in v3:
+> - Removed the BLK CTL patches and created a separate patch set [2] for them;
+> - Collected r-b tags for 1/9, 2/9, 3/9 and 9/9;
+> - Removed the DCIF QoS functionality until I find a better way to
+>   implement it through syscon. QoS functionality will be added in
+>   subsequent patches. Also, used devm_clk_bulk_get_all() and used
+>   dev_err_probe() as suggested;
+> - Addressed Frank's and Krzysztof's comments on the DCIF bindings;
+> - Addressed Frank's comments on dtsi and dts files;
+> - Added a new binding patch, 6/9, for adding 'ldb' optional property to
+>   nxp,imx95-blk-ctl.yaml;
+> - Link to v2: https://lore.kernel.org/r/20250716081519.3400158-1-laurentiu.palcu@oss.nxp.com
+> 
+> Changes in v2:
+> - reworked the BLK_CTL patch and split in 2 to make it easier for
+>   review;
+> - split the dts and dtsi patch in 2 separate ones;
+> - addressed Frank's comments in DCIF driver;
+> - addressed Rob's comments for the bindings files;
+> - addressed a couple of checkpatch issues;
+> - Link to v1: https://lore.kernel.org/r/20250709122332.2874632-1-laurentiu.palcu@oss.nxp.com
+> 
+> ---
+> Laurentiu Palcu (4):
+>       dt-bindings: display: imx: Add i.MX94 DCIF
+>       dt-bindings: clock: nxp,imx95-blk-ctl: Add LDB bridge child node
+>       arm64: dts: imx94: Add display pipeline nodes
+>       arm64: dts: imx943-evk: Add display support using IT6263
+> 
+> Sandor Yu (1):
+>       drm/imx: Add support for i.MX94 DCIF
+> 
+>  .../bindings/clock/nxp,imx95-blk-ctl.yaml          |  24 +-
+>  .../bindings/display/imx/nxp,imx94-dcif.yaml       |  90 +++
+>  MAINTAINERS                                        |   9 +
+>  arch/arm64/boot/dts/freescale/imx94.dtsi           |  82 +++
+>  arch/arm64/boot/dts/freescale/imx943-evk.dts       |  86 +++
+>  drivers/gpu/drm/imx/Kconfig                        |   1 +
+>  drivers/gpu/drm/imx/Makefile                       |   1 +
+>  drivers/gpu/drm/imx/dcif/Kconfig                   |  15 +
+>  drivers/gpu/drm/imx/dcif/Makefile                  |   5 +
+>  drivers/gpu/drm/imx/dcif/dcif-crc.c                | 238 +++++++
+>  drivers/gpu/drm/imx/dcif/dcif-crc.h                |  54 ++
+>  drivers/gpu/drm/imx/dcif/dcif-crtc.c               | 710 +++++++++++++++++++++
+>  drivers/gpu/drm/imx/dcif/dcif-drv.c                | 250 ++++++++
+>  drivers/gpu/drm/imx/dcif/dcif-drv.h                |  90 +++
+>  drivers/gpu/drm/imx/dcif/dcif-kms.c                | 181 ++++++
+>  drivers/gpu/drm/imx/dcif/dcif-plane.c              | 300 +++++++++
+>  drivers/gpu/drm/imx/dcif/dcif-reg.h                | 270 ++++++++
+>  17 files changed, 2405 insertions(+), 1 deletion(-)
+> ---
+> base-commit: d785d132202e8e8e93335ebf74ad5b29fca0951f
+> change-id: 20260602-dcif-upstreaming-fb177f3c9351
+> 
+> Best regards,
+> --  
+> Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
+
 -- 
-2.56.1.839.g22a8290db9-goog
-
+Thanks,
+Laurentiu
