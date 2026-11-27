@@ -1,85 +1,111 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.208.51
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795789988;
-	b=3DfOMDsyLduZGXyGNXcMPxoDyJzTIZ3hliCPhYR42cE7C78vDpu1do+LIHOn+t52jV96
-	 GZaHil5QVvvC6NpjrYv8I1tMQhYp6yekHbiR4qVxsZ0GKs8iGVoscEVRO4KWvuJLb4lDz
-	 CHp4A/eqcP1FmAohqncYYVbSCpUKRWtWl+jado5j4toELWFrVkPdtc1+FT3XFZc5Tof4r
-	 PK7ThT07Q4EAHX3hTzVfJqN6Q3TgbmZJi/j8HwvTRATz2czXkO6P+5W/JBFhMySIAmXJB
-	 DiGxNWnAZX9QmlgobNZSUr6C+ZAWEC1o55c4cVFqyna1dZVcJkgrk6ALDOR8j36DKpw==
+	t=1795790006;
+	b=D3D+x/NWcAY2E0djZzXaJANiWrE6mShy/Od31J2SuXTd8VYpobka7pg0yeEZUUKqV8jb
+	 2qSuqTPXT33E+z3kkJDJa94dj2AjL646aaW94aO/yqd6zfRGnOrgHNGRwaqtGiJ/3A6d6
+	 rl/T6LLNbK1JgQFI2ftM8DJxvBzpbXK1Gu9t66aoBKJK2ztct8DLbw2iBLX3cm3DWSR4F
+	 pJsDhDeuI3qyimc/i8rTJWdakyNyqt/bxB0HP2YXnAh5JnMmLH5D+1VvB/bb6Q9X6OrG3
+	 9s3A/CKGu8nEyOh/8tdmmQeaz6dR4EoymQvi2oG6zP/gmqr8OR24qFfIhJEBavORMYA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795789988;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795790006;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 MIME-Version:Content-Type:Content-Transfer-Encoding:Subject:From:To:
-	 Cc:In-Reply-To:References:Date:Message-Id:X-Mailer:
+	 From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key;
-	bh=yvkfGtZASSHBZAU+r59KnhIyIeV87W2KzYtyQ/PUTgY=;
-	b=cIPHUzE7ybFWt3sHc4R4PNgxp+8Ae38lxjubtXI8UeFyyFniKZnWp8Ng6AKTrCh6va5e
-	 pVzYW3JCslG1UdKeVFujz0DUK4L0XWzzZ4eGC8/GbEexPiHY0h0ONSfNB/6JTDRftWKLo
-	 0dWlHy32tr/UhMPOZcba8t2De2yAugwu2p8WaKy5KioCDZU9tEO45P88EkoS/8DL2BEFJ
-	 tBPcGzrU8QNYPex/AOshieRsOTG8Dev8AzwIfmlQFQaTM4QDBAdkjiPw+GqlCVgnrYJzF
-	 E4HyB7g1smr4NvwvK1QY5bv9ivGYbCw+5FNSBncgbG5fDCVszh8IaztdkbBgruLBJ5Q==
+	bh=4jk+eMtoNzyBPcbPSMP2jejnX5Q5wRK8gv8j2BTbshs=;
+	b=upc6zdziGb8azM/YBoXQ1ZHMSiMp5jM9dQfqBq6JaoMXqhAi4FugSG/l9ERD7/SRnuNe
+	 EZpqS2mh2B9fd/ggO/4emrsWBZOYNpMpND77f+xz24xsAlUlxDoHqjlJc3J5HX+dos3Mv
+	 RRdqbHVlQCg6j8kv/fqxOHqemUOAngncDxC/Vq4GFqqma1nFLCMqluBxgmvsKHkfVIUUs
+	 mZa/GeOk1zY1Bci99VI0mpPPeCMbY27v5ZjffXhwLquKpURRxPk3zN3XTUx9/faGPDBC4
+	 arJ7wEJUxd2E4u/+AUmkyUMu4VKxbHNkjX40YqzQgJ/ka++BMZTfNIbUiaymEiLUX7A==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=baylibre.com;
 	spf=pass smtp.mailfrom=baylibre.com;
-	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=GvDTR7Ne;
-	arc=none smtp.remote-ip=209.85.218.44
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=Kh4yhHoy;
+	arc=none smtp.remote-ip=209.85.208.51
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13765606A31F
-	for <linux-clk@vger.kernel.org>; Fri, 27 Nov 2026 14:33:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 13765606A31F
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA781606B1B3
+	for <linux-clk@vger.kernel.org>; Fri, 27 Nov 2026 14:33:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org BA781606B1B3
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=GvDTR7Ne
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-c5198302d38so629192366b.0
-        for <linux-clk@vger.kernel.org>; Fri, 27 Nov 2026 06:33:06 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=Kh4yhHoy
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-6ba380cd8dbso10998302a12.3
+        for <linux-clk@vger.kernel.org>; Fri, 27 Nov 2026 06:33:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1795789985; x=1796394785; darn=vger.kernel.org;
-        h=message-id:date:references:in-reply-to:cc:to:from:subject
-         :content-transfer-encoding:content-type:mime-version:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=yvkfGtZASSHBZAU+r59KnhIyIeV87W2KzYtyQ/PUTgY=;
-        b=GvDTR7NeoznAqgsSLnmw/eeg+hz/iMh9ZtGgW0zfV1MN7dRos6ZdlTiDgTcV9Y+SGy
-         Bzc0f8s0YL748BLUHIrG7C7hYIWKzEngQVhxsFvhzMAH8qu0FVKVH6uQxeXqO5/CcP0v
-         +/Gh4ryhl1HIX21ooOEsi64MbbNOEQzk/O/HN1Ami3DBTnfK7Ri97u74i7F7RgewkUcb
-         WWFnEbX39Ogdg0V798+xQTZFAbJ2lIL//8+w6ZPoZxyKAhSIzOqtY5ZzVF/i7qep4Fsc
-         L2os8ordgGY9qJ4eFEbwQW3i3w+Yw1hJzDyKeXO59tsJawkoafTV/1qz3cjM1TOaA/yx
-         M57Q==
+        d=baylibre.com; s=google; t=1795790004; x=1796394804; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:mime-version:date:message-id
+         :subject:references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=4jk+eMtoNzyBPcbPSMP2jejnX5Q5wRK8gv8j2BTbshs=;
+        b=Kh4yhHoyRLyamHP4c589eGt6mFYKg+T4DCFz2chTTM2iLS+5BJgzihuYm8dycaqj+I
+         D+UKNRnLeHIZdIY/Y3uM0He11I7oK8XERH+Dd51NTF/1SOfYnGyaBxSQ2sgAauQrI3JJ
+         zkqBx/uP/8Y/D2R735Kbyoa2uVQRT680ZyUSO6O/OoFkfSryNOU8TtTB1iSIeSuqdGsb
+         WIw2Z3oRQJS2zsXHiwiQgEC3Dh9gGMUa+P3DS0GD9kfQZu3FTWYp18ijl0xwON/f85LU
+         dKCDMPu7PDFm/gm7Xlal8NbeYYPaao0MhoOWVsFcssb0EU5O4EXz46Qp6dJys14hb/mQ
+         kbaw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795789985; x=1796394785;
-        h=message-id:date:references:in-reply-to:cc:to:from:subject
-         :content-transfer-encoding:content-type:mime-version:x-gm-gg
+        d=1e100.net; s=20260707; t=1795790004; x=1796394804;
+        h=content-transfer-encoding:content-type:mime-version:date:message-id
+         :subject:references:in-reply-to:cc:to:from:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=yvkfGtZASSHBZAU+r59KnhIyIeV87W2KzYtyQ/PUTgY=;
-        b=alXgIOReMzcmyGdWIrHZxgCZj79H6Xjes3gySQ0NwNFLPaDAxHXBPv+GGhAlq1xfr9
-         d4VbjfCH6X6aN1Y3RoQwr+fHEzuC6dx6t/C0pSVxgUP8sqM0e+u4fJulkXXF6LNI7bJP
-         Nj0xZZ4DKhL/vh/EObk9sFaL3iQHUhR9dn9G8nCnIrz23Fz55AyVELW0MrQPV9w1XpBn
-         +dyLM0bqDaAO0k4dJx6jkqTamb+3G5XYI7csN0/uVyWswNDxZeKBPNXNjcXmo0AGBGQb
-         MlN5MIq3jqCIUV9X9xhiQ+LzIVUHFcRAUsRtHESiiWbJE0/wS5/UupnmAFCV/Fp2ktzu
-         BWYg==
-X-Forwarded-Encrypted: i=1; AL+hErFTjki2+39D+Xba7QDhIkaAyARWfKQP0szd6SfOegR6BFXKgmDS/UHupBuwI7DVfxEE4VEs8rYd8jA=@vger.kernel.org
-X-Gm-Message-State: APuU4Z9WbQY0PJkaJYIpv6XTh9j9UrUopj38GeY0oKXSvlobMvHjwmkQ
-	f8AiIjKeO8FMu/mhhTzjrBi9yjq3gCOFKZALp5iF+1V0jgyd2zfMyhyQBcjvivcVjdw=
-X-Gm-Gg: AZFdTZeLCqhlJsFP+ldv/QJhneNKasyYNVksWpNofbmg5DM+AJETbVDBg8sydwHq3Tk
-	Q/Na6wub1uCeC8+5+1qmhUORfUyyPH7xPtplQA4OFgxc3H6pgWiBMgGc+OJ9O+3aHDRs+M/6T+r
-	vH3cmJkcSeEl5+SY80sga3Upahs36PyzNAY5Q85SaHTiZOUnr2ozWY5vPD2jtfs9XanNtLNgJpj
-	bFySnipPr4ztN1fs/gTd3UtuI6HzbzjtNb1VGmHiswFIa4tCU57Bdd8W18CN0ZAbhaW39gQo3d9
-	wVui3OZo8a134AeC0doqU78r6nwFjyk6iQUMPM5arxg8neTzvV9F6HWfULB5N3KnUraqdQjWgfU
-	SPOXila/+GdS1JI7Zcasw590CHc5bXMjMhRVEJ9lufn51mFPyIruRDgy3s6dgkbTP394WjuSh3O
-	+jmMPxsZQLBs4ckFZvk1NLW31d3nsDa/fMzsPINi++b4LrisFkPTBFrQ5R4XynRSYSYYXN4IAAG
-	WDeIX4xJXJ2u9jqI1p8V5kSomOMj3f2tLeetkyXBTmM8jSTzUlaHM63mT0t0NYDn5k8qo2Jt3BB
-	WChYoapxbvvLVe8Lc5z2Z9pg/RZP7S/sYymouDmbtz6203yy
-X-Received: by 2002:a17:906:4fc7:b0:c51:37ec:380f with SMTP id a640c23a62f3a-c513a1df6e5mr2037268466b.0.1795789985506;
-        Fri, 27 Nov 2026 06:33:05 -0800 (PST)
+        bh=4jk+eMtoNzyBPcbPSMP2jejnX5Q5wRK8gv8j2BTbshs=;
+        b=Fm3m+1YsCv3sUvlTOOF2p/PzWs72DEQ46iRfgAIxEjI6MNxAOccFpJhMeqGld31FD3
+         jaxqL9/5DbweVw4v6oY0Sh6srj77y90HXUhOjKa6ifY1tZyJJUJztBmEt2LUeIAdDDZG
+         w7gJfsIzGS223bMEPoyzDSI84tRegg6r2kce5hRPojV4TV1P3ZpQBF4QsakkaaXDwe/k
+         xjH7phhpXejeB7YZ0TGaudIOdoE03p7Tv9FzpoHv13+Cer7iqzUU2xsFvIhdUOJ2RFmE
+         iel+B0INJgassuhEBk0nmYmGecWEyQqDXfrHP4b70lcI9qPSsGY4IR7hISbF3wIvcK1f
+         c/sw==
+X-Forwarded-Encrypted: i=1; AL+hErEmjD1Bl610F4iUmiBa9taCQn9BR3evBVzR3sZ8jFjbiAskPgPdIo7UqMCvwLC1fpcGF+O8DaWQCuI=@vger.kernel.org
+X-Gm-Message-State: APuU4Z9C8mkzg8C6mq5wle8KFK/Nshw81Rm8SA+KPk7JGwLzRWgN8eHr
+	fYDoowZul2cU5310zFRPMKmWGPOmFraH81OaAoAfd3z4nW72edCv4kwOoR0WeUXBXkc=
+X-Gm-Gg: AZFdTZdaJ4Ay3i7r9qQqv68BhF7S0walYbHxmN1tliog+kedIjMFk4Zl8aQYy5ev3g3
+	hcEG4jRvDP8mX3zNPm7Tsc9yyQJbBktT/s3BsN5nIo8jKsig7i8m9dfZPCIGV05L3BOuL3eQiqu
+	s00x/Sf0zSv7TIhkkmOGpH+jECFcAa7b5qI1CCMB/yJvf7v3qRDl37pKYbwptDtzASy64uZEvsw
+	JoqPDTD8B7LnJmwREZVvsCVBtLMnFJN1elFbqRkWBwfuk9hy27xS4jkTrVZwwAWSh0HVYIUEFRy
+	BC3o58X3NdOBteoJg7ZmsI0cyBA6041OZI3/hwsb4DUMvi2hoLp60sdJyKyMaA8zIM1+KelgSXu
+	42qTU9Ja6M4jfKjmbHQ08P/KSHMUII4YgDwzeiNiG1KjsuBrlS08WSIQPzv0MTb7VNaubdLGHZ1
+	CzkZz1zjqYftfH137aaklfWR2GJLc2KXU0KEUsSDGL7ooIkLtRnU2kNAJqUtubVX/Rbru9+8pzg
+	pofnyB/RyE6M347E6woDYtXufWqUkZEGJ1EAFFoZLprF+yCzyJ7Un6AdepW3ug8XPKr1aFnY0fN
+	3hrzVsHoCrhLy7fyKil9f2JKdAZosYpFS3CKJwpUMeXtFCVt
+X-Received: by 2002:aa7:c4d9:0:b0:6b5:9731:90fa with SMTP id 4fb4d7f45d1cf-6ba37cc0ad9mr13284812a12.6.1795790004077;
+        Fri, 27 Nov 2026 06:33:24 -0800 (PST)
 Received: from localhost (82-67-6-57.subs.proxad.net. [82.67.6.57])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c513ae688f8sm897225466b.25.2026.11.27.06.33.04
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6bb9f8160ecsm72961a12.15.2026.11.27.06.33.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Nov 2026 06:33:04 -0800 (PST)
+        Fri, 27 Nov 2026 06:33:23 -0800 (PST)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Jacky Huang <ychuang3@nuvoton.com>, Shan-Chun Hung <schung@nuvoton.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Richard Cochran <richardcochran@gmail.com>, 
+ Arnd Bergmann <arnd@arndb.de>, Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Andrew Jeffery <andrew@codeconstruct.com.au>, 
+ Avi Fishman <avifishman70@gmail.com>, Tomer Maimon <tmaimon77@gmail.com>, 
+ Tali Perry <tali.perry1@gmail.com>, Patrick Venture <venture@google.com>, 
+ Nancy Yuen <yuenn@google.com>, Benjamin Fair <benjaminfair@google.com>, 
+ Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Steam Lin <STLin2@winbond.com>, linux-arm-kernel@lists.infradead.org, 
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, 
+ openbmc@lists.ozlabs.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@oss.qualcomm.com>, 
+ stable@vger.kernel.org
+In-Reply-To: <20261124-perso-ma35d1-upstream-clk-v13-0-c920f4a9f0ce@bootlin.com>
+References: <20261124-perso-ma35d1-upstream-clk-v13-0-c920f4a9f0ce@bootlin.com>
+Subject: Re: [PATCH v13 00/10] clk: nuvoton: ma35d1: Fix mux parenting and
+ peripheral clock rates
+Message-Id: <179578999837.3130490.1321256774164046797.b4-ty@b4>
+Date: Fri, 27 Nov 2026 15:33:18 +0100
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -91,40 +117,40 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH] clk: nuvoton: Manage MA35D1 mux clocks with the
- controller
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Guangshuo Li <liguangshuo@mail.sdu.edu.cn>
-Cc: ychuang3@nuvoton.com, schung@nuvoton.com, sboyd@kernel.org, 
- bmasney+clk@redhat.com, jbrunet+clk@baylibre.com, arnd@arndb.de, 
- krzk@kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-clk@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>
-In-Reply-To: <20261126-a35bb25eb5-u10-0@mail.sdu.edu.cn>
-References: <20261126-a35bb25eb5-u10-0@mail.sdu.edu.cn>
-Date: Fri, 27 Nov 2026 15:33:02 +0100
-Message-Id: <179578998230.3130490.7646408699296668212.b4-review@b4>
 X-Mailer: b4 0.17-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=576; i=jbrunet@baylibre.com;
- h=from:subject:message-id; bh=yEJ5axVOhIe7TSERqWwFegn8KRpdTXframG86k/ZPzM=;
- b=owGbwMvMwCW2VtK+WnvWU3HG02pJDNmcU+b7JprGfZRm2i36dFnfb99zzCWRhzqFTLyLtvUGn
- VmdKOzTUcrCIMbFICumyFLDXS3+TlLry6zpOrdh5rAygQxh4OIUgImweTMyTA2Sv/DCe8I15qDA
- Va/XKMw7EqwYUPpg2frZGsz2vgv/VDD8jzD5/EzcvjwuM6zjydsDVl0N63jPcPeJczn/2vVH7cF
- fHgA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1318; i=jbrunet@baylibre.com;
+ h=from:subject:message-id; bh=/kkh+STkW16bo61fnrALXUXLopXwJUn8icTeFUDyuzM=;
+ b=owGbwMvMwCW2VtK+WnvWU3HG02pJDNmcUzaJnLvllxStGv1dWD2t2zaPaXOLj2dHvMC8gu0yX
+ moGSbc7SlkYxLgYZMUUWWq4q8XfSWp9mTVd5zbMHFYmkCEMXJwCMBGnfkaG06uzPxgxWazev9T8
+ nBznBSb/J5mvX23n5H1avOdw6kn1AEaG219YnyTk+92QXLDoc8rr7wv2Lb6115HvlPH6mBXGqbP
+ SmQE=
 X-Developer-Key: i=jbrunet@baylibre.com; a=openpgp;
  fpr=F29F26CF27BAE1A9719AE6BDC3C92AAF3E60AED9
 
-> The MA35D1 muxes remain registered after the platform device releases
-> their register mapping. Use managed registration so both mux helpers
-> unregister their clocks before the registers are unmapped.
-> 
-> This issue was found by our static analysis tool under development.
-> 
-> Fixes: 691521a367cf ("clk: nuvoton: Add clock driver for ma35d1 clock controller")
-> Signed-off-by: Guangshuo Li <liguangshuo@mail.sdu.edu.cn>
+Applied to clk/linux.git (clk-nuvoton), thanks!
 
-This does not apply on top Miquel's work, see clk-nuvoton branch.
-If the problem is still present, please rebase re-submit.
+[01/10] dt-bindings: clock: ma35d1: Mark HXT and LXT legacy
+        https://git.kernel.org/clk/linux/c/5cb3fcb3a35e
+[02/10] clk: nuvoton: ma35d1: Use clk_hw pointers as mux parents
+        https://git.kernel.org/clk/linux/c/4df94650b44a
+[03/10] clk: nuvoton: ma35d1: Avoid possible error pointer dereferencing
+        https://git.kernel.org/clk/linux/c/88997515be60
+[04/10] clk: nuvoton: ma35d1: Retrieve HXT/LXT from DT when possible
+        https://git.kernel.org/clk/linux/c/4154c8b3d3bc
+[05/10] clk: nuvoton: ma35d1: Reparent the gates correctly
+        https://git.kernel.org/clk/linux/c/1c2214475dce
+[06/10] clk: nuvoton: ma35d1: Use device managed helpers for fixed rate clocks
+        https://git.kernel.org/clk/linux/c/c31aa10b3ca6
+[07/10] clk: Create devm_clk_hw_register_fixed_rate_parent_hw()
+        https://git.kernel.org/clk/linux/c/5093f6f2543f
+[08/10] clk: nuvoton: ma35d1: Reparent SYSPLL correctly
+        https://git.kernel.org/clk/linux/c/107caca779a5
+[09/10] clk: nuvoton: ma35d1: Fix CCAP muxes bus width
+        https://git.kernel.org/clk/linux/c/6f6ef44a950a
+[10/10] MAINTAINERS: Add myself as Nuvoton MA35D1 clock controller maintainer
+        https://git.kernel.org/clk/linux/c/350f54ff5b92
 
--- 
+Best regards,
+--
 Jerome
 
