@@ -1,99 +1,86 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.127.102
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795761818;
-	b=zf2tRnOEvdNrDp2YLtOL1xB6tNMYnKtaKlmmVEtB0ZNxZ3Eri19jSDBP4DXWSDa39/Wo
-	 DT3+lzHr2/8o8nQOxD00j6BmvR20J4Xvm6SkHN7YKtsZOAoVr2gqgCFnTasrcio4LY5OB
-	 5sx6Zl7ZnleRhYM4Ix+lBu3nfu+dGx6Yi0NQFHaH44k4375BOGS3VMP8hq8jP+Ja3/SXI
-	 yn/TMH3rwhV2RJ8D8lkFuJNXPu3aRryOPWjniEVwSFVL85RSHy/TmTS4h2Ej6yZpNTxBn
-	 ehTLFK9hvsDlrh9pZkedBtw4Az8v804NWMIODDrqzPvTXaGiprqc1S2jlGMk5IDgblA==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795761818;
-	h=DMARC-Filter:DKIM-Signature:Received:Received:Message-ID:Date:
-	 User-Agent:Subject:From:To:Cc:References:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:X-ClientProxiedBy:MIME-Version:
-	 X-MS-TrafficTypeDiagnostic:X-MS-PublicTrafficType:client-request-id:
-	 request-id:X-MS-Exchange-SenderADCheck:X-MS-Exchange-AntiSpam-Relay:
-	 X-Microsoft-Antispam:X-Microsoft-Antispam-Message-Info:
-	 X-Forefront-Antispam-Report:
-	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
-	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
-	 X-MS-Exchange-CrossTenant-Network-Message-Id:
-	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
-	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
-	 X-MS-Exchange-CrossTenant-FromEntityHeader:
-	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
-	 X-MS-Exchange-CrossTenant-UserPrincipalName:
-	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
-	bh=PmzkZL98IFVLVO1AVH100KZlsT1wHhOSsnXCSCBipzc=;
-	b=r+k9G2UtGcThM6ryTXY4Resk+W7sqBdYtw9C0+02cw4oU2QeOXPrB9bVZYK9Y+4Fym4E
-	 lecaP0KLhioj/fPNZJG+9wT3mvlGkizXk3KtrrTsd6czBVzgfkmZOS4TAgXNUrKsN8qJZ
-	 Aug35VMBJHliw5s4Lz/IZh36LLe7EcBySdWnhOOrBg/hdCrAQzHbELflhrGPsT/ZwU6Vz
-	 39i3ylqhjjU6qKZH0BJXgpvwvqcRKyj0CrXSgUJGB2UwMPTlvA2VEBLg+Gb8Gg0mdgXa0
-	 7c+OIb4QUBLqBEZDE/WzRl4Q9DEmgqhDhEpoZ1lo4Jjorwfwf/6ZrB4ydnccCkZEQ6g==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=amlogic.com;
-	spf=pass smtp.mailfrom=amlogic.com;
-	dkim=pass header.d=amlogic.com header.i=@amlogic.com header.a=rsa-sha256 header.s=selector1 header.b=SHN7+LKm;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.127.102
-Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11023102.outbound.protection.outlook.com [52.101.127.102])
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=119.15.109.137
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1795764763;
+	b=3KjGJGwAK7E2hDyyRxT7MuHM649n7lEMxH1BpSaM5HcjZFRXL9v+SJPPXrRF0cLq2cV/
+	 /9WBcSgCMHUa+Gfj/YYFJFh5bobin3HmyT6xzIulzFdVbOCoNF9iNgudIn1mx9VOpBcso
+	 IrZNJbWhed7u0w/GscwOPqrq2uYv5kXlBCZWYnTKVpaZMLDzk+vTL7wkxH2GBhOKuNOJ0
+	 uHMy5r4193wDiQ7R2FEZcjGXAbLpktcNe65SuXdr6fqnS7TFl7YlsMrtlZBbi1kCuOsb8
+	 27co3Ji1UxEJI7laH7ZoKQwuA94QLH5BxYo2MmaDH0+TTLSneRDmhsGRtW2zWcD/TjA==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795764763;
+	h=DMARC-Filter:Received:DKIM-Signature:X-GPT-Reason:From:To:Cc:Subject:
+	 Date:Message-ID:X-Mailer:MIME-Version:Content-Transfer-Encoding;
+	bh=EdN5PePvwqnR5e4iJ9uZ9sjTrBZADoIpDliss9XMc9M=;
+	b=E5umRvlydRnqApRw3qvFeAOIewy++YoVGSiDHMCQWVisBUN9ZYZk40MJIFf5OPQqb59/
+	 pwGS1hZVBxnDUb9iX2a5xNqrrFY+inTP5kQh5CeOsftfZWok1qAVrTBWEcGolbuzy7flb
+	 5Mmy47TbNXgBJ83yim6NF9jITYiiIjrR1wpXdrDXNvoauKvfMBFggXJtLd2ZnNetsCFIL
+	 qpew9/Byi5zQ0gM+gnmTUyr/dm8fcqe6cAOk1Eon801J60w83w7iszRzXVah1IE00Gusy
+	 Gck9OpPzGpnYSxs9q91kFGr7wH8t6uWXoZMCjtLyw1gt8Fo0gAt/KyhEQMzkfljCTXg==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=d-silva.org;
+	spf=pass smtp.mailfrom=d-silva.org;
+	dkim=pass header.d=d-silva.org header.i=@d-silva.org header.a=rsa-sha256 header.s=2025a header.b=cKh8YSZI;
+	arc=none smtp.remote-ip=119.15.109.137
+Received: from www.nmnhosting.com (watt.d-silva.org [119.15.109.137])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ACFD606A324;
-	Fri, 27 Nov 2026 06:43:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 2ACFD606A324
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amlogic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7A25606A323;
+	Fri, 27 Nov 2026 07:32:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B7A25606A323
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=d-silva.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=d-silva.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key, unprotected) header.d=amlogic.com header.i=@amlogic.com header.a=rsa-sha256 header.s=selector1 header.b=SHN7+LKm
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=R/I4LrVda4qNTJ15c74hTedwBNJTefgypE3HaEiME9ubZ2bZTsClwOzW5h5sQUDIcz1j30AgzI5plzSpPniz5hYr65iF6c03RMMueRwQuV+Y0YkMxy+ULpUlY9U7zZPn7syV/YbqlAa2XW0RP38k2diW22fb3PvZOd5pAlruN1yKhjYJ+XwsOeKlnqFGZIMSkMB98+SOTlmxJXFf6YuXUOAwWfZG5izxuGu8xIrA/1cEby+ptkXouWuKgMcywDilABEBW+TsFnKsq5ZGKCpqTaXFhJbcN78dhGHpJwLq/kLl2q3Z34oWd4H5H0nic35dv60lVKJNhCN8wPUDhhwKPA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=PmzkZL98IFVLVO1AVH100KZlsT1wHhOSsnXCSCBipzc=;
- b=SrAQ1K18Ptk9ZLPoSRS45Vr/1c6OwmgWWxYUyByVgqksHY3Vyjv1gOpZ1qt0poSbkRzkLgIejXtT6MBgNJSGx2r9B9TPJ7lE1fYLNjrfh/94frkC59BrJ0pI/OQ8/SgtXt2L50mtX8CU4q7RVS++UR6eGZ/4nHDM6qsWZ1/CuI3P3RbKCS/LoqJ53Q72LnI1qrDe9yhZUfiKQOOsfwNvBgrW/db90Ii6ShYzPx44c28Mb3jFeqr1lgbZVVPjHW/mFG+usbSdVQJcpkRHu1FvIZgCoETBs1wxZwFz5QFc9/aLQsTk1I1gYMPJDpWS6jwBw7In/C1VPto231XEjSUs8Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
- dkim=pass header.d=amlogic.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=PmzkZL98IFVLVO1AVH100KZlsT1wHhOSsnXCSCBipzc=;
- b=SHN7+LKmiBoiXVIttvkxn2a6QU6mLeje/HZlq0xlMomUKh9MOjJZE/EbA2TXN/MpAq+32u/PI8ahjKPUYkQnCyrOjLt2TIMzcgcKlpNFrvfxu2gHqTxtJgdvUvuEeali+Fn4nOd3fTXBGESNYVMg4qJ/h/PEzgptoKbMxovLhJDvizkhmxLAcUhPq2gwi26qvk7aiSXONWFGNKbeXC/szDmq1g5+FWnUsZSpKOWLGms2bxB2XGaRZYezsscki8Ac0amU+ZCIgMN0mVJBBR5PK7YAnra9VH0APwPiaSlAOOPgKcQtiLKM7e7Api6Cre8hMsnBt9h58LlQpcpyweDE8g==
-Received: from KL1PR03MB7149.apcprd03.prod.outlook.com (2603:1096:820:ca::7)
- by KUZPR03MB9712.apcprd03.prod.outlook.com with HTTP via P2P; Fri, 27 Nov
- 2026 06:43:33 +0000
-Received: from KL1PR03MB7149.apcprd03.prod.outlook.com
- ([fe80::2f06:12a:fff0:6506]) by KL1PR03MB7149.apcprd03.prod.outlook.com
- ([fe80::2f06:12a:fff0:6506%3]) with mapi id 15.21.0662.004; Fri, 27 Nov 2026
- 06:43:33 +0000
-Message-ID: <0548866d-8214-47f1-9dba-06629240993b@amlogic.com>
-Date: Fri, 27 Nov 2026 14:43:30 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC RFT v2 3/3] clk: meson: pll: Remove the dedicated n
- parameter
-From: Jian Hu <jian.hu@amlogic.com>
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>,
- Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
- Kevin Hilman <khilman@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-amlogic@lists.infradead.org,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <20261029-meson_refactor_n-v2-0-ff4ac74e527b@amlogic.com>
- <20261029-meson_refactor_n-v2-3-ff4ac74e527b@amlogic.com>
- <179390104085.2573818.48733523079260500.b4-review@b4>
- <98fc8cb8-186b-493e-b74c-d8625d11dab1@amlogic.com>
-In-Reply-To: <98fc8cb8-186b-493e-b74c-d8625d11dab1@amlogic.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SI2PR01CA0033.apcprd01.prod.exchangelabs.com
- (2603:1096:4:192::23) To KL1PR03MB7149.apcprd03.prod.outlook.com
- (2603:1096:820:ca::7)
+	dkim=pass (2048-bit key) header.d=d-silva.org header.i=@d-silva.org header.a=rsa-sha256 header.s=2025a header.b=cKh8YSZI
+Received: from Hawking.lan (hawking.lan [10.0.1.4])
+	by www.nmnhosting.com (Postfix) with ESMTP id 070444C955;
+	Fri, 27 Nov 2026 18:32:32 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=d-silva.org; s=2025a;
+	t=1795764752;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=EdN5PePvwqnR5e4iJ9uZ9sjTrBZADoIpDliss9XMc9M=;
+	b=cKh8YSZIzLt5Uc639i/UDbw9GzdXJf0nxSgyy45sOkyvdTej2GTM3EfWixiXNRcKV9KAKi
+	4Ej55uhZxuZB1ff5tEWtp7+Xrbuzx33vjic77Rt8dC/hn/FBh8zweARZpZ5gqFky5v9+sx
+	CjYyPFIEMpWGbe/jw4aKI9Ladn3l/EVAMuMqmJTB40on86NBLxVq55sJP+t76mFLy3fpJm
+	arjtJuEKOat1b2jp/uC5w4/NJrmXRpH7CCAXFw98Bvvp72lSUvRkxHAih2A28plEH8qTQw
+	fpch6/fe07M/NW2rG48HAvVAZ8X8TtcREBh5Yume+urdqFEZ/6PVrYm3c/stCg==
+X-GPT-Reason: legitimate_transactional_technical_notification_content_matches_the_mailbox_purpose_and_sender_identity.
+	The message is a technical kernel patch submission from alastair@d-silva.org,
+	which aligns with the recipient's domain/identity context. The
+	content describes specific hardware support for the Allwinner
+	A733 SoC and provides detailed file changes and prerequisite links
+	to lore.kernel.org, a standard domain for Linux kernel development.
+	There are no signs of phishing, urgency, or marketing; the formatting
+	is consistent with professional software development communications.
+From: Alastair D'Silva <alastair@d-silva.org>
+To: Vinod Koul <vkoul@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen-Yu Tsai <wens@kernel.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+	Mathias Nyman <mathias.nyman@intel.com>
+Cc: linux-phy@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev,
+	linux-usb@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Alastair D'Silva <alastair@d-silva.org>
+Subject: [PATCH 00/11] arm64: dts: allwinner: Add Allwinner A733 USB 3.0 support
+Date: Fri, 27 Nov 2026 18:32:20 +1100
+Message-ID: <20261127073231.1776847-1-alastair@d-silva.org>
+X-Mailer: git-send-email 2.53.0
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -103,121 +90,86 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-X-MS-TrafficTypeDiagnostic: KL1PR03MB7149:EE_|KUZPR03MB9712:EE_
-X-MS-PublicTrafficType: Email
-client-request-id: 9f45ff7d-be43-4d4b-9c4e-1c40968ef6be
-request-id: f0f2b47f-b404-4840-262b-08df4c51c176
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|7416014|366016|22082099003|18002099003|261009223027099003|56012099006|4143699003|11063799006|261021135927099003|261022105027099003|261026121527099003|261028144727099003|261026140227099003|10067099003;
-X-Microsoft-Antispam-Message-Info:
-	GuJZASr9mX9kdMGCT4cGmLwftaYxCpUU01MU+VtqJuLRIK6lDjs+97EJPUTl2gyvTj/0oiRyvjRqr6BdvAjcXaOHkRK5n8h6vOn/EMFI3KFz4VJ4C4V5yW06n03ZBLwbbwPMYidBlIFVmFm2OVMwpNZKMH/iDJeE9nfydfk4of+sxMu8YAaOR/IBrJNgdLpe3lpnqh4OJjBKPJTYhfjZJQvy3iE2RdNsrDytxis4a+c8MwWb99JeBhFkSjyyG2QSEetc8N/GLCRTbrfjF/L2CWOKBz4tdBcDkV7bocaB+d/p6GY7P1984JKr99ma4KGwBowsNpjLoOgw9CS0Mu96J/710iBE+IPGALbHmWyvqwOXI6uKy155RBQG5wclj74x/sKl6i13m/lQJf7dHCVcBfgA/QlrTwfeGnP3gGyNrsdctQX8ajWUCK074HiV31xlZqgnzZGlgvb1VFYRDpv2DtIxKKJO33eCAy6lLcqs0JciD92CQUjxU8iFwkqqwaEg8nWCWLNICH8d+UfCiXtRf2zHRayVEVUgpG3ZkR6cKbMmR7YEh9bQ0qcTI1IWiGlS/UCFlzQeTKI9m5pqI9MKvKLCUQO/vOYOcn2eWEwd+kzL7qgWPdtN0kZp2ttdoyIDLpBDwdxNtkU7mHorslJpHvMeiSnAoqeSFjbkzRlZtY8=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(22082099003)(18002099003)(261009223027099003)(56012099006)(4143699003)(11063799006)(261021135927099003)(261022105027099003)(261026121527099003)(261028144727099003)(261026140227099003)(10067099003);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?UngrVHhiSHlNZWJlTk1BWUlIS1lLcmdDOWhJZmZtKzZNck5mVmhEYTVNSW5T?=
- =?utf-8?B?VS80aFFGSy9VU1NuZnhGSlpuY3B3WkxkeTNmdXpqaStVM3FlVUVrdnBqMEVF?=
- =?utf-8?B?citDTkQxMktyWDdGSndBZFI2d0RyeTFyT1FQVm1YSmpNOGpvT09jbVhKZGhX?=
- =?utf-8?B?N2ovWXlnQ1MzUWtwUnJlWmVzaUpCSG1tWVhXa1lUb0h1azVKNTdidGt2NE1V?=
- =?utf-8?B?dXZ5MHhpZ0RuNVllVmkyYnJWOWFrakUxU0JXZittendGRkEwZkFwMWIydnRm?=
- =?utf-8?B?TU8vSjJ6OUZwRXhnVXZQUGdBbjV6bTBlVlQzajVJYXhMTU4yRGU5Vi9WYUhS?=
- =?utf-8?B?cUxZc25ZYkZ4YWpnam1sYTNCZE56QkpiaThIUGJFblFQbVUrYzNsK0dWaWVa?=
- =?utf-8?B?VUQ2ekVSb2RVNHlxVWxab09jUzQ1NlhiT1hjUTNXa1FBeDVRREVQZDgyNUFW?=
- =?utf-8?B?Rk9mL2E5MTRQdzlRS1pnYkpzUitjTno2dFdnNjMrejBKcEx5YTVMVmFPdlZI?=
- =?utf-8?B?eVJjZkVNVHRjK01sUkhOKzFFNlY0WGV3T1MySTNGUUI0QVJJR0c3UVZ5QVVE?=
- =?utf-8?B?WEl6Y1pCUm0xcFIzc1h1ZkZqYnZXWkJDL0NLY2pKQkZzN3ZHUzBvVGhvQjhP?=
- =?utf-8?B?aDV2QWJYejk4TmhxN1hlNFRPQlpFWFpkM3grRE11NjhPcjV1cW9ybnlnQW9T?=
- =?utf-8?B?VnJyNnFqT3ROSWFqWGE3c0dXakZwNTg2dzlPdGhwMVNMUEJzMHJrTjVvQlVs?=
- =?utf-8?B?SnZGWW1PQ0lxQmNEdmFFbnZRVHJ2cUhNZU4yM1pEY2VxZUgwM0NOSW9mTzNJ?=
- =?utf-8?B?NUtnZG4rU1J1Vnl0Qk14UzdZd3Rabnl6bFVnS1lYL0I3VEZFYVdpRTN0THRw?=
- =?utf-8?B?Z3QzNHBYcXZHWVdWb1RJQWE2a1crOEZ2MmpyTllDeWo4bi9mTG1Ud3dCbnFj?=
- =?utf-8?B?RnJFUG9naURCcE5nYTI0L3lMS0pwWk92b3BPWDJ1QTBqTXVHMjJLR1FPc0Zz?=
- =?utf-8?B?U1BZMVdvZkZZK0Z5VUFBY01OQUxWVFJTUFRQMWZ0R3M2NXVDWnllQlllaUlT?=
- =?utf-8?B?ZEd0QWt1U3prWU9pYXBKRitPQmR2K1BXN3Uzb0gvb25BVTBydVRvemtTcWhJ?=
- =?utf-8?B?TUx3djkxeWJVNUxvZ3Yvd1ZMUE1SN2h3Znd3SktYczdlcFlaYjJhUUwvQ0VI?=
- =?utf-8?B?YzQ4dHVMc3FvNDRtdTVPQ1VxcXRNYStTSkFVbk9tUDJHZlR2OVFLZUlGOTJG?=
- =?utf-8?B?V2hDODNhRVlqV1gwS0pxazNoTkpSby9VV3h3aWR4K01DcG9vWS9oMjlteG16?=
- =?utf-8?B?NGNvanZHTEdmNEpBVEkzdlBPQ2FQOVVVK3p2T05qaXo2cDY4cDg3UGwzV1Fw?=
- =?utf-8?B?YzRzTDNtTkg1dGtaWkRzZU9vbGN1Rm43bVVVeGpiaVg1MmRLOEZsUVBKUW56?=
- =?utf-8?B?TGNNUjVjNUhHZjdweDZHMGhYVWNNTTc1b2cyR2xyVjl0MkJMbEZCd2YwWFlj?=
- =?utf-8?B?MG9xQlVVVGwvL1JDNDdJUmFsbHA5WkRmYXMwVm5jNTNpNXVEQTNhZDZwbE1O?=
- =?utf-8?B?TXhZRFR5VHlyQm4zU1BkbStGeVFjbVY3RklNUHJUODlBWmhBY1hIVzc1K2tw?=
- =?utf-8?B?eTkxS29heHBXMmI2SlVPcnBNU253MWdZWWt5SUpqdjNYR0ZMS1FMb1RzZVNv?=
- =?utf-8?B?amg2K3dKZVRUZE1VOTcwVTVUNC85aFY2Y2FUSEIwMmJMK0pNTDFGK05KNFAx?=
- =?utf-8?B?TW9BTno5TzBFR2ExRWZFQXgyOEpkTFB3Z3JycHdNRlNBd1k4WjV5ZHVWend0?=
- =?utf-8?B?dW4zS2krcExINCs1WklGcWhZK3ErWG5MWW8wQ2RmNmJJVlVqaVpQL1NwMml4?=
- =?utf-8?B?N21Xc3BTUVdwQXJ4aThxSHRBamFhdG5MeUxZWUxBSkgwbUtrU3Q3UXhZTjFS?=
- =?utf-8?B?RUhyeVo3azFGbmNVK0xSL1NwSnFvdG1oazcyNW5aL1lzcHZCclpKY2RDcUc5?=
- =?utf-8?B?aFg3VkVvWU1DbExvOEtJTFBaVnkwZnlCTVJ5a29IM1ZHajhlaGNLL1FDOWJ1?=
- =?utf-8?B?dHd6a0lVaE83bmd3QU05bUZDdkM1Q2h5RFpwUUNiN0ZINnl2UzBFM1dBREF5?=
- =?utf-8?B?a3ViYUtQdWQwWTZTRUtNRWo3d2RpYmtOMmRZbnQxa1lmQkI1cW5wZnlwTnBw?=
- =?utf-8?B?dEJwNy94VUl6QzlBc09JMnFYQjluaE1OMnVCS09mdnFiQ3NzMGE4Y1JZK1Vx?=
- =?utf-8?B?bDJIbDE5SGxvREE0bjcvYzNXTEUrNjZlb2xVekJoUy9TaVFZZjlueGNsTUFK?=
- =?utf-8?B?MkRyWk1ISW5lV2d3SkZpRUJBeFhwZWFiem1CWmZIajNBWXF5VWxtQT09?=
-X-OriginatorOrg: amlogic.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f0f2b47f-b404-4840-262b-08df4c51c176
-X-MS-Exchange-CrossTenant-AuthSource: KL1PR03MB7149.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Nov 2026 06:43:33.5619
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: CL8tXCE8mcdnhCUCu1mQImTAbz2hRbNhaHBoo1NELvN1mHJ2QvAftBPojHcTSmGQnWOf/QPyz/+f3LHeSn7AUQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KUZPR03MB9712
+Content-Transfer-Encoding: 8bit
 
+This series adds USB 3.0 host support for the Allwinner A733 SoC and
+enables it on the Xunlong OrangePi 4 Pro.
 
-On 11/25/2026 9:06 PM, Jian Hu wrote:
->
-> On 11/6/2026 1:50 AM, Jerome Brunet wrote:
->
+It adds the USB 2.0 UTMI PHY driver, USB 3.0 mode for ComboPHY0, USB2
+CCU gates, DWC3 glue support, an xHCI W1C port change quirk, and DT
+nodes.
 
-[ ... ]
+Verified on the Xunlong OrangePi 4 Pro with a SuperSpeed (5000M) USB
+3.0 flash drive.
 
->>>
->>> -struct pll_params_table {
->>> -     unsigned int    m;
->>> -     unsigned int    n;
->>> +struct pll_mult_table {
->> nit: a struct with a single member. A plain 0-terminated
->> `const unsigned int *` list of multipliers would do
->>
->> Also, there are spaces instead of a tab before `m`.
->
->
-> Ok, I'll remove the single-member struct and switch to a 0-terminated 
-> unsigned int array.
->
-> The helper's table pointer will be updated to 'const unsigned int *'.
->
-> The spacing issue is resolved as a result.
->
->
-> To avoid ending this series with a mechanical patch touching every SoC.
->
-> I will submit a separate patch before the per-SoC changes to add a 
-> 'mult_table' member
->
-> to the 'struct meson_meson_clk_pll_data' structure.
->
+Prerequisite series:
+- arm64: dts: allwinner: Add Xunlong OrangePi 4 Pro support (v2):
+  https://lore.kernel.org/r/20261127065343.1449675-1-alastair@d-silva.org
+- Add Allwinner A733 (sun60i) PCIe and Combo PHY support:
+  https://lore.kernel.org/r/20261125062948.1234677-1-alastair@d-silva.org
+- Allwinner A733 PCK-600 power domain fix and DT node (included in
+  prerequisite-patch-id below).
 
-A short follow-up on the table conversion I described earlier.
+Alastair D'Silva (11):
+  dt-bindings: phy: allwinner,sun60i-a733-u2phy: Add Allwinner A733 USB 2.0 PHY
+  dt-bindings: phy: allwinner,sun60i-a733-combophy: Add combophy0 USB 3.0 support
+  dt-bindings: clock: sun60i-a733: Add USB2 bus and sys clock IDs
+  clk: sunxi-ng: sun60i-a733: Add USB2 bus and sys clocks
+  dt-bindings: usb: allwinner,sun60i-a733-dwc3: Add Allwinner A733 DWC3
+  phy: allwinner: Add Allwinner A733 USB 2.0 PHY driver
+  phy: allwinner: sun60i-combophy: Add USB 3.0 PHY mode support
+  usb: dwc3: Add Allwinner A733 DWC3 support
+  usb: host: xhci: Add W1C port change quirk for Allwinner A733
+  arm64: dts: allwinner: sun60i-a733: Add USB 3.0 controller and PHYs
+  arm64: dts: allwinner: sun60i-a733-orangepi-4-pro: Enable USB 3.0
 
-I said I would add a separate "const unsigned int *" member and convert the
-SoC tables one by one. I would rather keep the existing member name 'table',
-instead of adding a second table name.
+ .../phy/allwinner,sun60i-a733-combophy.yaml        |   5 +
+ .../bindings/phy/allwinner,sun60i-a733-u2phy.yaml  |  58 +++
+ .../bindings/usb/allwinner,sun60i-a733-dwc3.yaml   | 103 ++++
+ .../dts/allwinner/sun60i-a733-orangepi-4-pro.dts   |  31 ++
+ arch/arm64/boot/dts/allwinner/sun60i-a733.dtsi     |  61 +++
+ drivers/clk/sunxi-ng/ccu-sun60i-a733.c             |  10 +-
+ drivers/phy/allwinner/Kconfig                      |  17 +-
+ drivers/phy/allwinner/Makefile                     |   1 +
+ drivers/phy/allwinner/phy-sun60i-combophy.c        | 573 ++++++++++++++++++++-
+ drivers/phy/allwinner/phy-sun60i-u2phy.c           | 233 +++++++++
+ drivers/usb/dwc3/core.c                            |  18 +-
+ drivers/usb/dwc3/core.h                            |   8 +
+ drivers/usb/dwc3/dwc3-generic-plat.c               |  15 +-
+ drivers/usb/dwc3/glue.h                            |   6 +
+ drivers/usb/dwc3/host.c                            |  10 +
+ drivers/usb/host/xhci-hub.c                        |  53 +-
+ drivers/usb/host/xhci-plat.c                       |   3 +
+ drivers/usb/host/xhci.h                            |   2 +
+ .../dt-bindings/clock/allwinner,sun60i-a733-ccu.h  |   2 +
+ 19 files changed, 1177 insertions(+), 32 deletions(-)
 
-The G12A/Meson8/AXG table converts will be submitted together with the final
-removing 'n' patch.
-
->>> +     unsigned int    m;
->>>   };
->>>
-[ ... ]
-
---
-
-Jian
-
+base-commit: 9437046953b2fb3bf55b36582450ea0267df82a7
+prerequisite-patch-id: 19691099774bd3dc41f56585c03ddefb7bdc6f9c
+prerequisite-patch-id: 85db03df3394cdcb2780a0da122a74b2c1fe220d
+prerequisite-patch-id: a3e883da50bf03e8f522444def66fec7f996ffbe
+prerequisite-patch-id: c6889699a6dc13c336ce4cf4659e21b551e9a9fc
+prerequisite-patch-id: ef2f0344452092edb2221b93c44a3e82cb896a2d
+prerequisite-patch-id: c598480f753e36b7f6230129b864c559b9f185d5
+prerequisite-patch-id: f86b468a896a40f132adfcba885700327dff1bc5
+prerequisite-patch-id: 079d60101e1b9e5425458060314bde3e9cc2fe4c
+prerequisite-patch-id: 090c5ff78d4e2150804aa8d294581cd338b1e971
+prerequisite-patch-id: af0aebcae7c38d58354925119c412178b5821b5e
+prerequisite-patch-id: beb8a098ba14724e316ff243bdf8e00e729243c1
+prerequisite-patch-id: 63342c5ec38e8eb9e55c8c74d3c5a81a630d5f69
+prerequisite-patch-id: 1dc8d70f80674c98b2b15d09556dd27f643b20da
+prerequisite-patch-id: 4555860586ef50f27bf787a23f6ba693e9c3b0d6
+prerequisite-patch-id: 0279f281cd59cf54bceee39b0fa4d0b6a7b87c48
+prerequisite-patch-id: 14424bd8324b6cae2b8c4d6840df0db626d1385f
+prerequisite-patch-id: 7b42728bc8271e5dfd57fffec47a7f5745eff357
+prerequisite-patch-id: 74f5c7d066477024a374a789b3180e841398fb07
+prerequisite-patch-id: 309a5a3ca5b216915907263dea7024263abf1d1c
+prerequisite-patch-id: 55e543b9854c7ae2fa86969233d05ccadd3792e9
+prerequisite-patch-id: cfcad85224e288ec2168e7f245b4a1c63e9a34a7
+prerequisite-patch-id: 18dadb9c1e41141d015422b658b7dd0d153b7d69
+prerequisite-patch-id: 47a863f533ee9ae1589e25618f27a7282a0f8d37
+prerequisite-patch-id: 54181ce00a78f9f69031d3964f14bf800dd98e0f
+prerequisite-patch-id: 5a6d6dac4f6b42edf911fbca2078508e977bdce9
+prerequisite-patch-id: e919d9591e97e3b69fa86625a868583ee74d16db
+-- 
+2.47.3
