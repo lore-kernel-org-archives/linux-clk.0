@@ -1,70 +1,61 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.142.180.65
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795815060;
-	b=z6giBwB0suIqwxbPz0KcEHEieOsK50VtM105XzywyKGOh5mfXDaczI7/iWUiUG48WDLX
-	 Dl33R4u1wiI+9MsLJHoKALizwbjjaD3vf951/HSvHhzXdDDI1mRD42JjViFfj6HKIX1xB
-	 ZrbVo1MOlaUi/kYTTR/CizeIQCTmfBIzOVxYw0VZR9UI1DC9LH2j7julBNrxVWVngJa25
-	 D9O56ZwnFLgpt2cri12wrjbKLokWAAPSBwIDojHnuX2v6nVlMEwffXqoji0QhQ3w+0iDA
-	 r7nk7iqPIJkPwnmdVqNRTtMG/6W/sO8zQF44YUyty2bDcpjZfXijbWoE2DWukpgr0MQ==
+	t=1795815757;
+	b=kCSeghKVZs0wf1RXViWSvnfCBYuWPQzYfzTY+0tI876RYTwJVe5iS7fLRCkkJIAMVcbE
+	 z9NCUkXvKSrHfFrEryPMWclnVMz93UsWreFpYti8uhIRuXcvb+Z1quo3AQHc75QfKzokr
+	 fhHUDZPWiqAtsmG4NNF7gSocyo6ENB2kWKifqD/LNjgQ8qsm2xwF40gBYTeNEfZg8Xhj/
+	 rxDLDOTTebzDKetICMwdTPkBSq3DDRzVE6GGrAqi6jx9sgPpStjGOhGhBw7UE9V1XahyO
+	 Kmc53t3JXPiSGCKG9GKgL8U3Uoxu+0ZeiPcU0KezFSaS6WhmjxmjEEKkT9M5zoTk1+A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795815060;
-	h=DMARC-Filter:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:
-	 X-Mailer:In-Reply-To:References:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding;
-	bh=q3m2yyt50RINKi6ioBAszyxO/hF+Qz9GpX0rwheQRCQ=;
-	b=L30VgIvQHh8DUaGKoi5SQI7wUp4pA0+Y4eQ08MxXfwcQLxcB57S1Mo7Q/KBkG434D3Ll
-	 XtQKQHBVNTwJu3ciQ0y6mGL0hSmG/8CUoF3k5chgptgK7QAUwuOTxLzJRUegBWZ6bB9pl
-	 Y7jywf97fToGUQdO1qctfyjtcdO953PuHNmHbzdwOiZl6NwKoaEWR0pZypE+KV2ngU/I/
-	 fNxf0QAz1FOL8BxjApJedvVcW0e7srwELGWrM1DsNNs6xHMRVQvt/crkhn+rLmPXvxd6+
-	 NRcV6LgQQcalDrIS02CN3VcKfNGJljzKSg/wLaSt1tkmfECmllgPfW18NL1z8FRZELQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795815757;
+	h=DMARC-Filter:Received:Date:From:To:Cc:Subject:Message-ID:
+	 MIME-Version:Content-Type:Content-Disposition;
+	bh=hPcUXXPJ9lqr7gnnI/WO2aVWDUyWi+0TICJP+pC4I58=;
+	b=EHfwCixMXiJe6mn+NIYlL6OYEigEAAk+2Ha+1Y87GnJ0mo3VLhAJewHEKHYIwilCHktQ
+	 43abDwEqmNoygK0r9EvVVg1HNH18AQfonofV5LcDpgOEU+Ta6yCUjNaKa3hn2VbcCNrxu
+	 14Kq1/+3ceh3YRfzcAVrGW1eAgU+3fj0bszDgZBiKb4XqDfPmfAOGDhYi5Ys7olE/74Up
+	 UOMi0JzoEGdBA2WP3sRJ9mRje2lGlfq4mO7HayoD1lULwIhYXm2MgOQ7jqaXuj+vt3j1p
+	 wDffD2XMZaFTYpIIpmgFmyTbp5r1fhJX/9Dh6HlLf5P7iOHYDDaAsmf9OEeBDy0JglQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=sntech.de;
-	spf=pass smtp.mailfrom=sntech.de;
-	dkim=pass header.d=sntech.de header.i=@sntech.de header.a=rsa-sha256 header.s=gloria202408 header.b=e5V8y1Ur;
-	arc=none smtp.remote-ip=185.11.138.130
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	dmarc=none header.from=makrotopia.org;
+	spf=pass smtp.mailfrom=makrotopia.org;
+	arc=none smtp.remote-ip=185.142.180.65
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature ECDSA (prime256v1) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F238606A31C;
-	Fri, 27 Nov 2026 21:30:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7F238606A31C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.a=rsa-sha256 header.s=gloria202408 header.b=e5V8y1Ur
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
-	bh=q3m2yyt50RINKi6ioBAszyxO/hF+Qz9GpX0rwheQRCQ=; b=e5V8y1UrtccmyPxmIkUjF2ky3U
-	exC1EK59wpjZe9T+uL8fDgx5yQnFLqvPPdf5wVpYR4AJDFvFarpaJ0we3NixMOBz5+Laf3+VkDQ7c
-	gGFyGoHCP2domoIm+STqlYwwvxhnqjGKFJp4CATKCk7mjuX4buNRea9eF2/OCuvT5QKSOsg9LJtxy
-	nBhWutwfY3LNRTLq8udK7VI8Xer4qBRRmVo6k5Yy53uJn5cAssMH+2HjAOh2r6o05sUCp5yAxDq/q
-	iZx2haoFDURMSaUDE0TqY/u7XuVnsgsJF/a+SomX4q0VkDbQ5+b83JCXnYzlI8whw7zKYHkXjGKJQ
-	7BICBRrQ==;
-From: Heiko Stuebner <heiko@sntech.de>
-To: Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc: Heiko Stuebner <heiko@sntech.de>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67305606A31C;
+	Fri, 27 Nov 2026 21:42:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 67305606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256:X25519MLKEM768)
+	 (Exim 4.100.1)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1xX3i1-0000000008G-2ORN;
+	Fri, 27 Nov 2026 21:42:21 +0000
+Date: Fri, 27 Nov 2026 21:42:18 +0000
+From: Daniel Golle <daniel@makrotopia.org>
+To: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
 	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chanwoo Choi <cwchoi00@gmail.com>,
-	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	kernel@collabora.com
-Subject: Re: [PATCH v3 0/6] arm64: dts: rockchip: add RK3588 DFI clocks and RK3576 DFI
-Date: Fri, 27 Nov 2026 22:30:41 +0100
-Message-ID: <179581499871.254621.2470437130945394639.b4-ty@b4>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20261126-dfi-clocks-and-rk3576-support-v3-0-0f33c1b8df48@collabora.com>
-References: <20261126-dfi-clocks-and-rk3576-support-v3-0-0f33c1b8df48@collabora.com>
+	Chen-Yu Tsai <wens@kernel.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>, bui duc phuc <phucduc.bui@gmail.com>,
+	Kees Cook <kees+treewide@kernel.org>,
+	Daniel Golle <daniel@makrotopia.org>,
+	Ryan Walklin <ryan@testtoast.com>,
+	Andre Przywara <andre.przywara@arm.com>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+	linux-sound@vger.kernel.org
+Cc: stable@vger.kernel.org, Marcus Cooper <codekipper@gmail.com>,
+	Philippe Simons <simons.philippe@gmail.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH 0/1] clk/ASoC: sunxi: fix H616 audio PLL and codec clock rates
+Message-ID: <cover.1795815223.git.daniel@makrotopia.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -74,35 +65,46 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+The H616 CCU reports the audio PLL at half its real frequency since its
+sigma-delta table was added, and the H616 codec support was tuned on
+top of that, so the two errors cancel for the analogue codec. Other
+users of the audio PLL run at the wrong rate: sun4i-spdif plays at
+twice the requested rate once the codec has moved the PLL to its
+sigma-delta setting, and an I2S driver for the Audio Hub that asks for
+24.576 MHz gets 49.152 MHz.
+
+The fix is a single patch spanning clk and ASoC. Correcting the CCU
+alone halves the codec rate, and doubling the codec request alone makes
+the codec run at twice its rate on the current CCU, so a two-patch
+series would leave one commit with broken audio for bisection and for
+stable backports, which need both halves together. I would suggest the
+patch goes through the sunxi clk tree with an ack from Mark for the
+sun4i-codec hunk; taking it through ASoC with an ack for the CCU hunk
+works just as well.
+
+Tool use: the root cause analysis, the patch and the text of both mails
+were produced with an AI coding assistant (Claude Code) during a longer
+session, which was asked to bring up HDMI audio on an H618 TV box, then
+to find out why the analogue codec played at half speed after the CCU
+correction, and to prepare this fix. It measured the PLL, the module
+clock and the DAC drain rate on the hardware with devmem and the
+AC_DAC_CNT counter, and checked them against the PLL formula of the
+H616 manual and against the vendor-derived H616 codec driver carried by
+Armbian, which requests twice the table rate. The measurements in the
+notes of the patch come from those runs; pitch and channel order were
+checked by ear.
+
+Daniel Golle (1):
+  clk: sunxi-ng: h616: fix audio PLL and codec clock rates
+
+ drivers/clk/sunxi-ng/ccu-sun50i-h616.c | 4 ++--
+ sound/soc/sunxi/sun4i-codec.c          | 8 ++++++++
+ 2 files changed, 10 insertions(+), 2 deletions(-)
 
 
-On Thu, 26 Nov 2026 15:52:35 +0100, Sebastian Reichel wrote:
-> When RK3588 DFI support was added, support for the clocks was missed.
-> This series fixes that and also adds the clocks for RK3576 as well as
-> RK3576 DFI node itself.
-> 
-> The DT binding for the DFI side already got merged together with the
-> driver changes today, so there is no dependencies for this series:
-> 
-> [...]
-
-Applied, thanks!
-
-[1/6] dt-bindings: clock: rk3588: add PCLK_DDR_MON_CH clocks
-      commit: 76c1bc06e04007247ca47e45d7313c24ac0b2570
-[2/6] dt-bindings: clock: rk3576: add more DFI clocks
-      commit: 2268455f297ec61b42ab44dfeaf982d2af370255
-[3/6] clk: rockchip: rk3588: add PCLK_DDR_MON_CH gate branches
-      commit: 2fb95541b66c05384c75259f06d51efa69e16bca
-[4/6] clk: rockchip: rk3576: add missing DFI clock branch
-      commit: 8b8862a19dc62e1fd838ce3eafd43382f78d4d01
-[5/6] arm64: dts: rockchip: add dfi clocks on RK3588
-      commit: 6046a394edaff1e6f67911ebe4ef0f508a9f82cf
-[6/6] arm64: dts: rockchip: add DFI node to RK3576
-      commit: b4f857a1d2ca5999295247933d29ebaf3b5377db
-
-Best regards,
+base-commit: b6a9fa34ce4187cb69d3c588a4bbffc31ce5db8f
 -- 
-Heiko Stuebner <heiko@sntech.de>
+2.56.1
