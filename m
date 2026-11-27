@@ -1,73 +1,58 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=80.241.56.151
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795802762;
-	b=TzC24msy5fMDmXlOt2fv4JwaGtRD+/84I0NMCDHyuqGZvi1YN1jmpDP4DzfRFWLReg6S
-	 jC2hgWFD4TlQSqChvobPf1Dah8jM7iBhasu8PI/ml8zLOl59M7a8dNr60EKFY+cl6ZNzG
-	 GA381v31thHk726MxEX6aIUaIDPzSPyQe8K/pqONH8u+WTNbiLYpa9muUjYWu/HO1ypD1
-	 akUayMrJ3Glox0ZPioRDRUz1RF1IvccI4c8G8jP1Y6p7x+I5+yDx+cqvObywwyeZrDrVJ
-	 dmxgKiX3nraHfMv2EJPAnv6fTQhXZYDP5sgoHnnZfI0ud6Ou782WYU1NE2mdAmvJgFQ==
+	t=1795803908;
+	b=Au6nIWpd1kt6fo4uEdawCGuVjF1I/OQWVqcEMdv/DP02WMaKP05EK4upiVBdZZSLinWb
+	 breUo3yXuYmbx536rcL5AWoaGEmAScWGwPJmIB2UlvWmJg54debuaVG3K6HfZv5OYXC6v
+	 vwDJyzjXYgsSMobXOX3FriBHlQy5tutcYynpZp5qW4jmnBnKcRYbFefZEpllr+zmV4EzW
+	 krK7vbIWM289ZOqdKvJNy79c80NUtv10Yk+izhTsmaY+l+asBuQrfxKO2DKRDvrZH36Jz
+	 QShd2S9/WU0IBF0JUby/l7Rw8JXq1G2SkVsQEBNOINoafuMAde9onca3NJIKE0jv+7Q==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795802762;
-	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
-	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
-	bh=/LAn10CjDS6Zxt3L6mFomWVrJQxlQ87/AtaWfuA2RyM=;
-	b=jZiTUh9O/eY+wNued8HluGZ2zMKEXIwKvMFGXhXn5sosPjwHdQYNhwfMqoaPNwGx0q+s
-	 wygc8MTmgAjvf3N+UYKHgLANK+dubqG4lmtFP1QKbeqjrWEyegzGH16xMrCb2XKH9Ql1V
-	 1aEkvaQIYqahnMmIJ0w/niVm0q5f9ExVbTPuJ21PQvcecgK9kfXTX35YDLyVJnHbwtPoY
-	 YGcaeKA4Rt4DH9x34rNaowscGr13ZgXAj69/DtTEmeOoI3ZJBifjbiVU3VU5QaWw5H0h5
-	 gWkbQqy+6okBV3skeUVswNRXCgiCkyF3XCmkKqNS4r/WBAB1ftctYatx1wBXcq98VQg==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795803908;
+	h=DMARC-Filter:Received:DKIM-Signature:Message-ID:Date:MIME-Version:
+	 User-Agent:Subject:To:Cc:References:Content-Language:From:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:X-MBO-RS-META:X-MBO-RS-ID;
+	bh=nhYYKORTR+/BNUYkaM3WAO4aIQzSPeOEyfSMlfBv7+k=;
+	b=eZmnKiKfgvALBKifPzuymRVbhoKec+7QRIrCIc+0U7OuIJpNV+/k0+Cby4LKE2q1/gU+
+	 4SsXipincuBEaLWSji+ntdUopHvj3VlFZwDjs5Xhm//6+HH1YuQhx9d03cW5p79/m7SuV
+	 JiD6T59DRpjI1MUpJgBmq1r1+ztGqF11K6KI1hN4l0f72BqM9Xz0jxvp/YkvVmElSJflq
+	 3qlNFYEcP9GiS7GLkaES1vuCdmR8NifI4wg98CpRNDlPIGSTzPl619C63OabsXhS17dIP
+	 GYHjeZC2mMU5BKYmHYwC17WyXnJhVExDUVwGQcl00OcW3YPBx8QYPXmGgR2i4BJhhIQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=eLMcuMf7;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	dmarc=pass header.from=mailbox.org;
+	spf=pass smtp.mailfrom=mailbox.org;
+	dkim=pass header.d=mailbox.org header.i=@mailbox.org header.a=rsa-sha256 header.s=mail20150812 header.b=rp0o4cZg;
+	arc=none smtp.remote-ip=80.241.56.151
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EAE7606A336;
-	Fri, 27 Nov 2026 18:06:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0195606A321;
+	Fri, 27 Nov 2026 18:25:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org F0195606A321
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=eLMcuMf7
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1A1A1F000C1;
-	Fri, 27 Nov 2026 18:05:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795802761;
-	bh=/LAn10CjDS6Zxt3L6mFomWVrJQxlQ87/AtaWfuA2RyM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=eLMcuMf7+6bklxEfCrmvW0LnReaqJnDeLLu3fRuzG0i6o/KU4CsLtTWJO8kfIRdOe
-	 0F8pNKxURPoi+83T5ueRj5oPLzDUEhNX4ww3OUbMvbKJ9F4Qr80RKQuAMCRiDOiLq1
-	 0lYJaVB+Zb21BudkyEkIUcueRfBGAreu0ccjeVMKc+h+xEMwAsQzcpAK8//6fBpFW8
-	 75jj2Vs8AFAOVT/NB7mfc0w00ACGWHJJ3QZm8O9zEXug5VrmNZe66eIcZBfsS7Oc5c
-	 //Ns4MjBwwGkvi800rvOUwNKmfFY10TU8oo7Y7D9GAtyQbQymgOTCWq8MbPED2gqGg
-	 PSgqLxtBkJMtw==
-From: Lee Jones <lee@kernel.org>
-To: lee@kernel.org,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Takashi Sakamoto <o-takashi@sakamocchi.jp>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig=20=28The=20Capable=20Hub=29?= <u.kleine-koenig@baylibre.com>,
-	Pankaj Dubey <pankaj.dubey@samsung.com>,
-	Ajay Kumar <ajaykumar.rs@samsung.com>,
-	Jayati Sahu <jayati.sahu@samsung.com>,
-	Smitha T Murthy <smitha.t@samsung.com>,
-	Sathyakam M <sathya@samsung.com>,
-	linux-samsung-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org
-Subject: [PATCH 12/12] clk: samsung: fsd: Terminate PLL rate tables with sentinels
-Date: Fri, 27 Nov 2026 18:03:20 +0000
-Message-ID: <20261127180416.3277544-13-lee@kernel.org>
-X-Mailer: git-send-email 2.56.1.839.g22a8290db9-goog
-In-Reply-To: <20261127180416.3277544-1-lee@kernel.org>
-References: <20261127180416.3277544-1-lee@kernel.org>
+	dkim=pass (2048-bit key, unprotected) header.d=mailbox.org header.i=@mailbox.org header.a=rsa-sha256 header.s=mail20150812 header.b=rp0o4cZg
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519MLKEM768 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4jbhfR0W8sz8vb0;
+	Fri, 27 Nov 2026 19:25:03 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1795803903;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nhYYKORTR+/BNUYkaM3WAO4aIQzSPeOEyfSMlfBv7+k=;
+	b=rp0o4cZg/2LoIO1Q3s2bGCHl0Aon823Hf088RxGd6yK0MGZt0OcgEHQyZ8sPv/bU9JRYhC
+	qfnbtzyR0NSsKumv1eWkS6y22w/gphMewwv47R1gJk07iLtsp/FHrbmnTm3wsmGibl6682
+	AB7m/c/rSdKsxCj7EVhQXuOcTdBL1Jg4NCfVCTSsOZDMnx6lWDFEKpjljbhE/RQ7/+YMeV
+	nr6R4OO+cgd8IDbsU8hyAuExijEq1D+zcY7LVNMGKNH5hKOT4UQ3VCqaH9K+dES520+O0c
+	zv/tXwq6+iJm2zJFx6THtVHP7g/ytNNUCEcX72NJX4FNmrF5vBCiD/1CP6LXFQ==
+Message-ID: <0e44d7dd-eb49-4c47-a43c-11ed90c96bb0@mailbox.org>
+Date: Fri, 27 Nov 2026 19:24:58 +0100
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -77,70 +62,56 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 01/14] clk: renesas: r8a78000: Merge debug prints in
+ r8a78000_clk_get()
+To: Geert Uytterhoeven <geert@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+ Brian Masney <bmasney+clk@redhat.com>,
+ Jerome Brunet <jbrunet+clk@baylibre.com>, Ulf Hansson <ulfh@kernel.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ "Rafael J . Wysocki" <rafael@kernel.org>,
+ Marek Vasut <marek.vasut+renesas@mailbox.org>,
+ Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Kevin Hilman <khilman@baylibre.com>, Vinod Koul <vkoul@kernel.org>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+ Paul Elder <paul.elder+renesas@ideasonboard.com>,
+ =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clegoffic@baylibre.com>,
+ Sudeep Holla <sudeep.holla@kernel.org>,
+ Cristian Marussi <cristian.marussi@arm.com>
+Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Geert Uytterhoeven <geert+renesas@glider.be>
+References: <cover.1795796064.git.geert+renesas@glider.be>
+ <7abac4b033081657e2a9870182bc06f5a5a02c0c.1795796064.git.geert+renesas@glider.be>
+Content-Language: en-US
+From: Marek Vasut <marek.vasut@mailbox.org>
+In-Reply-To: <7abac4b033081657e2a9870182bc06f5a5a02c0c.1795796064.git.geert+renesas@glider.be>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-MBO-RS-META: cepmxa9jpmdz5zarare85p9sm4r8pee9
+X-MBO-RS-ID: feb1e7b3c69ed64ac80
 
-_samsung_clk_register_pll() sizes each PLL rate table by scanning until
-it encounters an entry with .rate == 0, then copies the counted entries
-into pll->rate_table.  However, pll_shared0_rate_table,
-pll_shared1_rate_table, pll_shared2_rate_table, pll_shared3_rate_table,
-pll_mfc_rate_table, and pll_cam_csi_rate_table all omit a terminating
-zero sentinel, causing out-of-bounds reads into adjacent read-only data
-and populating pll->rate_table with bogus entries.
+On 11/27/26 5:26 PM, Geert Uytterhoeven wrote:
+> From: Geert Uytterhoeven <geert+renesas@glider.be>
+> 
+> The two debug prints in r8a78000_clk_get() are very similar.
+> Merge them into a single debug print.
+> 
+> Note that the clock's name is still printed, but its ID no longer is, as
+> that is purely internal.  The printing of real firmware IDs will be
+> readded when their handling is added.
+> 
+> While at it, unwrap the (wrongly-indented) continuation of the
+> r8a78000_clk_get() function header, as it fits on a single line.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Reviewed-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
 
-Append a sentinel entry to each of the 6 PLL rate tables.
-
-Fixes: 4f346005aaed ("clk: samsung: fsd: Add initial clock support")
-Fixes: 75c50afaa0d9 ("clk: samsung: fsd: Add cmu_mfc block clock information")
-Fixes: b826c3e4de1a ("clk: samsung: fsd: Add cam_csi block clock information")
-Cc: stable@vger.kernel.org
-Signed-off-by: Lee Jones <lee@kernel.org>
----
- drivers/clk/samsung/clk-fsd.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/drivers/clk/samsung/clk-fsd.c b/drivers/clk/samsung/clk-fsd.c
-index 0a0bf1d62a04..ded7bfa97234 100644
---- a/drivers/clk/samsung/clk-fsd.c
-+++ b/drivers/clk/samsung/clk-fsd.c
-@@ -155,18 +155,22 @@ static const unsigned long cmu_clk_regs[] __initconst = {
- 
- static const struct samsung_pll_rate_table pll_shared0_rate_table[] __initconst = {
- 	PLL_35XX_RATE(24 * MHZ, 2000000000U, 250, 3, 0),
-+	{ /* sentinel */ }
- };
- 
- static const struct samsung_pll_rate_table pll_shared1_rate_table[] __initconst = {
- 	PLL_35XX_RATE(24 * MHZ, 2400000000U, 200, 2, 0),
-+	{ /* sentinel */ }
- };
- 
- static const struct samsung_pll_rate_table pll_shared2_rate_table[] __initconst = {
- 	PLL_35XX_RATE(24 * MHZ, 2400000000U, 200, 2, 0),
-+	{ /* sentinel */ }
- };
- 
- static const struct samsung_pll_rate_table pll_shared3_rate_table[] __initconst = {
- 	PLL_35XX_RATE(24 * MHZ, 1800000000U, 150, 2, 0),
-+	{ /* sentinel */ }
- };
- 
- static const struct samsung_pll_clock cmu_pll_clks[] __initconst = {
-@@ -1482,6 +1486,7 @@ static const unsigned long mfc_clk_regs[] __initconst = {
- 
- static const struct samsung_pll_rate_table pll_mfc_rate_table[] __initconst = {
- 	PLL_35XX_RATE(24 * MHZ, 666000000U, 111, 4, 0),
-+	{ /* sentinel */ }
- };
- 
- static const struct samsung_pll_clock mfc_pll_clks[] __initconst = {
-@@ -1642,6 +1647,7 @@ static const unsigned long cam_csi_clk_regs[] __initconst = {
- 
- static const struct samsung_pll_rate_table pll_cam_csi_rate_table[] __initconst = {
- 	PLL_35XX_RATE(24 * MHZ, 1066000000U, 533, 12, 0),
-+	{ /* sentinel */ }
- };
- 
- static const struct samsung_pll_clock cam_csi_pll_clks[] __initconst = {
--- 
-2.56.1.839.g22a8290db9-goog
-
+Thank you !
