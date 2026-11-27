@@ -1,106 +1,107 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.214.182
-ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795787181;
-	b=JEUidx6HW9E4sKhMB3OsAQWJKA5MRn9N12T3osaNEcLRe9rxyL7z+MJ/RrXekCqnAUZN
-	 P6dllXQKBI5nzSSN6P1FIOBKeSe1eHWNXqcfW9eGrJx1hAFIkU8CkkYoLp0/Q8widmpCD
-	 nlmYd9DEt+GMfL6qkkXGmX29qTdlsg1D6+kL0FA0tFZra0/oNLca3zmNAntNCIZqcX9ce
-	 Fx0sYLKjUomG1MqgMuCbFmoSrUUFG14xsTvG2fuMRJmX8V+nborWCLBby1DaQfeuW6W3F
-	 sywE4TPSC7B7hNGrDmN7jyUSvY4mhJ8aUJSaE6l6PkdfrEnnBoAvlarMs9ed406Azdg==
-ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795787181;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-ID:X-Mailer:In-Reply-To:References:
-	 MIME-Version:Content-Transfer-Encoding;
-	bh=xR4yuXTQOAyEDilHAtowb56eXirOM8/fc1liK2FFiQk=;
-	b=i3PXxBmqYCJnToAvLJo2LGIO4HsiYDDq9WIyz7BlHTs+gQQezTbqMLXsztQy6fHGJc9j
-	 5IN0LCkVReH5DlsYPO5W1oqA3J3xozcgqNPdou4eJ7FjyyR+SnIe4SxYk2cE+kIeHO+Lu
-	 gsG47ktNjlvssVSTGRDi6a7voSey//abZk/OWOLTcdw62sw/39BKFED+mQUI3U1iiNfRr
-	 V9gRe53tP2GTUubj5jpHGFBhXyLHAhAJZG17zTRsnYR8gdawLFxufszGQoaWyLdf9QP0T
-	 J/cnbu8NiAsIY7SUIh765C21gA0YnvlXL7h7uDyLiFsIcYkaY/jkxu6ANytW9IVekhA==
-ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=AGAU9Liq;
-	arc=none smtp.remote-ip=209.85.214.182
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=40.107.74.3
+ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
+	t=1795787488;
+	b=eRdSo+jaAiTbn21zcn0UU8EAjLuQ+x7QMmbMAr33blI8YPCrHxef2G3LrJLz47IXPEXy
+	 iJvW/jbr2fAc1jkVbXc/i3g5h3zKgACc9JaVIwFJs/b9WdOKncD70E2fymgktJeiFbfGu
+	 PMG/CWPtdlFeFDquO9JHihO7oBf6nMA1T+/+tb2mgsOQnBYzb/FlmEc4CBpUbLYBp8apC
+	 m5Ro2uAmO6ESQzVCKTvqZYhNVNV6zF/3lm8HT/8LXsbNOSkXo/y+OtuGdjSNnePuP5mwh
+	 EiF6w5ILXe0MWeju5F6EFD9iu05WeGeoJ+oX9bFzDK1Z0wiL1GAbkb2Sa5T+UdK07gg==
+ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795787488;
+	h=DMARC-Filter:DKIM-Signature:Received:Received:Message-ID:Date:
+	 User-Agent:Subject:To:Cc:References:Content-Language:From:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:X-ClientProxiedBy:MIME-Version:
+	 X-MS-PublicTrafficType:X-MS-TrafficTypeDiagnostic:
+	 X-MS-Office365-Filtering-Correlation-Id:X-LD-Processed:
+	 X-MS-Exchange-SenderADCheck:X-MS-Exchange-AntiSpam-Relay:
+	 X-Microsoft-Antispam:X-Microsoft-Antispam-Message-Info:
+	 X-Forefront-Antispam-Report:
+	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
+	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
+	 X-MS-Exchange-CrossTenant-Network-Message-Id:
+	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
+	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
+	 X-MS-Exchange-CrossTenant-FromEntityHeader:
+	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
+	 X-MS-Exchange-CrossTenant-UserPrincipalName:
+	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
+	bh=Zfo3H2DVXSEm3U1wLHu/CQbo35QCCW4YqgWXFfojTIc=;
+	b=1CUuTZMeJnQ7XwmRQzjCRmbEgBD2Elj4QkExJFP3vhI0X+vCUv4rBDk9InIj7vl/rboZ
+	 4I6Db+c5lbboBaU280x7J9I1Qfn+9amIRns+3TIqIxOn+DskcKRlXZwIWKi9hRITTdE1c
+	 cux63vPHxuJaWZ7lojlKb77ICZGplscHBt/T0gabeVj3kRMFkfifOWb3Epom/UK6x71gv
+	 dJ4/Eo4NFYUC/5E+I3tL8e4xh2EEXRIMxfQVY6GkEzyinZWtucKIM3+HuQzVbQmf14UCV
+	 zDXAQ5aClbmBzvAJtaQMXWoPzvdlAhIyaGpHPRdyFbpCM63fMRvEAzMws+41RJOVpLQ==
+ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=renesas.com;
+	spf=pass smtp.mailfrom=renesas.com;
+	dkim=pass header.d=renesas.com header.i=@renesas.com header.a=rsa-sha256 header.s=selector1 header.b=Z4sUDsjg;
+	arc=pass header.oldest-pass=0 smtp.remote-ip=40.107.74.3
+Received: from OS0P286CU010.outbound.protection.outlook.com (mail-japanwestazon11011003.outbound.protection.outlook.com [40.107.74.3])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 586AD606A32F
-	for <linux-clk@vger.kernel.org>; Fri, 27 Nov 2026 13:46:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 586AD606A32F
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93324606A31C;
+	Fri, 27 Nov 2026 13:51:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 93324606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=AGAU9Liq
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2f0621eec70so57203125ad.2
-        for <linux-clk@vger.kernel.org>; Fri, 27 Nov 2026 05:46:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1795787180; x=1796391980; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=xR4yuXTQOAyEDilHAtowb56eXirOM8/fc1liK2FFiQk=;
-        b=AGAU9LiqypIjJWbA2RTVEHqWz5tvzMFqIsD8s1V5CDz+EW7FfM3OriPXCqsaoNZLgQ
-         nqGFaMjS4ne/xpB5yy/LZzPc1VcmsSa0irm6uqtGhsWDLTs8bXCwRpSK1Gv+NiCbX1yj
-         bi3khFFKtSsb9eaQ7bGRDEvTyImK0razii0vhPgaANtQwHbgXf8J9+0yklkltlc32nf2
-         Sq6z5R+lQF0DYvJi7G7iwrQKd4irmMu06/LWJtdZWchrqPOtPbHPDoygyDLNUyc+t6LP
-         4bCmzj8Rg3nk5ZvfJi2xUVwYnxm13ocBw5dvFeK9vnGsPNppJGPRoRFwt76RQOhVgll1
-         EaUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795787180; x=1796391980;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to:content-type;
-        bh=xR4yuXTQOAyEDilHAtowb56eXirOM8/fc1liK2FFiQk=;
-        b=ZKi1kVnsOncLbzLB82BVhaMWsMe1TLHTt/v0IUx2mKVfPz6PM6Qw6eRqDSEz0TKKlp
-         vRre6CIp07WTq88p73NyWv22FTblm9KZpAWz3ZhH1H44TOq1akDD1eTp+rgeSz8rnZ9D
-         PSYysDiusd0YUtCZzxs9dD0CGDj8rkFQxLx+tf5UGwiz3UD1IBjqCs1dfxHD0tAR6/yp
-         FKQPmBEFA3rMcWvZp1F29XMHMmAHrTTqA8zb/Zz0KsAaLUaeTaqjjHTSqlGfVavqiGLw
-         /bjaWlZ8+3JDYjuHLC8um4D+XN9L+QdHNUVE2L3Q4RrVYcZmFIiJIjlH4CGZTmqHlgub
-         CvYQ==
-X-Forwarded-Encrypted: i=1; AL+hErF07eSUvlHjEq7gzIiFQuCd6nYe7LhVc7g63v94HRs0vxBptJ2VwCf+MPup31jAPiD5YEytUrXcjsE=@vger.kernel.org
-X-Gm-Message-State: APuU4Z8PNXf0hyDT4y/pxsOdhpvlAx728mledUmzvo1WiyDEoTvCOj2c
-	Qk2Cws/4ZLXG3/WwjLu8vxEMxNISWBc51B+9W5qYGEPTBO2dNHv+AaG1
-X-Gm-Gg: AZFdTZfFAbAWWNOjQW4xEyl2+Oy5TBKV0QQoG8/q/sc2lZXKhIg27Xr4QkZppo8SmDT
-	1PvZqXw3XlvVedsGLNLl/Oef2Ja9EBe1ke/7wd+rxe10u7ghiRGk1ehx08xuyu0mb31UdCYxjoY
-	6YGUTU7XZwtE4GdLTcyeHIaJCeUXBZ41RR8UFjO1lv3yK+VLpJg6hztRP1ja4pPFesuHOFUIbSZ
-	37XBbh2BIfLOQAsAp/KGU/oApK4IVNcn/rf0nCppR+15oItMQtRax8JoaacmqEzTmpYrbNDOpdm
-	bfXJqxCiKr7lc759ZOV0gLjuSNeVXnHBCAHhftddr+gS/EETEfTXSxZncDkD+V0yRG9XfEFMB2S
-	DpcM+nnfdgjFwhvPp1Z4q4GUcMNKSPU5Sg2UVoMFPmwWYMijcifjHrP3/dPZtiSM8uUY+RrhpVs
-	s+yr4TR+7aMECzQv/GOvNlzxLCLmPUVjryeQX2P6lche140ZFGVTzc2IcJfgbAamg/GPNnpHfxf
-	AFgZifDHx44RZvXFpHh8zfFG7NerbDUNduQVrSeuKxA7FKxKJcsM4FmjuZqtxmEI9njkjQKUUkh
-	mVo07IpjtlWTN0UHqUANXkX23yxkKHuFJvP7FKOC3CR8Ids=
-X-Received: by 2002:a17:902:cccc:b0:2f0:d976:651d with SMTP id d9443c01a7336-2f0d9767d6amr88871745ad.14.1795787179570;
-        Fri, 27 Nov 2026 05:46:19 -0800 (PST)
-Received: from localhost.localdomain ([2404:c0:aa07:12b3:e89:dfdd:d14b:d911])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2f03f0c1f2csm121741545ad.22.2026.11.27.05.46.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Nov 2026 05:46:19 -0800 (PST)
-From: Hikmah Gumelar <hikmahgumelar@gmail.com>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: linux-media@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Abel Vesa <abelvesa@kernel.org>
-Subject: [PATCH v5 7/7] arm64: dts: qcom: msm8953-xiaomi-tissot: enable front and rear cameras
-Date: Fri, 27 Nov 2026 20:45:07 +0700
-Message-ID: <20261127134507.125513-8-hikmahgumelar@gmail.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20261127134507.125513-1-hikmahgumelar@gmail.com>
-References: <20261127134507.125513-1-hikmahgumelar@gmail.com>
+	dkim=pass (1024-bit key, unprotected) header.d=renesas.com header.i=@renesas.com header.a=rsa-sha256 header.s=selector1 header.b=Z4sUDsjg
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Qt1FhDVSSPsEs02ppDIfHhzGEI0WuKaRoVOk050z+odmUWKC7tN9g7Uu6XqCSbKHPbqWDkH4Nl3vC64cKPBeA4rk5Ov2kks6k9/Cig2vORQfju3mYqPDgCLQP8cm4ww/33/BlFXDKMoe2xUvTP25alBBzvuiJR8TanwkYH/sWC+BCwj60UvUokmSjSOUflNr02NFvvPIDVy0V3QyMdnfmvyIuiQgOwBOd3jApbSfcez2U0sauTVbSGDfzgq/zbpP/HcWUF9Q1Jnu4RJjBk4wDKbJFFeEUvAdPyxsAqxxMPP41EIdXz/lVkU4gtQXElAsBQGAVN9RRv9YP0TJiRhZZA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Zfo3H2DVXSEm3U1wLHu/CQbo35QCCW4YqgWXFfojTIc=;
+ b=Se3gQL/OpXpI+6mj4Z/VuaXE2Hx0rTA8ylhjijW1BR6P66W4ba0sBHASbp3ujLauCXE67yR51angMvScY56FHo6v9tQlnFl174OHNZfP6FP/4x7FOY9pWE19DJCLf4tchLCLGPEDs0+qrfMiHzMgCt+D7AZVp2oXrH+pi2kwf5JY6MtmQbZrcJFkF/86zEXsZXmoHySKWxQYHFVEenFnVxSDn/TgFRrVqCPm5BEWYkWbVJDx9l4AmN9gnRBVdzflYd3PocnEkvRma/LASbjzXkcXRjzTbrjqS3++fLUIOQz/WW6asd85SiJxmINDoFQfzTK0/784DyoNmgFUioQLOA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
+ dkim=pass header.d=renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Zfo3H2DVXSEm3U1wLHu/CQbo35QCCW4YqgWXFfojTIc=;
+ b=Z4sUDsjgZ+TrWcPSAaJ8nNsW3tnaEv1fPwQ6RQxmmpInd3fviSxnTBb4y1qN5Gi5soI9gO7iY2uslzaLmqGwGrVoQWGhIBMrWvqIgM9PKbeeWaa8XLFnjK3okM5SykjHlMaEkcwgGeZKSIKAHa3nokllyiiu9VOJlwLAzFpI404=
+Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=renesas.com;
+Received: from TYYPR01MB15118.jpnprd01.prod.outlook.com
+ (2603:1096:405:1a1::11) by TYWPR01MB7307.jpnprd01.prod.outlook.com
+ (2603:1096:400:ea::10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.662.9; Fri, 27 Nov
+ 2026 13:51:25 +0000
+Received: from TYYPR01MB15118.jpnprd01.prod.outlook.com
+ ([fe80::1116:d56:8164:63b4]) by TYYPR01MB15118.jpnprd01.prod.outlook.com
+ ([fe80::1116:d56:8164:63b4%6]) with mapi id 15.21.0662.007; Fri, 27 Nov 2026
+ 13:51:24 +0000
+Message-ID: <d132b7e9-ead1-4f6b-a3c2-7240b89156ae@renesas.com>
+Date: Fri, 27 Nov 2026 14:51:11 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/7] i3c: renesas: Fix zero I2C SCL rate on pure I3C
+ buses
+To: claudiu beznea <claudiu.beznea@tuxon.dev>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Frank Li <Frank.Li@nxp.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
+ Magnus Damm <magnus.damm@gmail.com>, Stephen Boyd <sboyd@kernel.org>,
+ Brian Masney <bmasney+clk@redhat.com>,
+ Jerome Brunet <jbrunet+clk@baylibre.com>, Linus Walleij <linusw@kernel.org>
+Cc: linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, stable@vger.kernel.org
+References: <20261026-divo-ssgrlpcsrc-2966-i3c-v2-0-2e76b87209bb@renesas.com>
+ <20261026-divo-ssgrlpcsrc-2966-i3c-v2-1-2e76b87209bb@renesas.com>
+ <bd8014fe-6a77-445d-b73d-e87404638593@tuxon.dev>
+Content-Language: en-US
+From: Diogo Ivo <diogo.ivo.sx@renesas.com>
+In-Reply-To: <bd8014fe-6a77-445d-b73d-e87404638593@tuxon.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: FR4P281CA0271.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:e6::20) To TYYPR01MB15118.jpnprd01.prod.outlook.com
+ (2603:1096:405:1a1::11)
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -110,166 +111,145 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TYYPR01MB15118:EE_|TYWPR01MB7307:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1b2956d4-8272-40ff-a0e0-08df4c8d867c
+X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|23010399003|366016|7416014|376014|1800799024|11063799006|4143699003|18002099003|261009223027099003|261009221227099003|22082099003|921020|10067099003|56012099006|261102123227099003|261028144727099003|261026140227099003|261026121527099003|261021123027099003|261021121427099003|261022105027099003;
+X-Microsoft-Antispam-Message-Info:
+	jCeLZr7PB/SXjpp0MLhCNulA1HblVsB7f6nYO/Xwh37XtD4Ry5MOZwuWd2i/6FFZvuaMy5q3ROt1HB6LejiS/U30U2DFkD7soywZ9KWtt/Xxerhu5cwxm5VbRWRkZjPEABgTI8JHaYLIMH3B01lazK0XXJnmeqG8TrjgvPsNne+ac1ok8ifKgcXnU7k7lYgX6msipEvSpGkJJx/pG7TGJORNqx+ex5dAJzmSzIxswip/7a5wnt3E2RkSq3Y7fX/y75LNXqEcaa/lfU/LjK5eVfIBKEniBHh2GarA9zK1Odu1haXmQBOEiy1hr9Z6kqZNkBXvE78U5oosqzy6JfYGFQLFCktt6krPCCL4MXIynsK6vO58dAepLdOXVNreKM0cEAwAX/ivNgGMY+vNmnll1rjVcm4lpl/cm1UwxexRDKTXw4dzZOzC643ae0ehraD9GCLKRtyA/UKVoqVXv3K4hV8AVbrCTBQsHz8uxQW5kyrUcdGCycw5z4sPD5q3lGvYhVgDVQ0m66+AJC9q4kvgMlo7dQ4Avu1rr1U//AkLTOtF9KRHuq85CIIM1aMhM6hEo5Rjr7fj/LrGHjsu6X1RRQ3N3MPOrfECKafB0cLwH27ALT/PCptBB182CYcXNgqYQ+bsMGGmuOJOLA9clwzaqP59TI04lAYQ5GpEXFvu6e26J5kNUlUhaCD62N3Z4jK2j0Lp5nzFvVfTJnhO3Ih1+Q==
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYYPR01MB15118.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(23010399003)(366016)(7416014)(376014)(1800799024)(11063799006)(4143699003)(18002099003)(261009223027099003)(261009221227099003)(22082099003)(921020)(10067099003)(56012099006)(261102123227099003)(261028144727099003)(261026140227099003)(261026121527099003)(261021123027099003)(261021121427099003)(261022105027099003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?QmNMdmNBSU44amU5V0V1NDNhcU5aWEpTcGxlRU5GK1hSZEpYRDJ6ZHRVT0dC?=
+ =?utf-8?B?cTIwTmVhS1VoeFJFOC94aGFjd0c3RzZ0U0dheEVqaHJQUjNaRHBsMUFqV0Jm?=
+ =?utf-8?B?emxIVDNiYjhMaEhpVzFXL1plSnNwYW03OFpRQVZWdGpreUx3VEM1bm1oR2Zx?=
+ =?utf-8?B?aVk4amUySlk4ZHJjcU9VQWlQS09rKzRsN0hMS0RjeTdrYkVCbkprRE9Cdy8w?=
+ =?utf-8?B?b1U2Z3hibUJYQUlWME9icEFQOFhLOVpLS1gxMXgzMWd1b0UwUVlCQ0M0M0Ur?=
+ =?utf-8?B?aXRzNGtOaHlkVEl5RzRZdFN1MUdEQmorV2tlU1dNWHpuRnAwb1FZdCt2QTJr?=
+ =?utf-8?B?RnJsMnN5MjdBa3VsbE5YUUorUllzc0ZxNHpnaDl4OU91LysvRE9ZcUdCcmNp?=
+ =?utf-8?B?bTFFMCt2enFzUlpvT2d1M01kUlV5SnU1TGVWOENxOXlQalBZNGdYb3JjMEpB?=
+ =?utf-8?B?RWFHNEI4UXJsT0ZwQ0JMcXBsV3ExWlR0VkEvUzFyYkhGSlZTQXNZTUs0K1Ry?=
+ =?utf-8?B?akgvalJCWHdEeitXTFVKa3pSTVJXMDJrQnFIcU9VbUdSdzNXMkVCSEFzUkJQ?=
+ =?utf-8?B?N1dHRUYrbmJsN01jZUpOY0hsbzFickFRdy9TTFFVR252NWwwOFFmVTN5K3Vq?=
+ =?utf-8?B?a0RlYythN2Mzb3o3U29jcnBUNW9JaGliQXY1NG1JTmQxK2FOeFV1WTVIOGlM?=
+ =?utf-8?B?eWFjdFpXaWM1T1BtY0p0QWpaWjVBTnM1SzB3SCtacUdsWjFmY3U3Vndjd3lF?=
+ =?utf-8?B?TllIN3RVcUFqVGV3MERQL0Z5dENOamJXem40cEM2RW9pM09YOUtJWGZ6eXpZ?=
+ =?utf-8?B?ZmJ1Y1NlN1RPdmMyWmM3L3g4M0lEbFdRT0VyMG9RL0ovN0ljVjBFdk5kaWhB?=
+ =?utf-8?B?WEZVSjlHc2I0Y0hWWU1XYWNSQTdyQW1WZHJqcWlyU1FaNytwamxlN1NwR1Vm?=
+ =?utf-8?B?RlJ6dm1JMm1TU1dxYVpPWG4rQ1lXS2JINURwVm1VcHlObUFlelExWHMwNW5S?=
+ =?utf-8?B?bVZVS21IRFh6YVhiZ2t1ZUJaU0JBNFVCMnZKSWhkRitkaVBZblVGUFFEaldH?=
+ =?utf-8?B?azJzNCtxYWpVdlF2SU1pdk0zRGNRMUVUTHJKbk9sblRJQkxWSlpvVzVYcUli?=
+ =?utf-8?B?OCsyWDZHY2VvU2xjMFl0K2xVRXdGRndFQzhlY3BMMExkaE9OLzRMVW5qY2lz?=
+ =?utf-8?B?bElKa2lHNUtyMUFhb3hXL3R6UjF3SjBpR0JNZzJtM25JOTFpbGZ4VXhWejR3?=
+ =?utf-8?B?d2Z0NUVDekxuM3hPZldCS3pKMHVxakNsUzY1NzZ1T2tlTEdSRmRqanJwY2s3?=
+ =?utf-8?B?eXFwTWdYcXJxV0djcE91YlpDcmZVWmhBRytzNlY5ZkJRZHlTSmhva1lhNTVh?=
+ =?utf-8?B?V2RlMEU4WnNPMUZReGthbUY0VTBtV3VWQjVnd2U0SW1rNWdVL0lEbnVqNjdS?=
+ =?utf-8?B?S1RXY3FveTFrbU1tOVZtVEpld0J1YTJWcnFSc05kbzBMMkloNUpnSXpiNVQ3?=
+ =?utf-8?B?UmtwaHkrd2ErT1pvRXNQY2dDeDhveXRycmZ2Y05YdWQ0eDh3OEtqU1JNbGpi?=
+ =?utf-8?B?VjJSMis0V3hLOFZuckxhbVpFRE1oMmRQRlJYMVVzQ2Z4eXlIYzVHSWxDTkN5?=
+ =?utf-8?B?SFhrN242RS8wc0ZGZmNGWWxVTlBlcjRqTjN4dUxyYnJZTG9Kc1FaUzZHdWZo?=
+ =?utf-8?B?K3BaUUYvRWNrdHJJelE3Szhzb0dwUkhUK1EzOEMvNmFCNDlJUDJjVnhsWkVD?=
+ =?utf-8?B?QUIwQXJ6cGNqOXJobzVDWmw2ZEpTRkVBMkkzQXFvdEFmbnZDa2tLM0IvRERC?=
+ =?utf-8?B?NGdDOEhmMXlkZ2ZMc3k1dWtKNDBFdWV4U1Bua2tHVVZSMmZMY2pvY1I2ZEVX?=
+ =?utf-8?B?aHJnMEJ3UjdrMFZRdXd5SG83TjdWQmR4VXZwQ29pM0JtcmN5ZUcrTG1ya0hM?=
+ =?utf-8?B?d3pNZFhFWHV3TnNQUTE0WXZRVU1sNkVYaFF6NU84WUVNcnpJZFdUV1NNVFpJ?=
+ =?utf-8?B?RXFlNHZCdk9VYkwraTUyaW5EY2lFY1dOOFN1a0VrSGw5N3lWdDJ2VWQzYS9k?=
+ =?utf-8?B?bzZDNEdUc21ERnVvbG1qT0dsYW9VYldWbU9TdTltcjlGSS9EUTQyd2t6UmxO?=
+ =?utf-8?B?blVVZmx6WWNHaHRIUVFKclBIV1dQSGUvVDJ0ck9TSG81MkkvaEx3ZWJNejMz?=
+ =?utf-8?B?dStwZStFdG50MnN3SGl4UDkwNXNpOCt4ZzAwQzNIU2NlczZHbEV5L3NEQXcw?=
+ =?utf-8?B?N1dYRjFKekR1OE9FMzJqc05HcmZTODRRd0Judi9WOWQzelFzRmFma25ManpI?=
+ =?utf-8?B?elpWdU9JVFpYU0lZeHRXV1JrS1VUOXp0cW01ck1qVVFuK2FXZkhkbFlEcXNG?=
+ =?utf-8?Q?j+wx+zhAeENYhzIE=3D?=
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1b2956d4-8272-40ff-a0e0-08df4c8d867c
+X-MS-Exchange-CrossTenant-AuthSource: TYYPR01MB15118.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Nov 2026 13:51:24.6549
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: dgmXsENx4njtMFIbbJCyalU+AWzcUlC8Bmylu/NWVJGeuGG6/rkz4kCU+2H9P81QsQcLQoSUeQlU1X11PbouwXHc45js2BjIBaUkaNmPbq8=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYWPR01MB7307
 
-Enable CAMSS, CCI, CSIPHY0/CSIPHY2 ports, and the OmniVision OV12A10
+On 11/27/2026 10:12 AM, claudiu beznea wrote:
+> Hi, Diogo,
+> 
+> On 10/26/26 13:35, Diogo Ivo wrote:
+>> On a pure I3C bus there are no I2C devices, so the I3C core leaves
+>> bus->scl_rate.i2c at zero if i2c-scl-hz is not specified in DT.
+>> Deriving i2c_total_ticks from that zero rate programs a zero-width
+>> open-drain SCL into the STDBR open-drain fields, which are still used
+>> in pure I3C mode for example in DAA.
+>>
+>> Fall back to the 1 MHz FM+ limit instead, the fastest rate an I2C
+>> device could have, so that a sane open-drain timing is programmed.
+>>
+>> Fixes: d028219a9f14 ("i3c: master: Add basic driver for the Renesas 
+>> I3C controller")
+>> Cc: stable@vger.kernel.org
+>> Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>> Signed-off-by: Diogo Ivo <diogo.ivo.sx@renesas.com>
+>> ---
+>> Changes in v2:
+>>   - Substituted if/else with ternary operator
+>>   - Picked up R-b from Wolfram Sang
+>> ---
+>>   drivers/i3c/master/renesas-i3c.c | 10 +++++++++-
+>>   1 file changed, 9 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/i3c/master/renesas-i3c.c b/drivers/i3c/master/ 
+>> renesas-i3c.c
+>> index 8b264f72e55c..78d0a2c4a19e 100644
+>> --- a/drivers/i3c/master/renesas-i3c.c
+>> +++ b/drivers/i3c/master/renesas-i3c.c
+>> @@ -579,7 +579,15 @@ static int renesas_i3c_bus_init(struct 
+>> i3c_master_controller *m)
+>>       if (!i3c->rate)
+>>           return -EINVAL;
+>> -    i2c_total_ticks = DIV_ROUND_UP(i3c->rate, bus->scl_rate.i2c);
+>> +    /*
+>> +     * A pure I3C bus has no I2C devices, so the I3C core leaves
+>> +     * scl_rate.i2c at zero if not explicitly defined in DT. The
+>> +     * open-drain SCL fields of STDBR, which are used for the DAA
+>> +     * pending read, are derived from it though, so fall back to
+>> +     * the 1 MHz FM+ limit instead of programming a zero-width clock.
+>> +     */
+>> +    i2c_total_ticks = DIV_ROUND_UP(i3c->rate,
+>> +                       bus->scl_rate.i2c ?: 
+>> I3C_BUS_I2C_FM_PLUS_SCL_MAX_RATE);
+> 
+> The manual (at lest the RZ/G3S, Rev.1.30) mentions on the documentation 
+> of BFCTL.FMPE bit:
+> 
+> Set this bit to 1 when using the transmission rate within a range up to 
+> 1 Mbps (Fast-mode Plus [Fm+]) of the I3C-bus specification. Set this bit 
+> to 0 when using the transmission rate at other rates (up to 100 kbps 
+> [Sm], up to 400 kbps
+> [Fm]).
+> 
+> In case the i2c_total_ticks = I3C_BUS_I2C_FM_PLUS_SCL_MAX_RATE should 
+> the BFCTL.FMPE bit also be set for the operation you mentioned? If so, 
+> maybe set the default to I3C_BUS_I2C_FM_SCL_MAX_RATE to avoid any 
+> further changes?
 
-rear and Samsung S5K5E8 front image sensors on the Xiaomi Mi A1.
+I checked the RZ/G3L manual Rev 1.00 and this same block about FMPE is 
+there. However, in that case shouldn't this be applied to the whole 
+driver? For example on a pure I3C bus with a bus speed of 12.5 MHz what
+this section says is that the bit should be enabled. I checked the 
+driver and neither the BFCTL register nor the FMPE bit in the register
+are defined, so if I understand this correctly the FMPE bit seems like
+something that should be addressed for the entire driver on a separate
+patch and here we can keep this speed, but please correct me if I am wrong.
 
-Signed-off-by: Hikmah Gumelar <hikmahgumelar@gmail.com>
----
- .../boot/dts/qcom/msm8953-xiaomi-tissot.dts   | 124 ++++++++++++++++++
- 1 file changed, 124 insertions(+)
+Best regards,
+Diogo
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8953-xiaomi-tissot.dts b/arch/arm64/boot/dts/qcom/msm8953-xiaomi-tissot.dts
-index fccb9c4360ca..d8db3567fd36 100644
---- a/arch/arm64/boot/dts/qcom/msm8953-xiaomi-tissot.dts
-+++ b/arch/arm64/boot/dts/qcom/msm8953-xiaomi-tissot.dts
-@@ -74,6 +74,108 @@ vph_pwr: vph-pwr-regulator {
- 		regulator-always-on;
- 		regulator-boot-on;
- 	};
-+	vreg_cam_avdd: regulator-cam-avdd {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vreg_cam_avdd";
-+		regulator-min-microvolt = <2800000>;
-+		regulator-max-microvolt = <2800000>;
-+		gpio = <&tlmm 62 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+		pinctrl-0 = <&cam_vreg_avdd_default>;
-+		pinctrl-names = "default";
-+	};
-+};
-+
-+&camss {
-+	vdda-supply = <&pm8953_s3>;
-+	status = "okay";
-+
-+	ports {
-+		port@0 {
-+			reg = <0>;
-+
-+			csiphy0_ep: endpoint {
-+				clock-lanes = <7>;
-+				data-lanes = <0 1 2 3>;
-+				remote-endpoint = <&rear_cam_ep>;
-+			};
-+		};
-+
-+		port@2 {
-+			reg = <2>;
-+
-+			csiphy2_ep: endpoint {
-+				clock-lanes = <7>;
-+				data-lanes = <0 1>;
-+				remote-endpoint = <&front_cam_ep>;
-+			};
-+		};
-+	};
-+};
-+
-+&cci {
-+	status = "okay";
-+};
-+
-+&cci_i2c0 {
-+	camera@10 {
-+		compatible = "ovti,ov12a10";
-+		reg = <0x10>;
-+
-+		clocks = <&gcc GCC_CAMSS_MCLK0_CLK>;
-+		assigned-clocks = <&gcc GCC_CAMSS_MCLK0_CLK>;
-+		assigned-clock-rates = <24000000>;
-+		pinctrl-0 = <&cam_sensor_rear_default &camss_mclk0_default>;
-+		pinctrl-names = "default";
-+
-+		reset-gpios = <&tlmm 33 GPIO_ACTIVE_LOW>;
-+		powerdown-gpios = <&tlmm 39 GPIO_ACTIVE_LOW>;
-+
-+		avdd-supply = <&vreg_cam_avdd>;
-+		dvdd-supply = <&pm8953_l2>;
-+		dovdd-supply = <&pm8953_l6>;
-+
-+		rotation = <270>;
-+		orientation = <1>;
-+
-+		port {
-+			rear_cam_ep: endpoint {
-+				data-lanes = <1 2 3 4>;
-+				link-frequencies = /bits/ 64 <216000000>;
-+				remote-endpoint = <&csiphy0_ep>;
-+			};
-+		};
-+	};
-+};
-+
-+&cci_i2c1 {
-+	camera@2d {
-+		compatible = "samsung,s5k5e8";
-+		reg = <0x2d>;
-+
-+		clocks = <&gcc GCC_CAMSS_MCLK1_CLK>;
-+		assigned-clocks = <&gcc GCC_CAMSS_MCLK1_CLK>;
-+		assigned-clock-rates = <24000000>;
-+		pinctrl-0 = <&cam_sensor_front_default &camss_mclk1_default>;
-+		pinctrl-names = "default";
-+
-+		reset-gpios = <&tlmm 129 GPIO_ACTIVE_LOW>;
-+
-+		avdd-supply = <&pm8953_l22>;
-+		dvdd-supply = <&pm8953_l23>;
-+		dovdd-supply = <&pm8953_l6>;
-+
-+		rotation = <90>;
-+		orientation = <0>;
-+
-+		port {
-+			front_cam_ep: endpoint {
-+				data-lanes = <1 2>;
-+				link-frequencies = /bits/ 64 <418000000>;
-+				remote-endpoint = <&csiphy2_ep>;
-+			};
-+		};
-+	};
- };
- 
- &hsusb_phy {
-@@ -169,6 +271,7 @@ regulators {
- 		vdd_l4_l5_l6_l7_l16_l19-supply = <&pm8953_s4>;
- 		vdd_l8_l11_l12_l13_l14_l15-supply = <&vph_pwr>;
- 		vdd_l9_l10_l17_l18_l22-supply = <&vph_pwr>;
-+		vdd_l23-supply = <&pm8953_s3>;
- 
- 		pm8953_s1: s1 {
- 			regulator-min-microvolt = <870000>;
-@@ -302,6 +405,27 @@ gpio_hall_sensor_default: gpio-hall-sensor-state {
- 		bias-pull-up;
- 	};
- 
-+	cam_sensor_front_default: cam-sensor-front-default-state {
-+		pins = "gpio129";
-+		function = "gpio";
-+		drive-strength = <2>;
-+		bias-disable;
-+	};
-+
-+	cam_sensor_rear_default: cam-sensor-rear-default-state {
-+		pins = "gpio33", "gpio39";
-+		function = "gpio";
-+		drive-strength = <2>;
-+		bias-disable;
-+	};
-+
-+	cam_vreg_avdd_default: cam-vreg-avdd-default-state {
-+		pins = "gpio62";
-+		function = "gpio";
-+		drive-strength = <2>;
-+		bias-disable;
-+	};
-+
- 	ts_int_default: ts-int-default-state {
- 		pins = "gpio65";
- 		function = "gpio";
--- 
-2.47.3
+> Thank you,
+> Claudiu
 
