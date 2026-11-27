@@ -1,85 +1,85 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.218.51
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795809787;
-	b=J9UM49im/O59g6DUcizsYmxERkuFYgrOfM0boWpq+UREZrGgLrFFyPo7dukwk4PB88v5
-	 xRFnTRxcfM2EAOZFN3O/B3ilaGqx0JTiog7+C+d+mwMGc/3YqcAA+PJG2E6zkMBFKtZbc
-	 7g5Hl+U79yTSuOzYKnr28R67W6HOTfUHB+xFAqSWiBmbbASuh9oQ5KfELQXreEV3A8ewo
-	 L7KB+yEJrgeBZvE9Eopp/CYzB3Byq6atQz7kTZso6Z21O3GHUBW72JU7JJL5ajmxO+w5w
-	 +BjIaNF+dfr9r8Rx4creGdjxSecAHIJYSiTEhB4RGrgiEqyZurDc7XoWv/mnk46K0Pw==
+	t=1795809789;
+	b=apwVPzqU9GMvt5p6PZ/DG3yLpSjTlSL4hq9cAhVgFHOAsf6hYrihWLfuypACnEm9dTaj
+	 2l3dSrsBuR4vfAwMjesiBVpbp/MirOXuSYW4++ghuS67BX+4Zh9qI+j+H8FT4Gox/BoPK
+	 D9JXyemhVW+GydRzTQCp6kTvQ6k44oHYzyUuBUAVIFTZVchOA0QUHpAccqpulAyhGvmdC
+	 RE4nGsuHKK+Ch4pZ+s9Ncd630kppN1qo8Lo01/DqvGX3p7ICerd+lhDAnZn+7A90dnJfo
+	 0ZzJBV61fe/5n2kQC7pPGIx2WtXlQPy5/0xNkGUzZWKNDLVlHXzyja3FDrLWobYUVtQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795809787;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795809789;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
 	 MIME-Version:Content-Type:Content-Transfer-Encoding:Subject:From:To:
 	 Cc:In-Reply-To:References:Date:Message-Id:X-Mailer:
 	 X-Developer-Signature:X-Developer-Key;
-	bh=L/E3JJyk32BLVSmJPSu88QD4Xx3KecbTtSFMtKZvIaA=;
-	b=gu80C+IBZkky9TM3MJ98vn3xtDlG8QS5KAyJgn51RSD+HzsRWNcIKZY5huAi+f9IOpmc
-	 b3TSd4b0hvRS9T0uqcCEBuyB2mLWzKTuuTTIe5tUjOTvSdMyvDdPnNijkY7sGb+YlGDMk
-	 6qH8gq4XWyGUiiKtay358wPrrFpwsLXho26qM61kl/GyDUzb8uNPGr4JGTjJLBk37Zw37
-	 AG6d6zLilGLfc7GjfKjOQXwj9mNsgiq1nrjaau9s+GKlJQGSJDp9r6BkR17fzfBZ/ph5K
-	 V7dRaU1z60ewUp8LAkQSU1JKjelf1lZaOSmKtF5dqv682USp3Jm5tyQxU1YHDMxT3Ow==
+	bh=wtusPwl7oTxkglScGF7WcIoLENdcCkcXrxudV6XyW/M=;
+	b=fm9uF+upcyKGnQmybYsuEFalxc/hqHzWQTc5c/GJ947XRRqAO19Ms0tHDDk0trgNWLtU
+	 3zK8xaikPCK8k/UqoZyKNg/XbRSBnslGeOM1SbbFPc32LLoSDOvdWof1m9cz4VOQEwzZ5
+	 hOvSoPQNt6rVuKtJXyFe91/07qsZ1eDKyX9M69ER3JGXWPrtaKHrgZAW1q4VB4A14JPQP
+	 29UOGx5gqbCtwG2oT04gYwDv692FAbPShZvkF7EK4ajZ7fgITxwKAexVcn8IGrgCaWX+y
+	 VbpSOrgsh8U2ghBYmMsaMcHS3plk5DGu0EpuMVJewrLuO5G1NcQOkFk2TYk/bILQq1Q==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=baylibre.com;
 	spf=pass smtp.mailfrom=baylibre.com;
-	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=USVugUGJ;
-	arc=none smtp.remote-ip=209.85.208.52
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=n2R6FiKp;
+	arc=none smtp.remote-ip=209.85.218.51
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67185606A31E
-	for <linux-clk@vger.kernel.org>; Fri, 27 Nov 2026 20:03:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 67185606A31E
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A1C6606A31F
+	for <linux-clk@vger.kernel.org>; Fri, 27 Nov 2026 20:03:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 5A1C6606A31F
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=USVugUGJ
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-6bab10842f8so9959506a12.0
-        for <linux-clk@vger.kernel.org>; Fri, 27 Nov 2026 12:03:06 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=n2R6FiKp
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-c50ac25cdd4so1066967166b.1
+        for <linux-clk@vger.kernel.org>; Fri, 27 Nov 2026 12:03:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1795809785; x=1796414585; darn=vger.kernel.org;
+        d=baylibre.com; s=google; t=1795809787; x=1796414587; darn=vger.kernel.org;
         h=message-id:date:references:in-reply-to:cc:to:from:subject
          :content-transfer-encoding:content-type:mime-version:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=L/E3JJyk32BLVSmJPSu88QD4Xx3KecbTtSFMtKZvIaA=;
-        b=USVugUGJ0OGFei1oWOv3ixK8kXmdxW89ohPqYbYPFavNwb4jr4xK/cCB4y9hnjKBRM
-         aMOvkgqxflag6ZhfKgZn6Crc/Q0pKn6tBIJr46jAuxAaLmM6loQMdtPdlzh1ApFcCcIo
-         B9aE8+dPxpxuHlLdrD194YCNFEvbZV3F+cl0P53tTPOcbIF6UF8cTL4S14CNVv4DUmuA
-         AEgFaEREQj2bq+B/IQqtj2BIkyBdW4uRS3Y7P0eYNo5+b5iJKu53Sp17WIb/C/drqg3q
-         +O8oCjm7LKaIgd6H5wW5LXl6/Pd9/2GoHH9kdvrEAwaYwOXV+667Uk+wJ1cWl86UfOSi
-         Xo6g==
+        bh=wtusPwl7oTxkglScGF7WcIoLENdcCkcXrxudV6XyW/M=;
+        b=n2R6FiKpuo8g8obEOm2WV36wL4nr03F4a4p5Nyd0b2wdtPQbbdxheWIYRfJxzmZb3+
+         O2uuDZi0uiaRR82uvCRPvAceWhP6zDVXz1OoocXKjcgBdfGYu5+22YfyBooVCoPKn0vb
+         r3D8qlvSHEZrhAGWsfmzXQbzDcPYrHAIRTqsZ8RA+mGo9ottqiGedVNrCrZjIfpbMUbK
+         daqNU1T6ZxAeN6QzRxvkmpuSn/9lf6SmQK+ByQ8IC8jIHeNICeMgIr5qlFtzEkXyQDnP
+         aumrrQUn8yPuqlr1pakQcTxfinAX7L31iaQpgA14Yqa4x1BmedsGkQVWOQm/ejRHzr28
+         OTDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795809785; x=1796414585;
+        d=1e100.net; s=20260707; t=1795809787; x=1796414587;
         h=message-id:date:references:in-reply-to:cc:to:from:subject
          :content-transfer-encoding:content-type:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=L/E3JJyk32BLVSmJPSu88QD4Xx3KecbTtSFMtKZvIaA=;
-        b=yJ4ftoJdE7qYrJ+hC+rFXiyJR962viNTpPCs9JB5JGkysioV4j1cAqjnvN9FeM+dcF
-         7pvwk9Calshhgpxwkh0UBBoD3jRkmQ3GK1vKPPSgYWVPbaGGNdwQ7ni0Qjv55eScSoZt
-         7XxBDU1tjJ8tLkoMqHh+rUr8F36auPDiFxO3hs6GgRZcz7ZwOjPiLU9Eo8t5kDM9H7wr
-         Z9h4y94MaQUTR4XMbCxShp72hBKYMXv8gO23GyaGKs76uXRX9uSjYOGAWvyoQr9Rm8/g
-         VdzHG6U0TPkanE7Xz25UITgzJB+CL/vhZ8hIPBs/XOBPISPWf9PXV/aU2MAteLguxtTa
-         l42A==
-X-Forwarded-Encrypted: i=1; AL+hErHvkRmJj8GHxMz+I5tcdjJV9AGUVyoIxD9kRGVIxPOb9v+Nwvrg7H9UGI5Yi8wAi+WglrX27+F1eMY=@vger.kernel.org
-X-Gm-Message-State: APuU4Z83qR/Q7VhV8fw7r3JSQ5VnTYrANI4R47lUO8QnC43bHknAPM4J
-	1abfK58G0CXbE/+6ajC+jGDnElOzB0GgWoUULePjLapuhDrXLMc0YfOhs8CpF3rEywk=
-X-Gm-Gg: AZFdTZeIFm2BHQZkdCK6GsS67W9+iSRXg/Kd33LDYr0+NuolrybiIf9WoiqRccY6eUJ
-	lUAEbR8Ff6l62ZJ82vfvxYvTgu1LlSg33mzu5jfF3Vd6cwbCfPxPhPNJ+9VWQyZT14MzDgp185M
-	Bp/MY5C47/zav9j2iwCfwCmwkwatAmXuH3NZWObww2BwRt177gItoRuccomSDQVf3ZNcK+aWesp
-	2m9UnQTm0F16BsnfMMNdG/9pgItZWDFYhga0gSN1a7dYFIqwjxbRajV/sjieSMdVzjIeEp8uxbV
-	KHVK0Ro+hlrKB7/IdPqvzLx+82FFv1g9n2CXJl5Gk2pB3AAeRyoqr3OzCPXMYRmGJbNF9eCYO3+
-	Wu3+utWbrYRhThFDlqbfhVyneyOgFayVnxJqe82F1K4BtgSOhg3TbHOpfWdTrgf511RYu+yZzPZ
-	zVGd3A1OtinEiBV9Xi0SMOSnYQzc2MWjpcuY5x8uhgi3HQwe3Lx2cFDYrDKCEOfbkKjDGRnEqXV
-	qFx25ISIek+IjGGErQE6WsuOubv8jQz+q/kNWsNIpCg2nm8qnykNtEgedwyopLkjTXESOKur6xZ
-	uXMeMr3YzOa0qVxGbq0MyPFJ4wYUODAMPVmfTXZKoEbkCCyS
-X-Received: by 2002:aa7:d402:0:b0:6a9:8863:ada4 with SMTP id 4fb4d7f45d1cf-6ba1fae103fmr14763271a12.3.1795809784883;
-        Fri, 27 Nov 2026 12:03:04 -0800 (PST)
+        bh=wtusPwl7oTxkglScGF7WcIoLENdcCkcXrxudV6XyW/M=;
+        b=Av5Y2mXmqsFBheQ3YzD9bjFcLoPN9X2JQc4bk8FJ+N7QvAXa2MGhRFPnoewRD6bqD6
+         XWFQVe2t4HLgGqey46qm7lIhCIn6yRlG0fs2apHMUd4p43EXEkOpzdDcq/9VaZwfzEPa
+         fqQYku54qOBVC/26oNNV+bHNzc23eXXKLR3ON3atZgnXxSrUrjKdoIvvrcWlMEeLJBIA
+         K7dERK7iM/h5WUdJLZdpOhX62UrU4bGMvnSO+F1hrAEPB620ZkIV3gDsqysbjJCVVEIw
+         GltFnfwA44rAvNA6yli4bLozMAr6Hg1bN4LKN/QfPZ+CZt/jXIyUvYr/yHokeo+QBHJX
+         SPHQ==
+X-Forwarded-Encrypted: i=1; AL+hErHLadwFxta57uVfKrK6sz+Imtjcou7fAJJS47scjm1NZUQwfZcKRVAx7MoJjpQbzympz9RrtZH4jfE=@vger.kernel.org
+X-Gm-Message-State: APuU4Z/YTgq1o7XLUseZj5e9zLk3bbw85+GMsSMNgU4DtbT1bTqJG6vC
+	WtqhkpycO7G1lAR03/VHPnz3Hi7I7Ixd5tmsWvP9AoKIpdA24zHfVteOj7LBfuSF/eg=
+X-Gm-Gg: AZFdTZddWCJYyeShm5WAAZWURbvQ4ylyT09qx38ItDZDyd5xlxSfy6Wh6faUOByv6cP
+	3mZ7vT2NRNasKzz3cty8V+y0/hGfLsgD8U8H3dRl/JI+NjRUUnzWBiZnADKRfRflpzYqfyOKJdO
+	d+CRStygR+us6v4QzIjyKhKAIYO2Y1lC26HGG7W2OtnqQZK0XmSggiuhzTV3Y2/WmnhSaUX9J5Y
+	CsIt0iQGRLIXrR2LTVucVWL5nuDTHFUtUnkDZmFJmtKJeBaZDUya4cyCN6OlyHZ7fHEaNR9DmE2
+	uS1t4qsSXdg6kwPoKdSzUSKj+dh0tTVnJ8LMwHaG62DRF4jXDbbNjoae2xjm+sbBZxuUMi70TWv
+	70J8nWUjdWB+drSx1TDSAmk4p5LFI4zZiheUGp6B3pnukT/TdaCbzizHXepH8xv+VFGmRJXKr8V
+	J/WHUbHgAi0SVlcGBU2ZPXaoZUDay4WFRfW54Nbj2QtOO7Li23u7u24ze2WNC9Uu1kqO8v1KRqE
+	LqtbJ3dK3OQubVglFwOqPd0CIdlpqMrBupZshUuM9D5fbop3qYs+QJGVDuMr7f41cSLZHQN5L57
+	lcGUMdpRAdKpxyIyJyxCcXULDNSkC+xk/rjeMDEy6O8No5Je
+X-Received: by 2002:a17:906:5908:b0:c3f:d8f2:f08e with SMTP id a640c23a62f3a-c513aad1aa7mr1591096666b.44.1795809786817;
+        Fri, 27 Nov 2026 12:03:06 -0800 (PST)
 Received: from localhost (82-67-6-57.subs.proxad.net. [82.67.6.57])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6ba6f8fa5b9sm9906969a12.37.2026.11.27.12.03.02
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c513ae661b3sm897861366b.16.2026.11.27.12.03.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Nov 2026 12:03:03 -0800 (PST)
+        Fri, 27 Nov 2026 12:03:06 -0800 (PST)
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -91,7 +91,7 @@ Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH 1/6] clk: Remove unused clk.dev
+Subject: Re: [PATCH 2/6] clk: Add dev_clk_get_from_provider()
 From: Jerome Brunet <jbrunet@baylibre.com>
 To: Geert Uytterhoeven <geert+renesas@glider.be>
 Cc: Aaro Koskinen <aaro.koskinen@iki.fi>, 
@@ -106,28 +106,30 @@ Cc: Aaro Koskinen <aaro.koskinen@iki.fi>,
  linux-rockchip@lists.infradead.org, linux-omap@vger.kernel.org, 
  linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org, 
  linux-pm@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>
-In-Reply-To: <a896e5bdb29c7c6de39df9b28b11d55614f2ec2d.1795094688.git.geert+renesas@glider.be>
+In-Reply-To: <7155949aea78042fd399da5ad23a72765b2b6cc7.1795094688.git.geert+renesas@glider.be>
 References: <cover.1795094688.git.geert+renesas@glider.be>
- <a896e5bdb29c7c6de39df9b28b11d55614f2ec2d.1795094688.git.geert+renesas@glider.be>
+ <7155949aea78042fd399da5ad23a72765b2b6cc7.1795094688.git.geert+renesas@glider.be>
 Date: Fri, 27 Nov 2026 21:02:59 +0100
-Message-Id: <179580977968.3028968.220600254133838233.b4-review@b4>
+Message-Id: <179580977969.3028968.47907747276860033.b4-review@b4>
 X-Mailer: b4 0.17-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=438; i=jbrunet@baylibre.com;
- h=from:subject:message-id; bh=1x7I9OxtWjxbS+wEVDFGimHZA2zKBIWqfRJtzMCbXkE=;
- b=owGbwMvMwCW2VtK+WnvWU3HG02pJDNmcD7/5dtokM+ZkaTF6K2ZGVttk1rMrH2fK8un5tvb9D
- fstDRc7SlkYxLgYZMUUWWq4q8XfSWp9mTVd5zbMHFYmkCEMXJwCMJH4Q4wMmxfdaay4eymZS6GK
- Z55007ypBev3ur2PCN636eTcxxoMGYwMv2pstwfXV9w7/0GsKypkd/dKC/bAd4cr1ViY1xxhVqj
- nAgA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=576; i=jbrunet@baylibre.com;
+ h=from:subject:message-id; bh=w+BoHiPo+P6YGPZSkRwTWt/kGI08hfYqlVrPoLWDzrs=;
+ b=owGbwMvMwCW2VtK+WnvWU3HG02pJDNmcD781zBdazCsg9lL/zber23mznz9vt33xqqNRSyql5
+ 9/lP4XqHaUsDGJcDLJiiiw13NXi7yS1vsyarnMbZg4rE8gQBi5OAZjIejtGhnPrDj/t/PYpMF4p
+ 5/BazfN3D21QT/A6eNT9yBfJZ1dZop8wMpzYzS/A8uDOTLmdR+uChb9oSs6TL/Rb7JC9947joo3
+ LLnMBAA==
 X-Developer-Key: i=jbrunet@baylibre.com; a=openpgp;
  fpr=F29F26CF27BAE1A9719AE6BDC3C92AAF3E60AED9
 
-On Thu, 19 Nov 2026 14:40:34 +0100, Geert Uytterhoeven <geert+renesas@glider.be> wrote:
-> This basically reverts commit efa850487a6b6742 ("clk: Inform the core
-> about consumer devices").
+On Thu, 19 Nov 2026 14:40:35 +0100, Geert Uytterhoeven <geert+renesas@glider.be> wrote:
+> Clocks obtained through of_clk_get_from_provider() show up as
+> "deviceless" in the consumer column of the clk_summary file in debugfs.
+> Add a new variant dev_clk_get_from_provider() that also takes a consumer
+> device, so callers can provide it, and consumer's name will be shown in
+> the clk_summary output.
 > 
-> This commit added a struct device pointer member to struct clk and a
-> parameter to clk_hw_create_clk(), but the new member was never used
-> beyond setting.
+> Reimplement of_clk_get_from_provider() on top of
+> dev_clk_get_from_provider().
 > 
 > [...]
 
