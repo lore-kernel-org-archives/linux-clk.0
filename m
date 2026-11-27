@@ -1,56 +1,56 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795787986;
-	b=lDvvOnZb0FCLK4BYzD6VAIBCRk9BLHPc6tc57GYQ6SrKKQQ7d9nejf+hzVQRJ/7LDOCA
-	 d6/OAMeOR6zMQD6oBVttkH071tmTjYUv9MxpYTaOgwUKI+aWCbPpGptWYJhHghBehTcH8
-	 3p519Nkq/8wKnxrTa1I9EOLUrd2wGO65lA8EhpcEGCkNmR7xEcB/zvATcO/u4sfBo3u8Q
-	 AuidMs0j7JEElIhC3vGyMwbwf6x+XiFwXFjYhQY6W6f98In72Oi0tocSNUlzJEPXYWNLg
-	 1htCSl3Ff+7Kz4xaIuU25tHviWrziSoYy67X45AxnZDC3kj+/0r5ZtIzKB8ytdwTAcw==
+	t=1795788112;
+	b=s98b3Hf8+xSS7nEfLXb7bG2wem9ReKRgGnthYtRdw+m8VwfneX235bSY2CKUqAmkrDy5
+	 bmG4FlC40tjvEnuB+oO20Hc0ZqBuilPsvSZgbXSbH2erkio2OAIDJ7u4msSeSRhRrrVx9
+	 v7e9U1hZbUOvDaGppqMDtle+oHRCoL76rr9dH0dgXf/Z0vHdqnHQHtA5OpIQQRRY/PrZD
+	 WGjlV8PvcMBApa24b8SEj1EkoD/VfAELeM/HnvlWti1Igz+hqprpzQeOdfIW7l6re6Sa5
+	 JgRH7tJmp0IR8o+kzWL6z7tSdwyouOuZLRkUevW9F5yrg2J+o1kHeCMerO74ZJ/zoAg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795787986;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795788112;
 	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
 	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=joBQGaVGzM4ICcPvegBww9ZWFSucrUXQglmcNWxdBgE=;
-	b=mIqUmTB2mBdvtl1zAxT0+z9poCPZGmzjReDqc3tMc1Ko4JSJ6TShwqZnYVz0vhd8YWZR
-	 FqikV59JTza06lYx92p6B0Iq4xpePC4XaCLxi0GYD8kyt0KqAYI5aAiS7JCY3XHF5S1B0
-	 LC9cFRwwsUz6at6FxQYBEVAbq4vwwYCMhXLIOMYNuwm+TTxZ/im5Mmwlhx2YzrAJB5DEl
-	 0ldoL8TQx8IFmluGpPz5dFOitp838hiNMBsrjZS5KBFVljByr5V0Xtj8CAHs7jYeprpGZ
-	 mQc+mkrDjA+NGieqig71GoKkh/qWK6iZmu2c5j8Z8o8Mi6naM2dLgRMEj+4/2cmHX0Q==
+	bh=kPd6TTHPPZF1o4owm+NX+PvKg2IQUY4I29eF/MO8HIQ=;
+	b=VrphQk2nkCjbmKTOTuvGrv8NnKnTJRJk8tTql/MXXM+wQdC7rgjOSU3EnKK3EWGwzojG
+	 ZBeKBjtBK7ulPre+n7QGJfBUdLfwxemjNTYe+LEBIprjSvUCwOfgLtsvwVEfapLk1aOWV
+	 2dQltuDDCmTTTjGC1ECF9MrWtcevgWsMAOI0tPQtNfxsMjikRMa6LF8O5N85n8YeLnqNO
+	 5QpECzP9xhwaL3pEDfriemism7DyIxBe942h5RgzE5pSkAFmEyfLq55iRJz2N8/cCXAR6
+	 RzhH3ThC7I2Kg+EvZ324mv/g9IYZJlRYZV/cNfbILYMiUVVuG7cmOnB3wjW9g5zTFig==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=KPTo+nVq;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Z8v02QAP;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BA64606A326;
-	Fri, 27 Nov 2026 13:59:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F62F606A31C;
+	Fri, 27 Nov 2026 14:01:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=KPTo+nVq
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86EF11F0089C;
-	Fri, 27 Nov 2026 13:59:45 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=Z8v02QAP
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47C901F0089A;
+	Fri, 27 Nov 2026 14:01:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795787985;
-	bh=joBQGaVGzM4ICcPvegBww9ZWFSucrUXQglmcNWxdBgE=;
+	s=k20260515; t=1795788111;
+	bh=kPd6TTHPPZF1o4owm+NX+PvKg2IQUY4I29eF/MO8HIQ=;
 	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=KPTo+nVqX64oLBlSHSrRIrhorCvdbR8lSFbLwJMPtwxuKDgITBVKJJlv6XpEgsDWi
-	 Yio//ts6iq8UQ+c5n3Vp0tCWqkhnfb2fFlY+bghxldv65Fop6zW4uuKSxBKxu4U03z
-	 WsPkgWd9bWtkrOA7EjFr6L0WQUi2x5aS0dPsgTOZOjNt45PVzam0jHSqjHycPAyCWE
-	 bb1Jo21jcAhTY3p86rXRJ19pzWCAh5I86ThmI8Rnfgi2mH+/+ewr9SXHVjyuz/lLXs
-	 juev2VVXXO9tMrhW6UFuAY9yhBNxJE/dWRhMdwF+9P67vjpiWbMWK10zwrk/0q15Jn
-	 RYT0OmMbSOKoA==
-Message-ID: <sashiko-outbox-237527@kernel.org>
+	b=Z8v02QAPm8lUxNll8MzmgNQeso9m92czo1iF1bUEG/epivqLKj5f8/itDtJmFUknH
+	 MkZ3WYctcx3EMVLQ2iLgLloo5yf3UxVI51cjqH9a2yNT3Q30Wr0iNEGNDo6p2OQJMk
+	 f54Iq3b4t1tyF8/Qp4/fjx6vZKLJ00Al4DjVY5/Ns+46yVU986Igr+GsetsP7SmC+k
+	 dg3RH7IlD0/rhgYBU4uLPOjmY5492Ji5TuYgh7g5m7on0uUQ0frWxwk7Ta/hBMPcqL
+	 hKM4/U2rLmlq/7LXYoEoYD0S681du/CqU41YlNb8avGGiz2Zj88ZkR295wvmFODdh5
+	 SLmSZUarzcnfQ==
+Message-ID: <sashiko-outbox-237529@kernel.org>
 From: sashiko-bot@kernel.org
-Subject: Re: [PATCH v5 5/7] media: i2c: add ov12a10 image sensor driver
+Subject: Re: [PATCH v5 3/7] media: i2c: add s5k5e8 image sensor driver
 Reply-To: sashiko-reviews@lists.linux.dev
 To: "Hikmah Gumelar" <hikmahgumelar@gmail.com>
 Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org, media-ci@linuxtv.org
-In-Reply-To: <20261127134507.125513-6-hikmahgumelar@gmail.com>
+In-Reply-To: <20261127134507.125513-4-hikmahgumelar@gmail.com>
 References: <20261127134507.125513-1-hikmahgumelar@gmail.com>
- <20261127134507.125513-6-hikmahgumelar@gmail.com>
+ <20261127134507.125513-4-hikmahgumelar@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Date: Fri, 27 Nov 2026 13:59:45 +0000
+Date: Fri, 27 Nov 2026 14:01:50 +0000
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -62,56 +62,56 @@ Precedence: list
 
 Thank you for your contribution! Sashiko AI review found 3 potential
 issues to consider:
-- [High] media: i2c: ov12a10: self-deadlock on ov12a10->mutex in
-  ov12a10_set_format()
-- [Low] media: i2c: ov12a10: Kconfig selects unused V4L2_CCI_I2C while
-  duplicating CCI
-- [Low] media: i2c: ov12a10: ov12a10_set_ctrl() skips register writes
-  when !CONFIG_PM
+- [Medium] media: i2c: s5k5e8: control writes skipped when !CONFIG_PM in
+  s5k5e8_set_ctrl()
+- [Low] media: i2c: s5k5e8: unused V4L2_CCI_I2C select and duplicate I2C
+  helpers
+- [Low] media: i2c: s5k5e8: deprecated s_stream op used instead of
+  enable_streams
 --
 
-commit a28b7978efda2c7b1cde0c21ec38f6018f80694c
+commit f8cb2239802ac8d357b8e34b78a9d168603a7bc8
 Author: Hikmah Gumelar <hikmahgumelar@gmail.com>
 
-media: i2c: add ov12a10 image sensor driver
+media: i2c: add s5k5e8 image sensor driver
 
-This commit adds a V4L2 subdevice driver for the OmniVision OV12A10 MIPI
-CSI-2 CMOS image sensor.
+This commit adds a V4L2 subdevice driver for the Samsung S5K5E8 5MP
+MIPI CSI-2 CMOS image sensor.
 
 > diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
-> index 4c622e5eef73f..338244aa23eb4 100644
+> index 162b8ea026018..4c622e5eef73f 100644
 > --- a/drivers/media/i2c/Kconfig
 > +++ b/drivers/media/i2c/Kconfig
-> @@ -538,6 +538,16 @@ config VIDEO_OV08X40
+> @@ -879,6 +879,16 @@ config VIDEO_S5K3M5
 >  	  To compile this driver as a module, choose M here: the
->  	  module will be called ov08x40.
+>  	  module will be called s5k3m5.
 > =20
-> +config VIDEO_OV12A10
-> +	tristate "OmniVision OV12A10 sensor support"
+> +config VIDEO_S5K5E8
+> +	tristate "Samsung S5K5E8 sensor support"
 > +	select V4L2_CCI_I2C
 > +	help
-> +	  This is a Video4Linux2 sensor-level driver for the OmniVision
-> +	  OV12A10 12MP camera.
+> +	  This is a Video4Linux2 sensor-level driver for the Samsung
+> +	  S5K5E8 5MP camera.
 > +
 > +	  To compile this driver as a module, choose M here: the
-> +	  module will be called ov12a10.
+> +	  module will be called s5k5e8.
 > +
->  config VIDEO_OV13858
->  	tristate "OmniVision OV13858 sensor support"
+>  config VIDEO_S5K5BAF
+>  	tristate "Samsung S5K5BAF sensor support"
 >  	help
-> diff --git a/drivers/media/i2c/ov12a10.c b/drivers/media/i2c/ov12a10.c
+> diff --git a/drivers/media/i2c/s5k5e8.c b/drivers/media/i2c/s5k5e8.c
 > new file mode 100644
-> index 0000000000000..99580ceedceff
+> index 0000000000000..d25b978d7eda6
 > --- /dev/null
-> +++ b/drivers/media/i2c/ov12a10.c
-> @@ -0,0 +1,770 @@
+> +++ b/drivers/media/i2c/s5k5e8.c
+> @@ -0,0 +1,567 @@
 
 [ ... ]
 
-> +static int ov12a10_read_reg(struct ov12a10 *ov12a10, u16 reg, u32 len, u=
-32 *val)
+> +static int s5k5e8_read_reg(struct s5k5e8 *s5k5e8, u16 reg, u32 len, u32 =
+*val)
 > +{
-> +	struct i2c_client *client =3D v4l2_get_subdevdata(&ov12a10->sd);
+> +	struct i2c_client *client =3D v4l2_get_subdevdata(&s5k5e8->sd);
 > +	struct i2c_msg msgs[2];
 > +	u8 addr_buf[2], data_buf[4] =3D { 0 };
 > +	int ret;
@@ -132,10 +132,10 @@ CSI-2 CMOS image sensor.
 > +	return 0;
 > +}
 > +
-> +static int ov12a10_write_reg(struct ov12a10 *ov12a10, u16 reg, u32 len, =
-u32 val)
+> +static int s5k5e8_write_reg(struct s5k5e8 *s5k5e8, u16 reg, u32 len, u32=
+ val)
 > +{
-> +	struct i2c_client *client =3D v4l2_get_subdevdata(&ov12a10->sd);
+> +	struct i2c_client *client =3D v4l2_get_subdevdata(&s5k5e8->sd);
 > +	u8 buf[6];
 > +	int ret;
 > +
@@ -145,16 +145,14 @@ u32 val)
 > +	return ret =3D=3D len + 2 ? 0 : (ret < 0 ? ret : -EIO);
 > +}
 > +
-> +static int ov12a10_write_regs(struct ov12a10 *ov12a10, const struct ov12=
-a10_reg *regs, u32 len)
+> +static int s5k5e8_write_regs(struct s5k5e8 *s5k5e8, const struct s5k5e8_=
+reg *regs, u32 len)
 > +{
 > +	u32 i;
 > +	int ret;
 > +
 > +	for (i =3D 0; i < len; i++) {
-> +		ret =3D ov12a10_write_reg(ov12a10, regs[i].address, 1, regs[i].val);
-> +		if (!ret && regs[i].address =3D=3D 0x0103)
-> +			usleep_range(5000, 6000);
+> +		ret =3D s5k5e8_write_reg(s5k5e8, regs[i].address, 1, regs[i].val);
 > +		if (ret)
 > +			return ret;
 > +	}
@@ -162,75 +160,69 @@ a10_reg *regs, u32 len)
 > +}
 
 [Severity: Low]
-Why does VIDEO_OV12A10 select V4L2_CCI_I2C in Kconfig while the driver
-open-codes its own 16-bit big-endian I2C register access in
-ov12a10_read_reg(), ov12a10_write_reg() and ov12a10_write_regs() instead of
-using the V4L2 CCI helpers?
+Could this driver use the V4L2 CCI helpers (devm_cci_regmap_init_i2c(),
+cci_read(), cci_write() and cci_multi_reg_write()) instead of open-coding
+raw I2C transfers?  VIDEO_S5K5E8 already selects V4L2_CCI_I2C in Kconfig,
+which is currently unused.
 
 [ ... ]
 
-> +static int ov12a10_set_ctrl(struct v4l2_ctrl *ctrl)
+> +static int s5k5e8_set_ctrl(struct v4l2_ctrl *ctrl)
 > +{
-> +	struct ov12a10 *ov12a10 =3D container_of(ctrl->handler, struct ov12a10,=
- ctrl_handler);
+> +	struct s5k5e8 *s5k5e8 =3D container_of(ctrl->handler, struct s5k5e8, ct=
+rl_handler);
 > +	int ret =3D 0;
 > +
 > +	if (ctrl->id =3D=3D V4L2_CID_VBLANK) {
-> +		s64 exp_max =3D ov12a10->cur_mode->height + ctrl->val - 4;
+> +		s64 exp_max =3D s5k5e8->cur_mode->height + ctrl->val - 4;
+> +		s64 exp_def =3D min_t(s64, 1960, exp_max);
 > +
-> +		ret =3D __v4l2_ctrl_modify_range(ov12a10->exposure, 4, exp_max, 1,
-> +					       min_t(s64, 2400, exp_max));
+> +		ret =3D __v4l2_ctrl_modify_range(s5k5e8->exposure, 4, exp_max, 1,
+> +					       exp_def);
 > +		if (ret)
 > +			return ret;
 > +	}
-> +	if (pm_runtime_get_if_active(ov12a10->dev) <=3D 0)
+> +
+> +	ret =3D pm_runtime_get_if_active(s5k5e8->dev);
+> +	if (ret <=3D 0)
 > +		return 0;
 
-[Severity: Low]
-Does this pm_runtime_get_if_active() check skip all control register writes
-when CONFIG_PM is disabled?
+[Severity: Medium]
+Does checking ret <=3D 0 here skip all control register writes when
+CONFIG_PM is disabled?
 
-When CONFIG_PM is disabled, ov12a10_probe() leaves the sensor powered on
-and pm_runtime_get_if_active() returns -EINVAL, so ov12a10_set_ctrl()
-returns early without programming exposure, gain, vblank or test pattern
-registers.  Using pm_runtime_get_if_in_use() =3D=3D 0 avoids skipping regis=
-ter
-writes when runtime PM is disabled.
+When CONFIG_PM is disabled, pm_runtime_get_if_active() returns -EINVAL, so
+s5k5e8_set_ctrl() returns 0 without writing any registers during both
+__v4l2_ctrl_handler_setup() and runtime control updates.  Checking
+!pm_runtime_get_if_active(s5k5e8->dev) (or using
+pm_runtime_get_if_in_use()) allows register writes to proceed when runtime
+PM is disabled.
 
 [ ... ]
 
-> +static int ov12a10_set_format(struct v4l2_subdev *sd,
-> +			      const struct v4l2_subdev_client_info *ci,
-> +			      struct v4l2_subdev_state *sd_state,
-> +			      struct v4l2_subdev_format *fmt)
+> +static int s5k5e8_set_stream(struct v4l2_subdev *sd, int enable)
 > +{
-> +	struct ov12a10 *ov12a10 =3D to_ov12a10(sd);
+> +	struct s5k5e8 *s5k5e8 =3D to_s5k5e8(sd);
+> +	int ret =3D 0;
 > +
-> +	mutex_lock(&ov12a10->mutex);
-> +	if (fmt->which =3D=3D V4L2_SUBDEV_FORMAT_ACTIVE && ov12a10->streaming) {
-> +		mutex_unlock(&ov12a10->mutex);
-> +		return -EBUSY;
+> +	mutex_lock(&s5k5e8->mutex);
+> +	if (s5k5e8->streaming =3D=3D enable) {
+> +		mutex_unlock(&s5k5e8->mutex);
+> +		return 0;
 > +	}
-> +
-> +	ov12a10_update_pad_format(&default_mode, &fmt->format);
-> +	if (fmt->which !=3D V4L2_SUBDEV_FORMAT_TRY)
-> +		ov12a10->cur_mode =3D &default_mode;
-> +	*v4l2_subdev_state_get_format(sd_state, fmt->pad) =3D fmt->format;
-> +	mutex_unlock(&ov12a10->mutex);
-> +
-> +	return 0;
-> +}
 
-[Severity: High]
-Does ov12a10_set_format() self-deadlock on ov12a10->mutex?
+[ ... ]
 
-ov12a10_probe() sets ov12a10->sd.state_lock =3D &ov12a10->mutex before call=
-ing
-v4l2_subdev_init_finalize(), so the V4L2 subdev core already acquires
-ov12a10->mutex via v4l2_subdev_lock_state(state) before invoking .set_fmt.
-Any VIDIOC_SUBDEV_S_FMT ioctl will hang permanently on this second
-mutex_lock(&ov12a10->mutex).
+> +static const struct v4l2_subdev_video_ops s5k5e8_video_ops =3D { .s_stre=
+am =3D s5k5e8_set_stream };
+
+[Severity: Low]
+Should this driver implement v4l2_subdev_pad_ops.enable_streams and
+.disable_streams with v4l2_subdev_s_stream_helper instead of implementing
+the deprecated .s_stream callback directly?  Using the pad stream
+callbacks with the active subdev state lock also avoids manual
+s5k5e8->streaming tracking and the separate s5k5e8->mutex.
 
 --=20
 Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261127134507.1255=
-13-1-hikmahgumelar@gmail.com?part=3D5
+13-1-hikmahgumelar@gmail.com?part=3D3
