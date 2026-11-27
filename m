@@ -1,87 +1,85 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.42
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795799601;
-	b=KZUl97xN5hy4DwTOiJD20qCFc36fHtWVadsgLpEDEAYUOdJ8fZXXxMtmZvTaBAMUMUii
-	 lOWbMfMLWQKBkgyAjgd12KlKQ1bBR4hnoBGixvMdPVccN/bxWgxNkZlB5hviwPVb8GrRM
-	 vFG/Opn6XZPjQAjbqrmbzBZmIvTDesVaLci8gQ62yqXHcJpJcE9aSjX94p3rpwXJg5LCn
-	 9rKpGIcgqRUzfTm5hlUPjlyZMqS4ZLfLJcyyrx0+lq+3rq01ImDzW+/bNXw8mNwRNArXh
-	 YkndrD676JQ4Gyt24keL9NbVdhkqPeTK81S43+exiqWYFdLaX96jmEdZqHqn2BT8kHA==
+	t=1795802501;
+	b=ioTFTtS5G7AjYtk+S9vaRglgJtBsfHe5/SYxh0LvDhqUz/0oXwH4/PCZT1C812qWvE9d
+	 bKuZLqZtNP97CR/KRdqd5IAayao5W5KMj0Hj0Vh/l0ZXI5i4OcTXJNW1C6ymwxwj2GJ9m
+	 qQYyOJFWfYibCUzPlRF86pytEO4BfmT+N85xnU3cUQJGLv6sroWSNVnwnyTTvwDcGX6Qc
+	 Z1FSWIR5OOVtuLNakzTo8bnjEeVVIT0eN4gb6b5E4USId50AGw1PEFrknRT0m7A2p5653
+	 dgDafGhunQ4DLnu0SfhNWHRRYPJHu601lUIMy4R+OJuqu4bHxOERJu+1pog1w340ECw==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795799601;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795802501;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 Message-ID:Date:MIME-Version:User-Agent:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type:Content-Transfer-Encoding;
-	bh=j+q9Pl+HbS/InTwJthHaenRguBaH+pMfXVenIDo/BDc=;
-	b=4isrt1tr0DLdE60PuZldYRelfTPSUeJATy80awxsE3yYfYaVyQQE2vvNIHpxxcoXsXin
-	 qtTWk0+1v1mmQJEF6ZRnmL+90XlZTf6V+f0izAO5FUOx86YvC5Rejc1qudaGzFXuzFkkZ
-	 AmxoBrnlL4BQ1xli1UBY1L6mTy6Jxq6xbNtkWyV9ALxzGqSYlv84cOv4Kret1Xmg1a3In
-	 OahKjjqaRSFtFwHVUS8yLIv0vl8kz1X//e3XB1t8tairk2tlk60yhimhAJu46UWeSnKZ6
-	 TsX+EoWHpLEyEsYysUzzJbsijKHAy/vBXRTrlSjLJfVQs4wLv2+8i6fzKmSxaM+dGPg==
+	 MIME-Version:Content-Type:Content-Transfer-Encoding:Subject:From:To:
+	 Cc:In-Reply-To:References:Date:Message-Id:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key;
+	bh=fsNoUHPpGo1gHz1gAcdVPTu3hkJcEuLuYD2db/66XEI=;
+	b=OphDLUi9+mzwewnG8JNfpkt+2r88zGqMUCJNdEzI5FDXUjHNwghqyAAWTWv1TXGgBUJP
+	 ui9zEXrvEv0aQ48piI1HRcEgXohsTd+13V1MT0AJRTws5Ri8HaQwYx8HURyVdSY7rnT5d
+	 oYm8EDJacFscvCLGy4DB2LSHwhmMB9YGAtkjMy7is2Cyirg9e27IafFmkPhDf0e+HYAVa
+	 FpjwQCUGDOHsyofCrccXXpk21ZkTmllvtpyxW6WPi8zkUsn9AsSnxSiywNK7pq14ZxnsB
+	 pSMZvmyIij9JQW+ELpwu3OQXEoetux+VO3OtqIcVipt0AepjNNb3Cg3dsEqshcmypeg==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=linaro.org;
-	spf=pass smtp.mailfrom=linaro.org;
-	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=ATise0C2;
-	arc=none smtp.remote-ip=209.85.208.180
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	dmarc=pass header.from=baylibre.com;
+	spf=pass smtp.mailfrom=baylibre.com;
+	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=dKxCSoOQ;
+	arc=none smtp.remote-ip=209.85.128.42
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46E59606A323
-	for <linux-clk@vger.kernel.org>; Fri, 27 Nov 2026 17:13:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 46E59606A323
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6B2E606A324
+	for <linux-clk@vger.kernel.org>; Fri, 27 Nov 2026 18:01:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org B6B2E606A324
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=ATise0C2
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-3ab1bb9666aso5647261fa.3
-        for <linux-clk@vger.kernel.org>; Fri, 27 Nov 2026 09:13:20 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=dKxCSoOQ
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4bba60271d7so28483795e9.2
+        for <linux-clk@vger.kernel.org>; Fri, 27 Nov 2026 10:01:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1795799598; x=1796404398; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:in-reply-to:from:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from:to:cc
+        d=baylibre.com; s=google; t=1795802499; x=1796407299; darn=vger.kernel.org;
+        h=message-id:date:references:in-reply-to:cc:to:from:subject
+         :content-transfer-encoding:content-type:mime-version:from:to:cc
          :subject:date:message-id:reply-to:content-type;
-        bh=j+q9Pl+HbS/InTwJthHaenRguBaH+pMfXVenIDo/BDc=;
-        b=ATise0C2zygRkVnxpn+1Gi+wvzEDgRrpYlXsPMFVnxfwFb0qY49ChyMhFagedwTd7C
-         jjSKjOm248dCpVusUvOYfdFzbr78C0kpyq2Pp8/1bAM2zRTuxlneQ3ujKVqKpxBMQrvh
-         GkXqsFZbRJoIIshL3ynznuBArbx99GiXKbAG+y09VMweTymBKGAEPh+hf5kOtdh76tSQ
-         evsiB1kTOgSdcu8JdO4giOZDLdscI8A1y+vRaCfQk2i6k9sZXWdeEanPeJLpvickPIJx
-         gTmyNu+sLjEEgHosT7/77fiOtjFIYCItYX+0Q2lLzeKwS5iZMCJM1uYPoAfx+9cAnnoD
-         FidA==
+        bh=fsNoUHPpGo1gHz1gAcdVPTu3hkJcEuLuYD2db/66XEI=;
+        b=dKxCSoOQwJY4+C9ZrIn428uzPaSbrcuceYsjSLJIHTG8/Vl6PTA1WVNHaJUAa0sxVo
+         zs6EqHR9E8Wyd3mJva38/SQrjM4FzsDZbINuoFZNtQ8nQvSmGrlwYddn4uvg5mwizuFp
+         qsJhus/e5OKeyi5ElnkQ/2rMAH9ojoBaSw2eemDnCwYzeOGGufOxFE4fIhqxEeLu28Sh
+         guhaJd8c/DYLGSEEhLiy6uOGH9zL8hGUt3r/fKFRjlOch5ZidbPnbvaq4aB6RWgjnKLu
+         BaC2/RRPWCiW5kxsgkmSK34Bp5u9asihDQaF2LtMYpORq68eZwqB2dqUuwTNJ9iQs1eL
+         +W8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795799598; x=1796404398;
-        h=content-transfer-encoding:content-type:in-reply-to:from:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:x-gm-gg
+        d=1e100.net; s=20260707; t=1795802499; x=1796407299;
+        h=message-id:date:references:in-reply-to:cc:to:from:subject
+         :content-transfer-encoding:content-type:mime-version:x-gm-gg
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=j+q9Pl+HbS/InTwJthHaenRguBaH+pMfXVenIDo/BDc=;
-        b=pzKVuUlvveMJ1bsRA3FQ4CU8KkMmMgqskGra3iiM70bIlD/psTCTcR52Mm+ZZAMhGv
-         iONpvcQ1XTFUDMtaoQzGY5/dicyHa795Sd21Cf07rHPlnNI6wNGjOgKrfaB9JVObByMu
-         cy3XsTODEhv01GOTVB41GwAwyblTuJmagkw0jL+A5LLy3QFd/b4xDmKbqx3aiB8r5sqa
-         UeZRQpLtQSo+wGUlVmedbgztvKtziZLHJ9Wrm9tnstWGPnN4dWB1cfO8S7+8VIUiAAvb
-         +q0a1uMTWm7O6uhEbSXP8uaI1v2bsQoHpzy6fNl6ZA0y6HvhQU3aWW2IAmYgbTIIj9TD
-         n3uw==
-X-Forwarded-Encrypted: i=1; AL+hErGHGRWQWia+m/ShS93CFio78ysWqugz1HJ+3a9TdvR1m2/xW6onkuPQnLSjyxlzz7W6QsxFd7oNTWs=@vger.kernel.org
-X-Gm-Message-State: APuU4Z/9i4XtxsyXx58MO83ZseQFh7eatjO316+2EwrkOh8fxOI7Vy2u
-	AR8r/8JEap5BJOXfD4Y6+zGGNEeN7HswstGG+rEY9ClehHf1AbCTvprSBHchC0esdy4=
-X-Gm-Gg: AZFdTZdZ8zIVh1YO3kEMWezm55iW0YiVIhAqpqfJ9ceBkpYKydqV/CFxV5U1q3zfL0h
-	2ZR8ISj1vreZ4eCZ539emr9Hfgm/jZjpRb+6H92X9pgFs1aK9vh2pc8jWfLFJfRWBCo0YRX1uoC
-	rP1YxWrtJ3i4P8fMTeRCBRmO4HFKXK5WaI8wZN8x/PZhp3ldBMVfRa8+3tQLNHzfBMkbwA74i23
-	RIgHstX1IH6uqj2MdGi9HiBo9Ja2ee2jhlxWTl4yO211Dqrp8P7GhzuelKeaDSKvIZIaXQDYVUg
-	Fjp29MYDsuhl9B7+GLqSXze9Tj521XFEvLx53VyBxil0bZqK0f1WoQh6Q3WFO1CfvEp65emIlKB
-	DoN5pKhDrMvMAzuEloyx/L2pbGyciNT/e57p9oXGhw1GRefbe+PTgMyKlBo1/+DrPYpT3lKE/NS
-	b4/GqUyrMoT5PM7YVaUPuH2n1GTPm8PoFppptEpx8zLRCyB3HhcLLBZPt/RPeiW8sEw1q+h7QQT
-	78wZE35sZXsOMXl0o/IU7PFSsMPgjTnoZ5k5ef4WOQTgA/6d77DOZsl9Y9gBVxYxoNVI0WayukT
-	ppLow2cKt8njLhVmDNfM40aCKWiaRAGduabduSMDxt1xKq0kSO+fFgZPz1Sh5hvWrNFcQGCKmed
-	w2dX1lIY=
-X-Received: by 2002:a05:6512:1394:b0:5c0:da9:407b with SMTP id 2adb3069b0e04-5c1bc8722ffmr9342169e87.5.1795799598378;
-        Fri, 27 Nov 2026 09:13:18 -0800 (PST)
-Received: from [192.168.1.101] (91-159-24-186.elisa-laajakaista.fi. [91.159.24.186])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5c1bd0419c2sm5950133e87.52.2026.11.27.09.13.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 27 Nov 2026 09:13:18 -0800 (PST)
-Message-ID: <2ed19776-e8ed-438e-b946-7a83d9c318f0@linaro.org>
-Date: Fri, 27 Nov 2026 19:13:17 +0200
+        bh=fsNoUHPpGo1gHz1gAcdVPTu3hkJcEuLuYD2db/66XEI=;
+        b=uDsw0EvLI9lCwtLyi26WRSkDbATTqcHthbsJqP/I1+eFcWwtVV9lc5zs+IkJUfhl7b
+         kR2bXFujBIUT8asIwWQ7WLgDH1XrOHAofNSIdO/pu4Qijg4e8A/Xk2g//87saYGRg3nY
+         lw9HD8KdtCeRI7iAo3DR7h8yHhidUDmikzoeLmENXaGsHJgGWO6kH8N0dNqQqN9vi/6x
+         VkbBWo5C4/Z2h97GflME4wz5rCaqtCUTh3TOVbVLa1w0sXV2X5ih4shR6Bn6cZDheNGB
+         vwVzfW7qkFtJJcnBgamtC0XAt23/lO/DSMXbvdkLt3IrmEp3nSdMSlEeNyW2F96LXC1J
+         fiwg==
+X-Forwarded-Encrypted: i=1; AL+hErHwsrXBLkPSN9m9FyzHztV7xUY5q+mZojjDa7DBgjgPUTqex5LTusw4HoHNRpY4iO8jYrG34mHokaA=@vger.kernel.org
+X-Gm-Message-State: APuU4Z8s/ygNwlaUnCWrb39kLdGnCv0Ge0tRi7V35DPkX2ih2U4pINxF
+	QnDWPyKlCzUGY70wa1rWGdD0aCE4FEDavM61sTON2+nZTQ950JFpNZ3uhvJSDYgu1Ts=
+X-Gm-Gg: AZFdTZfpe/SsD9W88TS0dmj5n+QwGOJk/u81jWmefQZHLr5mahtjUjGdG2c9VY4zHco
+	oLAS7DHYdBpOBLa7ERI9oHoUOvhboNBSg1/vb3FEs3BPvMxFHPfR5cR4bTz8a0jYPBhI2nZJKhq
+	bH4200ep8IgjtoriKUH9YyMq2TGPySMSXcmf/vkbNDYjI7L9lG18oyE8o4ScVgRDPIe0n9cO1oh
+	4Zye3ou+hIZUSh2D8d+Alv+2mtwfSltkb+aQbo/k9bmQEce+e0XdlApUdNsOQQ1RHcD3DAj4C4D
+	ioEhShJ5kZCvOPQS8OkLvsab1lrx1Dr8kTq0TLIY8ABboa5UqMrpXbjXqDbFX650CaFKhjFFJrX
+	yuDoxraDhNHEy9AOFlbszNoQUrQCW4X7wPMcbSbai0PmGS0aTJfPCTOjyaD8vDk9Q8pHfoc+xFh
+	xREb0+xsiHafJRqtMxPZLyLRBo2trwm/QiNlFU4ObNsigyocbgXABCqAwS8echlDL8aX6UgmL1W
+	BYbqpy8W4QFzKFur7HZqYOZHX9uERqXaqCaNkLZ0lhBK6sUiqtCfZIFz91KxHGZ/OC4AmYry3tI
+	Ec6fz+JGjM0bbw4D7HiHCm3nO6ibtGsfiOdq7iptLHVkhA+P
+X-Received: by 2002:a05:600c:8486:b0:4ac:aae6:6401 with SMTP id 5b1f17b1804b1-4bb8880606fmr521206445e9.12.1795802498933;
+        Fri, 27 Nov 2026 10:01:38 -0800 (PST)
+Received: from localhost (82-67-6-57.subs.proxad.net. [82.67.6.57])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb853a9846sm832738955e9.11.2026.11.27.10.01.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 27 Nov 2026 10:01:38 -0800 (PST)
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -91,230 +89,214 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 3/7] media: i2c: add s5k5e8 image sensor driver
-To: Hikmah Gumelar <hikmahgumelar@gmail.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
- Brian Masney <bmasney+clk@redhat.com>,
- Jerome Brunet <jbrunet+clk@baylibre.com>,
- Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-clk@vger.kernel.org, Abel Vesa <abelvesa@kernel.org>
-References: <20261127134507.125513-1-hikmahgumelar@gmail.com>
- <20261127134507.125513-4-hikmahgumelar@gmail.com>
-From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-In-Reply-To: <20261127134507.125513-4-hikmahgumelar@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v3 1/3] dt-bindings: toshiba: introduce
+ toshiba,tc9564-clock.yaml
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Alex Elder <elder@riscstar.com>
+Cc: sboyd@kernel.org, bmasney+clk@redhat.com, jbrunet+clk@baylibre.com, 
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+ p.zabel@pengutronix.de, andersson@kernel.org, konradybcio@kernel.org, 
+ abelvesa@kernel.org, daniel@riscstar.com, mohd.anwar@oss.qualcomm.com, 
+ lorenzo.bianconi@oss.qualcomm.com, fabrice.gasnier@foss.st.com, 
+ alexandre.torgue@foss.st.com, marex@nabladev.com, 
+ changhuang.liang@starfivetech.com, devicetree@vger.kernel.org, 
+ linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>
+In-Reply-To: <20261125202141.1288493-2-elder@riscstar.com>
+References: <20261125202141.1288493-1-elder@riscstar.com>
+ <20261125202141.1288493-2-elder@riscstar.com>
+Date: Fri, 27 Nov 2026 19:01:35 +0100
+Message-Id: <179580249573.2809466.11034484697919897942.b4-review@b4>
+X-Mailer: b4 0.17-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6124; i=jbrunet@baylibre.com;
+ h=from:subject:message-id; bh=geWxMicG6uVAdhcEualT0NzvyoAmaPCiuckBB8B5yvQ=;
+ b=owGbwMvMwCW2VtK+WnvWU3HG02pJDNmcRxul7Xh+dZasndPvIcma4mp8cO+Pq9KHrhavfhO6K
+ e9E7PaJHaUsDGJcDLJiiiw13NXi7yS1vsyarnMbZg4rE8gQBi5OAZjItimMDIuUQ7gT3BbFLlqw
+ 7s2d/5M/7/KoX7shWK5yVYKMkdrFVDWG/65Z13T7Xl9l7purknKx6MW58le7Tt+onPdZf3bbpYM
+ tDBwA
+X-Developer-Key: i=jbrunet@baylibre.com; a=openpgp;
+ fpr=F29F26CF27BAE1A9719AE6BDC3C92AAF3E60AED9
 
-On 11/27/26 15:45, Hikmah Gumelar wrote:
-> Add V4L2 subdev driver for the Samsung S5K5E8 5-megapixel MIPI CSI-2
+> Define the binding for the clock and reset controller that present in
+> the Toshiba TC9564 SoC.
 > 
-> CMOS image sensor supporting 2592x1944 10-bit Bayer output.
-> 
-> Signed-off-by: Hikmah Gumelar <hikmahgumelar@gmail.com>
+> Reviewed-by: Lorenzo Bianconi <lorenzo.bianconi@oss.qualcomm.com>
+> Co-developed-by: Daniel Thompson <daniel@riscstar.com>
+> Signed-off-by: Daniel Thompson <daniel@riscstar.com>
+> Signed-off-by: Alex Elder <elder@riscstar.com>
 > ---
->   MAINTAINERS                |   7 +
->   drivers/media/i2c/Kconfig  |  10 +
->   drivers/media/i2c/Makefile |   1 +
->   drivers/media/i2c/s5k5e8.c | 567 +++++++++++++++++++++++++++++++++++++
->   4 files changed, 585 insertions(+)
->   create mode 100644 drivers/media/i2c/s5k5e8.c
+> v3: - Added Lorenzo's Reviewed-by
+>     - Changed to @kernel.org e-mails for Daniel and me
+>     - Only the gated clock IDs are now published in "toshiba,tc9564.h";
+>       the PLL and internal fixed clocks are implemented and accessed
+>       only within "clk-tc9564.c"
 > 
+>  .../bindings/clock/toshiba,tc9564-clock.yaml  | 73 +++++++++++++++++++
+>  MAINTAINERS                                   |  8 ++
+>  include/dt-bindings/clock/toshiba,tc9564.h    | 40 ++++++++++
+>  3 files changed, 121 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/toshiba,tc9564-clock.yaml
+>  create mode 100644 include/dt-bindings/clock/toshiba,tc9564.h
+>
+> diff --git a/Documentation/devicetree/bindings/clock/toshiba,tc9564-clock.yaml b/Documentation/devicetree/bindings/clock/toshiba,tc9564-clock.yaml
+> new file mode 100644
+> index 000000000000..026ed949f0f0
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/toshiba,tc9564-clock.yaml
+> @@ -0,0 +1,73 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/toshiba,tc9564-clock.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Toshiba TC9564 Clock and Reset Controller
+> +
+> +maintainers:
+> +  - Lorenzo Bianconi <lorenzo.bianconi@oss.qualcomm.com>
+> +  - Alex Elder <elder@kernel.org>
+> +  - Daniel Thompson <danielt@kernel.org>
+> +
+> +description:
+> +  The Toshiba TC9564 is an SoC accessed by a host system through the
+> +  upstream PCIe port on the PCIe switch it implements.  The chip includes
+> +  an embedded PCIe endpoint that provides access to various peripherals
+> +  within the SoC via its BARs.  These peripherals include a simple
+> +  controller to gate internal clocks, and a reset controller.
+> +
+> +  The TC9564 chip has a single input clock.  Internally that clock is
+> +  multiplied by a PLL, and the PLL signal is divided internally into
+> +  a set of fixed rate, always-on clocks.
+> +
+> +  The clock controller exposes a set of simple gated clocks, which are
+> +  controlled by two registers.  Each is derived from one of the internal
+> +  fixed-rate clocks.  A total of 21 gated clocks are implemented within
+> +  the chip, but support for enabling and disabling only a subset of them
+> +  is provided at this time.  Two clocks (I2C and PCIE) are marked critical
+> +  to make it clear that they should never be disabled.
+> +
+> +  The reset controller uses two other registers to control a set of 13
+> +  resets that can be asserted or deasserted.  Here too, only a subset
+> +  of the resets can currently be managed, and the I2C and PCIE resets
+> +  are treated as critical.
+> +
+> +  Clock and reset IDs are defined <dt-bindings/clock/toshiba,tc9564.h>.
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - const: toshiba,tc9564-clock
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  "#clock-cells":
+> +    const: 1
+> +
+> +  "#reset-cells":
+> +    const: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - "#clock-cells"
+> +  - "#reset-cells"
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    clock-controller@1004 {
+> +        compatible = "toshiba,tc9564-clock";
+> +        reg = <0x1004 0x10>;
+> +        clocks = <&tc9564_xo_board>;
+> +        #clock-cells = <1>;
+> +        #reset-cells = <1>;
+> +    };
 > diff --git a/MAINTAINERS b/MAINTAINERS
-> index f72ce07a4e38..2ac245d4ad7c 100644
+> index 93abbb315065..4d1f4cbfd731 100644
 > --- a/MAINTAINERS
 > +++ b/MAINTAINERS
-> @@ -25007,6 +25007,13 @@ T:	git git://linuxtv.org/media_tree.git
->   F:	Documentation/devicetree/bindings/media/i2c/samsung,s5k3m5.yaml
->   F:	drivers/media/i2c/s5k3m5.c
->   
-> +SAMSUNG S5K5E8 CAMERA SENSOR DRIVER
-> +M:	Hikmah Gumelar <hikmahgumelar@gmail.com>
-> +L:	linux-media@vger.kernel.org
+> @@ -28332,6 +28332,14 @@ F:	Documentation/devicetree/bindings/media/i2c/toshiba,tc358743.yaml
+>  F:	drivers/media/i2c/tc358743*
+>  F:	include/media/i2c/tc358743.h
+>  
+> +TOSHIBA TC9564 CLOCK/RESET CONTROLLER DRIVER
+> +M:	Lorenzo Bianconi <lorenzo.bianconi@oss.qualcomm.com>
+> +M:	Alex Elder <elder@kernel.org>
+> +M:	Daniel Thompson <danielt@kernel.org>
 > +S:	Maintained
-> +F:	Documentation/devicetree/bindings/media/i2c/samsung,s5k5e8.yaml
-> +F:	drivers/media/i2c/s5k5e8.c
+> +F:	Documentation/devicetree/bindings/clock/toshiba,tc9564-clock.yaml
+> +F:	include/dt-bindings/clock/toshiba,tc9564.h
 > +
->   SAMSUNG S5K5BAF CAMERA DRIVER
->   M:	Sylwester Nawrocki <s.nawrocki@samsung.com>
->   M:	Andrzej Hajda <andrzej.hajda@intel.com>
-> diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
-> index 162b8ea02601..4c622e5eef73 100644
-> --- a/drivers/media/i2c/Kconfig
-> +++ b/drivers/media/i2c/Kconfig
-> @@ -879,6 +879,16 @@ config VIDEO_S5K3M5
->   	  To compile this driver as a module, choose M here: the
->   	  module will be called s5k3m5.
->   
-> +config VIDEO_S5K5E8
-> +	tristate "Samsung S5K5E8 sensor support"
-> +	select V4L2_CCI_I2C
-> +	help
-> +	  This is a Video4Linux2 sensor-level driver for the Samsung
-> +	  S5K5E8 5MP camera.
-> +
-> +	  To compile this driver as a module, choose M here: the
-> +	  module will be called s5k5e8.
-> +
->   config VIDEO_S5K5BAF
->   	tristate "Samsung S5K5BAF sensor support"
->   	help
-> diff --git a/drivers/media/i2c/Makefile b/drivers/media/i2c/Makefile
-> index a750942e9c62..bdcb8f34aca3 100644
-> --- a/drivers/media/i2c/Makefile
-> +++ b/drivers/media/i2c/Makefile
-> @@ -136,6 +136,7 @@ obj-$(CONFIG_VIDEO_RDACM21) += rdacm21.o
->   obj-$(CONFIG_VIDEO_RJ54N1) += rj54n1cb0c.o
->   obj-$(CONFIG_VIDEO_S5C73M3) += s5c73m3/
->   obj-$(CONFIG_VIDEO_S5K3M5) += s5k3m5.o
-> +obj-$(CONFIG_VIDEO_S5K5E8) += s5k5e8.o
->   obj-$(CONFIG_VIDEO_S5K5BAF) += s5k5baf.o
->   obj-$(CONFIG_VIDEO_S5K6A3) += s5k6a3.o
->   obj-$(CONFIG_VIDEO_S5KJN1) += s5kjn1.o
-> diff --git a/drivers/media/i2c/s5k5e8.c b/drivers/media/i2c/s5k5e8.c
+>  TOSHIBA TC9564 PCI DRIVER
+>  M:	Alex Elder <elder@kernel.org>
+>  M:	Daniel Thompson <danielt@kernel.org>
+> diff --git a/include/dt-bindings/clock/toshiba,tc9564.h b/include/dt-bindings/clock/toshiba,tc9564.h
 > new file mode 100644
-> index 000000000000..d25b978d7eda
+> index 000000000000..7de8c8165199
 > --- /dev/null
-> +++ b/drivers/media/i2c/s5k5e8.c
-> @@ -0,0 +1,567 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +#include <linux/clk.h>
-> +#include <linux/delay.h>
-> +#include <linux/gpio/consumer.h>
-> +#include <linux/i2c.h>
-> +#include <linux/module.h>
-> +#include <linux/pm_runtime.h>
-> +#include <linux/regulator/consumer.h>
-> +#include <linux/unaligned.h>
-> +#include <media/v4l2-ctrls.h>
-> +#include <media/v4l2-device.h>
-> +#include <media/v4l2-fwnode.h>
+> +++ b/include/dt-bindings/clock/toshiba,tc9564.h
+> @@ -0,0 +1,40 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
 > +
-> +#define S5K5E8_CHIP_ID_REG		0x0000
-> +#define S5K5E8_CHIP_ID			0x5e80
-> +#define S5K5E8_REG_MODE_SELECT		0x0100
-> +#define S5K5E8_MODE_STANDBY		0x00
-> +#define S5K5E8_REG_VTS			0x0340
-> +#define S5K5E8_REG_EXPOSURE		0x0202
-> +#define S5K5E8_REG_ANALOG_GAIN		0x0204
-> +#define S5K5E8_REG_TEST_PATTERN		0x0600
-> +#define S5K5E8_XVCLK_FREQ		24000000
-> +#define S5K5E8_LINK_FREQ_418MHZ		418000000ULL
-> +#define S5K5E8_PIXEL_RATE		167200000ULL
+> +/*
+> + * Copyright (C) 2026 by RISCstar Solutions Corporation.  All rights reserved.
+> + */
 > +
-> +struct s5k5e8_reg {
-> +	u16 address;
-> +	u8 val;
-> +};
+> +#ifndef __CLOCK_TOSHIBA_TC9564_H__
+> +#define __CLOCK_TOSHIBA_TC9564_H__
 > +
-> +struct s5k5e8_mode {
-> +	u32 width, height, hts_def, num_regs;
-> +	const struct s5k5e8_reg *regs;
-> +};
+> +/* Clock IDs */
 > +
-> +static const char * const s5k5e8_supply_names[] = { "avdd", "dvdd", "dovdd" };
-> +#define S5K5E8_NUM_SUPPLIES ARRAY_SIZE(s5k5e8_supply_names)
-> +
-> +/* Register initialization tables derived from Xiaomi Mi A1 vendor configuration */
-> +static const struct s5k5e8_reg s5k5e8_common_regs[] = {
-> +	{ 0x0100, 0x00 }, { 0x3906, 0x7e }, { 0x3c01, 0x0f }, { 0x3c14, 0x00 },
+> +#define CLOCK_I2C		0	/* critical */
 
-You should use CCI interfaces.
+Name seems a touch too generic.
+If everybody named clock this way, we would be very likely to get collision
+in the DTS.
 
-Overall perphaps it might be a long and tedious review process for the changes,
-and I would recommend to send and get accepted two sensor drivers only, then
-do other work.
+suggest TC9564_CLK_XXX
 
-> +	{ 0x3235, 0x08 }, { 0x3063, 0x2e }, { 0x307a, 0x10 }, { 0x307b, 0x0e },
-> +	{ 0x3079, 0x20 }, { 0x3070, 0x05 }, { 0x3067, 0x06 }, { 0x3071, 0x62 },
-> +	{ 0x3072, 0x16 }, { 0x3203, 0x43 }, { 0x3205, 0x43 }, { 0x320b, 0x42 },
-> +	{ 0x3007, 0x00 }, { 0x3008, 0x14 }, { 0x3020, 0x58 }, { 0x300d, 0x34 },
-> +	{ 0x300e, 0x17 }, { 0x3021, 0x02 }, { 0x3010, 0x59 }, { 0x3002, 0x01 },
-> +	{ 0x3005, 0x01 }, { 0x3008, 0x04 }, { 0x300f, 0x70 }, { 0x3010, 0x69 },
-> +	{ 0x3017, 0x10 }, { 0x3019, 0x19 }, { 0x300c, 0x62 }, { 0x3064, 0x10 },
-> +	{ 0x3c08, 0x0e }, { 0x3c09, 0x10 }, { 0x3c31, 0x0d }, { 0x3c32, 0xac },
-> +};
+> +#define CLOCK_PCIE		1	/* critical */
+> +#define CLOCK_MSIGEN		2
 > +
-> +static const struct s5k5e8_reg s5k5e8_2592x1944_regs[] = {
-> +	{ 0x0100, 0x00 }, { 0x0136, 0x18 }, { 0x0137, 0x00 }, { 0x0305, 0x06 },
-> +	{ 0x0306, 0x18 }, { 0x0307, 0xa8 }, { 0x0308, 0x34 }, { 0x0309, 0x42 },
-> +	{ 0x3c1f, 0x00 }, { 0x3c17, 0x00 }, { 0x3c0b, 0x04 }, { 0x3c1c, 0x47 },
-> +	{ 0x3c1d, 0x15 }, { 0x3c14, 0x04 }, { 0x3c16, 0x00 }, { 0x0820, 0x03 },
-> +	{ 0x0821, 0x44 }, { 0x0114, 0x01 }, { 0x0344, 0x00 }, { 0x0345, 0x08 },
-> +	{ 0x0346, 0x00 }, { 0x0347, 0x08 }, { 0x0348, 0x0a }, { 0x0349, 0x27 },
-> +	{ 0x034a, 0x07 }, { 0x034b, 0x9f }, { 0x034c, 0x0a }, { 0x034d, 0x20 },
-> +	{ 0x034e, 0x07 }, { 0x034f, 0x98 }, { 0x0900, 0x00 }, { 0x0901, 0x00 },
-> +	{ 0x0381, 0x01 }, { 0x0383, 0x01 }, { 0x0385, 0x01 }, { 0x0387, 0x01 },
-> +	{ 0x0340, 0x07 }, { 0x0341, 0xb0 }, { 0x0342, 0x0b }, { 0x0343, 0x28 },
-> +	{ 0x0200, 0x00 }, { 0x0201, 0x00 }, { 0x0202, 0x03 }, { 0x0203, 0xde },
-> +	{ 0x3303, 0x02 }, { 0x3400, 0x00 }, { 0x323b, 0x02 }, { 0x3301, 0x00 },
-> +	{ 0x3321, 0x04 }, { 0x3306, 0x00 }, { 0x3307, 0x08 }, { 0x3308, 0x0a },
-> +	{ 0x3309, 0x27 }, { 0x330a, 0x01 }, { 0x330b, 0x01 }, { 0x330e, 0x00 },
-> +	{ 0x330f, 0x08 }, { 0x3310, 0x07 }, { 0x3311, 0x9f }, { 0x3312, 0x01 },
-> +	{ 0x3313, 0x01 },
-> +};
+> +#define CLOCK_MAC0_TX		3
+> +#define CLOCK_MAC0_RX		4
+> +#define CLOCK_MAC0_125M		5
+> +#define CLOCK_MAC0_ALL		6
 > +
-> +static const struct s5k5e8_mode default_mode = {
-> +		.width = 2592, .height = 1944, .hts_def = 2856,
-> +			.num_regs = ARRAY_SIZE(s5k5e8_2592x1944_regs),
-> +		.regs = s5k5e8_2592x1944_regs,
+> +#define CLOCK_MAC1_TX		7
+> +#define CLOCK_MAC1_RX		8
+> +#define CLOCK_MAC1_125M		9
+> +#define CLOCK_MAC1_ALL		10
+> +
+> +/* Reset IDs */
+> +
+> +#define RESET_I2C		0	/* critical */
+> +#define RESET_PCIE		1	/* critical */
+> +#define RESET_MSIGEN		2
+> +
+> +#define RESET_MAC0_MAC		3
+> +#define RESET_MAC0_PMA		4
+> +#define RESET_MAC0_XPCS		5
+> +
+> +#define RESET_MAC1_MAC		6
+> +#define RESET_MAC1_PMA		7
+> +#define RESET_MAC1_XPCS		8
 
-There should be an endline after comma.
+Those ids do not belong in include/dt-bindings/clock/
 
-> +	};
 > +
-> +static const s64 link_freq_menu_items[] = { S5K5E8_LINK_FREQ_418MHZ };
-> +
-> +struct s5k5e8 {
-> +	struct device *dev;
-> +	struct v4l2_subdev sd;
-> +	struct media_pad pad;
-> +	struct clk *xvclk;
-> +	struct gpio_desc *reset_gpio;
-> +	struct regulator_bulk_data supplies[S5K5E8_NUM_SUPPLIES];
-> +	struct v4l2_ctrl_handler ctrl_handler;
-> +	struct v4l2_ctrl *link_freq, *hblank, *exposure;
-> +	const struct s5k5e8_mode *cur_mode;
-> +	/* Serialize access to sensor registers and streaming state */
-> +	struct mutex mutex;
-> +	bool streaming;
-> +};
-> +
-> +static inline struct s5k5e8 *to_s5k5e8(struct v4l2_subdev *sd)
-> +{
-> +	return container_of(sd, struct s5k5e8, sd);
-> +}
-> +
-> +static int s5k5e8_read_reg(struct s5k5e8 *s5k5e8, u16 reg, u32 len, u32 *val)
-> +{
-> +	struct i2c_client *client = v4l2_get_subdevdata(&s5k5e8->sd);
-> +	struct i2c_msg msgs[2];
-> +	u8 addr_buf[2], data_buf[4] = { 0 };
-> +	int ret;
-> +
-> +	put_unaligned_be16(reg, addr_buf);
-> +	msgs[0].addr = client->addr;
-> +	msgs[0].flags = 0;
-> +	msgs[0].len = 2;
-> +	msgs[0].buf = addr_buf;
-> +	msgs[1].addr = client->addr;
-> +	msgs[1].flags = I2C_M_RD;
-> +	msgs[1].len = len;
-> +	msgs[1].buf = &data_buf[4 - len];
-> +	ret = i2c_transfer(client->adapter, msgs, 2);
-> +	if (ret != 2)
-> +		return ret < 0 ? ret : -EIO;
-> +	*val = get_unaligned_be32(data_buf);
-> +	return 0;
-> +}
+> +#endif /* __CLOCK_TOSHIBA_TC9564_H__*/
 
-Remove it, and use CCI interfaces.
+Nit: missing space before the closing */ in the comment.
 
 -- 
-Best wishes,
-Vladimir
+Jerome
+
