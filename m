@@ -1,101 +1,99 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.222.176
+Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.160.181
 ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795797649;
-	b=fJ0YIZWgbgXB+/+3nL/652EYomwywbNZm4aSSZh2I3cKJIP+4tnZOWG/kklFVVPrzYLT
-	 rJrY7rsyvmgp1SokmEAfFJ9ClNMjjkaCxyc7puk7moYuc6ty+81SMlGFvi7vsvHsSPzkp
-	 gskovkONjdYhq6upU0MrpCd4G/7S3kysFqOkhEN2UMHcDkAqv0xq9+B0rNV0jvqt5hoNL
-	 zXsz8rMQOhgC3Y9U6rbsy/HrN8YXvi/2txAyrpcqaJ05bNok7kagf/SwBQw+CFy3V95z5
-	 h7RfAXYlnTZsnn2l5fymPrpOh/o6nUrCoLhz9Zqi3V9U0OHAs0nyPBQRQI3Iy5TPU8g==
+	t=1795798662;
+	b=YTCIJzKOzZ1DIZEaj6Vzpr694MsSsdhgzWAHXWO9XfYOWfjreQ3/QnPB7DanQ78broGs
+	 1x77g3RI7nDh2jETfUokylbeEumAITNL1qzfiIlBVaRi0aTiQIpFtZXuwdFvjx+a+oUxS
+	 u8MLz25K3ZeVio+A9wB/Yc0jN2R3PcWXprbQdCQ+CBfBxT88+s41/nMwDpORos4ckKhxy
+	 gEsmJnKMEUJlbBLcqZepApHCouJx2O8mMXAAqgappgLQwCivV+/WCWDs84yqKdOjBz/kr
+	 YG3D+bRnUvCEb22nc9Zqx4AZuB3ffPUTceisLnnNFLBy1769vRVF8tsSxBIpuniU8Dw==
 ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795797649;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795798662;
 	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
 	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:
 	 MIME-Version:References:In-Reply-To:From:Date:X-Gm-Features:
-	 Message-ID:Subject:To:Cc:Content-Type:Content-Transfer-Encoding;
-	bh=IPle5l7CKPa/6OPjdxH6qQiH/tYsSSvVtMd6mjA4rsg=;
-	b=MzEa6akyiOaGoLDPAU3Mf+7A03t47L5Oao43+Y597Cf5Vz1UEW/XJ+66/RFsk+ppkMvl
-	 dEjGvtDOY+qfBLOoUniCN7vSo1xERVeEVzJm9u4m5rnu9LrZ2dEqK/hEB6WzgvjXKHzC2
-	 gGNrLJwNyfVZzHe1J64O+DK9UmRwgyPulNJ+D5SM6LDKhKFoxFZsqG5PyJW7WV6MJVh9l
-	 o52OHqqTWLuHNaRNCJuwyjUF/a2F8I6teI7Ju/qE1U9kJ+N2GKUmciKU9O6eQxmHOtTki
-	 LWV37HXB6rjCssasNds5OOSOYjbwe+0CpK6rWATsn7qp1zFqs3ZGMK1XIBSDU2lnILA==
+	 Message-ID:Subject:To:Cc:Content-Type;
+	bh=JoYlWYsc7qA+Bk9zv3r6KL/XVztnYAaVtmzSY0LmZ30=;
+	b=JVXTLxwrhLB3kkQuEA6G2LkZgo5Q1sVQrpgsh6Etz/WvtIMLHLxBnkhsc8fBjpVs0YcB
+	 MCwx8dEr3YjI579rUP9VJrMNOq8lNtYehwAKnqgmljc/72EAVr7GPfXiW1sfrWivPRNg9
+	 LfXxq7vgi+RltroVaAf+YOy8JzDQEUzbVdMeGoJHqAT9adFV6w3eMtVvb9tFXY0puCQCL
+	 YPndbeRzE6wzF1J6xjR6L+lbcjf7zmwJUE+hrNi7mKf4clwv6ofvCaDanX2VdIwhEyJJN
+	 8MLAaBMutW4PfkoIMypQ+o7PObA2e/ZypbJ22LEaDLGy6oWl+Z4Ub0019MTxnsAYp+w==
 ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=gmail.com;
 	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=uXpGyVUU;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.222.176
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
+	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b="f+CjY/BX";
+	arc=pass header.oldest-pass=0 smtp.remote-ip=209.85.160.181
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A9B4606A68B
-	for <linux-clk@vger.kernel.org>; Fri, 27 Nov 2026 16:40:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 4A9B4606A68B
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 326B2606A31F
+	for <linux-clk@vger.kernel.org>; Fri, 27 Nov 2026 16:57:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 326B2606A31F
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=uXpGyVUU
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-93f22a8515eso701460285a.2
-        for <linux-clk@vger.kernel.org>; Fri, 27 Nov 2026 08:40:48 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1795797647; cv=none;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=f+CjY/BX
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-55dc111ae86so17178681cf.1
+        for <linux-clk@vger.kernel.org>; Fri, 27 Nov 2026 08:57:42 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1795798661; cv=none;
         d=google.com; s=arc-20260327;
-        b=r+8hnN+DiprvOCPJ/El6WgeouqE7Nd8GfaLoV28P56WgSg/dVahBVkM4x6AXfyA9k1
-         EGFADn8U3cqei6pG4q5QnOFlDBLKPTUDyDiTDLiJv/9TjT228mFjk0/UPzBmu9sY+TZ6
-         9Exy+jd9TnAaZSWuvhhvhz+2gntlQ/kBYC7RCtyG/Figo4a6cke7SYl8qoY0SfP40Qi5
-         WIDen4D5S1dwxGJXlqu0zN83hxiZ/I/+diU3XM08KDharjdXljR31lp8gZYeHn/3YdTp
-         qJqYs/oKDoKeI1yxbZnaytI78BT1KEkH2dGKONA2jolJBNoLqOXarVWeZJ0rqe2WKAjy
-         fJUg==
+        b=JabF1FrDTyMWdj0slwfJXWrm7hRKB00ycWNEj2sEBbRkSjw9Dn0K3Snmi8e0cloXMs
+         +1VeFz6Ksbnl21dpnRjBwn/fzq6ZkiNbhVUsswxTvgcceFalE8sMofFJlw3RecO38w9N
+         HbH7g9ATgWEa7xd9oaAMEWnEzo6SuQllKqht5mGWN8x5OloiYvLMM1F7DZe41jMTQeSb
+         +HKXuS2V5rU436sFIw8gFLk9X56t5l8y2K2vhaHorTnpLAA8wxo/lwnWx01BEd1ZRxaX
+         drBHN19Ib/JjPNXRPxSdQ0BSybVm0u94nFmgGTaK7+4MXBKwR3Vte1PWR1/3A2TptvjQ
+         jxSw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:dkim-signature;
-        bh=IPle5l7CKPa/6OPjdxH6qQiH/tYsSSvVtMd6mjA4rsg=;
-        fh=TTK+RYYUVnWXerTLUvtRXilx8TWJaDmMk96Jz873Z9Q=;
-        b=AGgsAkpKTHjVBZydzHvQra8AlL4QQVGgGNmCQLE3LSMSSqI/3KG4Y8d/U5RAsgEPwN
-         xbplYc3jGZBm3hqIcmGFwGjh0l3josMSGzOGzFXLiM6Yae7hHf7Sh2mbgah0aocZbuSt
-         syrsFxDKb3+ZANMatgL3IUbkD4+8uHvAezrz7rCfeJX3E9Zf6SIh4q9B6TFBgiGG14wR
-         bAfGuMvRKYa1tkBYyqZONMvVnwYgRnG9wFkzC2TgJyKdFR467GPWKy6zh0sqpgc3EgJC
-         YgnaJNKE2Lc7QN/IpRmW2bVhTkbx2AbHTlbGcCaeoejG9R4X04GtTIjOUkbaI+qzh8+Q
-         drXA==;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature;
+        bh=JoYlWYsc7qA+Bk9zv3r6KL/XVztnYAaVtmzSY0LmZ30=;
+        fh=ogmZUWymun2Hc5T7PjwC0SkgmV9MWpFc9AM3gI4CP0w=;
+        b=Z8t9LLqdF7S3rVXXXA34c8eDWduFzbq17Tn+5O64CZJjba0Oapl+BARoVEd492f1sW
+         oWbJnY+U/AlhHcL0mbGziCvoOxYAUWAGI9BLN1yfXIxmJ40lXwxKiri4YHpqAtg8yp0m
+         iLknTLOaY6rbylwras5PqxTrMmFHYMwokf9mSzUMgUh9PKcnZ5hsRIYQd5U0VIHI8qy4
+         cwKcerPJ8J8qKz6kebc+monrLiPL2CLyazDceiwk9BwUDl79jXHYv1Hz6hfZtXeo/uCB
+         os4sg/q+GG+Z+TDin8pYRl+W0mFTMpLdszTMmd4xm3lt1pJZgFPGsgejDdSWxBhhKidi
+         9vEg==;
         darn=vger.kernel.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1795797647; x=1796402447; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to:content-type;
-        bh=IPle5l7CKPa/6OPjdxH6qQiH/tYsSSvVtMd6mjA4rsg=;
-        b=uXpGyVUU+HT9/mcL1vE5JHKOo8nLBz/gaz5KEYZt/mIPeLtFYLgQkFSNcnvX+KiV0d
-         EWzuPZ5DghT0s9dbZY+pdaalvx+Q/M2KO76wP5hUbSkXqpI4gxU8wF2py84L90CLac2b
-         a4uQcF+UTl9SH2PT8Zp/90Pk7IJEv+uErh1HgwPSJjnifwCDM7VhJrpWeZ1JGpsAQ9AP
-         Ar2PPJ/k9A2Dd7fcfZ8vy5Rq4FG+GGpN8kxw0WxtW17yklKlDaQnB4oMFT3zYnJx7GAa
-         O6/yRfvw1NIJa/NvHiTdF8tMNrLWE/7SpAGbBt+sMm/PL6BhjTwvzJr88SnAxUrK5+zR
-         hnYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795797647; x=1796402447;
-        h=content-transfer-encoding:content-type:cc:to:subject:message-id
-         :date:from:in-reply-to:references:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+        d=gmail.com; s=20260707; t=1795798661; x=1796403461; darn=vger.kernel.org;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=IPle5l7CKPa/6OPjdxH6qQiH/tYsSSvVtMd6mjA4rsg=;
-        b=wJuOjUp1Jc378MGud6sTV6lXubAQLMKoXvPHJztYS7c17yP6F9/btn5b1eSo1iWe+t
-         GMj9UbLNJY3oNTmReT9Te5eovkRp1vZIlMuvV+Hd3Gse6pPjYYVyf560Bi+fqLLBm/ql
-         iaTbSANQzixxkvaV3Z2rKHhNiySy27baOkQlE7bx8rAOkmrK/jLMIqGRJCtYV54hrmQB
-         S4+LHBRdSloGU4pXv0djd6rbwjx3L9y1sPMYuklTEOaw2KCaPIvujwzwJ8JxLodcvaex
-         GrkDlpYxRoGLYwgFSGA/hm2MSjfB3SWFeiCk8ceIDHcizq5cgdNX0DGlti3rHZW2+ckT
-         fuQQ==
-X-Forwarded-Encrypted: i=1; AL+hErHOdbdGFf64q2maAyQs+ltMMokCUvPsVcbMpgOALwQfoW5I2fjNLzsJY1LLzaW7s/uMJ+d0OEmWbTQ=@vger.kernel.org
-X-Gm-Message-State: APuU4Z+6BuaDHdXoQ8AfQk4/3a5fJp86Z3mcDrQJpPATPbsWsc9J5aX6
-	8Y3/1p0HQShtN2Jdv6zdTB1l2PKwgJ5uJViW+ALsFlwHvKYEsWZDd9IW3Ax6jyyEyo31fjpMbH7
-	aDIzVeSxKTcmLpakdL7QgE6p/VVJ5Jxw=
-X-Gm-Gg: AZFdTZfewKHib2zyyzOfdAB8L7EnHUNoaVOU1mYOS0Yshu8itiwJ2t7s0WyLwx6g12A
-	Ln8kBp+sLjyfpmnEcUsmZ0JDS91Id5/ZDbpj7huW9dwL5MnEyzw+lAmotshJu8ThzlhL4RsQ1B5
-	QMZtGUYtd4Bqjj8dzGYIN13S8UTMZ00MQXCGN0rtHRKI4gU4SE1ZVFYoriMZ3Ozav8KcahL3S7M
-	1pI9CTbVezy89HZUU4AOLKKDI9vb3MKBlNBydJ41o9MEgiaFZOeY3DIAyynkmQoFF/61gIbANKm
-	68A7D3KoR1MhlcbyAVPN3wqdZhPf6jskDtH05w48VLZ0OaDESoPwPQH24Go0XJbPSfjr1ckUBIF
-	9/LCcqp68DC+du00peCEMeClBF3qjOo04T65x87920KRBAGYWQJ6sZ6Q2QiCbAm9LlhmRqBQxUx
-	kmx6s68PaiUkzg
-X-Received: by 2002:a05:620a:4556:b0:93e:c691:a1c with SMTP id
- af79cd13be357-949bab3d32emr4186387785a.76.1795797647019; Fri, 27 Nov 2026
- 08:40:47 -0800 (PST)
+        bh=JoYlWYsc7qA+Bk9zv3r6KL/XVztnYAaVtmzSY0LmZ30=;
+        b=f+CjY/BXcpKl6jzX9OALdg1mfYorM8PIZRIjW5rU5+YXEtkDEecpk4tbM35O+h2l+Y
+         3BySmVV+mW3zLErChy3JX8Fn4SNdfz8iDIA4tmhi5DY7Ki6vPLJIZlQNQrgRm+e7BiZd
+         Dr45nSTD78QTB0+Gfx0Yfaf4hrdQNxxnzTAPR2jV1bMjf5ntnpwz9kaD04KIpjR0LYoy
+         t5Ky+I4vi9mo4WJ8lucIof1Cx3aBixtmy2uew8gN82rbCeH7WFL4MYtu1i6S9NN1z6hf
+         dQrP6ZJu+O/wvnlHDys73uhLW4+ve2adu9/IiRkeEDmKKWgUl7/St2Op+kUmSiTtTpf9
+         B5xg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795798661; x=1796403461;
+        h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+         :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=JoYlWYsc7qA+Bk9zv3r6KL/XVztnYAaVtmzSY0LmZ30=;
+        b=M+qklIC3Cz1gB/lnddfDdQtBwFmUu8MFKup6wf5fpdWCXcJ7Je+H69B9BDSwhyW7N7
+         cZWW2boYegXOn9+3feS27vWXFRo03IymKXxZHYgg9VF2viZtMxJ9jZ+nq8wkG6HT5y8X
+         C2XrD4X1Qij3pK9iezsLhN6FZkZC4L7gzRUzAzBGmUfJhbZ0wfJxnlyC4Cvr9D2aC5Xz
+         A9u+KmmG+a1QPIX+y1DZlKXUCsW5K2TRJa23RPKUupDjEI4YCjaO6u6ZLfukRH3cwm/N
+         l06gjuEG5I0/D5BHMTGoZKIcFvHa1nqpdwOccN9P14RK2s8IC/NUeYQzEVH9oyrJRK48
+         B2Kw==
+X-Forwarded-Encrypted: i=1; AL+hErFs+ComSVr0xMExkANn14bSl2dBUP2zWEmyN57QGzIp8SbJmNwFxSibvYpG5AfbWI5nVW3OaJ/RijQ=@vger.kernel.org
+X-Gm-Message-State: APuU4Z95qWH+hLBfdGj2r/HQWQb/LcdTc7aZmmsbCbFgF4Ko6MgeyYwJ
+	CRMsAtVuRSDnt1LAmwJTf6u1fDYxZ8/tttCXNsblLzdyY4axLntlIriTygRl+P9u1zWybAwvBmM
+	FONbunZF24dGEvPyBrH0Xjqc2+58Hag8=
+X-Gm-Gg: AZFdTZcWB6UqvGyhU/rAmErA4a6DrLA81W2UwVnFStswhdl/sunMSHdytXtV1fED0ho
+	6D4z+PnnT7AMy5PsslxfgBqU8ZI3ZwQhQWLV3Xjn84IVChRD+KtqwHtFvaZcorUg5XQWs1eNn/M
+	Si/GnaCEIvyTD5vXrjfxHEMsylYvibfcfOSwtRw15NFaPPr5d15VAFpX/0zZa2su9PWDWTLb1KF
+	Bkf2iFpdn7TLmkOXc1pKog+3tlbOghrLNkNxz2K/VDJWx8IyR9hWJ/b3QI7kzAL3XWyLzLjOCNp
+	dhju2tLvZ9BwFlTY+viMlRNQSz5U4BRN8rgJq88b//ClwSJ8Oirfk4RfwUD+YDNp20ALtS0H3lU
+	blmUyc0B4WR8GNJqTaIuMnS6E28r06Y2S2acQiY7Cyi4A11AbzIIwjoSFk3/sK/mCdZo=
+X-Received: by 2002:a05:622a:5a1b:b0:535:384d:68ac with SMTP id
+ d75a77b69052e-55d769e9f2bmr449322421cf.13.1795798661145; Fri, 27 Nov 2026
+ 08:57:41 -0800 (PST)
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -105,218 +103,93 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-References: <20261125123146.379057-1-hikmahgumelar@gmail.com>
- <20261125123146.379057-8-hikmahgumelar@gmail.com> <eae86bfe27d119c6170b25de5a917df3@mainlining.org>
-In-Reply-To: <eae86bfe27d119c6170b25de5a917df3@mainlining.org>
+References: <20261127134507.125513-1-hikmahgumelar@gmail.com>
+ <LKFsWplUk1yOr4M1dEHqZ20-Oo7ya-QA5qkF8u2lcfPUsbJYq0AoJhyjIEBwg6PPzlPSMYfqn6CB-sQBOuQDKQ==@protonmail.internalid>
+ <20261127134507.125513-2-hikmahgumelar@gmail.com> <a8ee91a3-fc4c-4268-97c1-b4ddeff2558f@kernel.org>
+In-Reply-To: <a8ee91a3-fc4c-4268-97c1-b4ddeff2558f@kernel.org>
 From: Hikmah Gumelar <hikmahgumelar@gmail.com>
-Date: Fri, 27 Nov 2026 23:40:34 +0700
-X-Gm-Features: Aa3M54psm_9QUNpDWsKD_Jig5hkKXFvslF5p_cQzzBmVdpcTVqPaadJIGqde-h0
-Message-ID: <CADA=zOMpnGjPuH63CdPKNMyVVmO7Rr7fB+EP=3MS4825kkgdtA@mail.gmail.com>
-Subject: Re: [PATCH v4 7/7] arm64: dts: qcom: msm8953-xiaomi-tissot: enable
- front and rear cameras
-To: =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <barnabas.czeman@mainlining.org>
+Date: Fri, 27 Nov 2026 23:57:29 +0700
+X-Gm-Features: Aa3M54oyapQeOF2CNR5heqj_kowOsQNp9ESIWcAwgObVTh4Yt2mT_qD_BbMY_SI
+Message-ID: <CADA=zOPBRrzdST4rwNwejXF9cY8XJUFMXc=+FR5AQMiFFdKPBA@mail.gmail.com>
+Subject: Re: [PATCH v5 1/7] clk: qcom: gcc-msm8953: fix csi_phytimer_clk_src
+ 100MHz parent
+To: "Bryan O'Donoghue" <bod@kernel.org>
 Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
 	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
 	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Abel Vesa <abelvesa@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
-	Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, linux-media@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	u.kleine-koenig@baylibre.com
+	Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+	Jerome Brunet <jbrunet+clk@baylibre.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	linux-clk@vger.kernel.org, Abel Vesa <abelvesa@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Barnab=C3=A1s,
+Hi Bryan,
 
-Thanks for the review and the notes on msm8953-xiaomi-tissot.dts.
+Thanks for the review and the clear feedback on the commit message.
 
-- I will add the blank line before vreg_cam_avdd.
-- Noted on OV5675 variants; for now this series focuses on S5K5E8 and
-  OV12A10, and OV5675 can be a separate follow-up later.
-- I had already moved vdd_l23-supply into the regulators node in newer
-  revisions, and I will double-check its placement and parent supply
-  against the board DTS.
-
-Also, following review feedback, I am splitting this work into separate
-series for s5k5e8, ov12a10, and the MSM8953/tissot changes.
+I will keep "leaving gcc_camss_csi0phytimer_clk stuck off" and drop the
+board-specific reference at the end. For the rationale, I will note that
+comparing drivers/clk/qcom/gcc-msm8953.c with similar Qualcomm GCC
+drivers such as drivers/clk/qcom/gcc-msm8939.c, along with testing on
+MSM8953 hardware (my Xiaomi Mi A1), shows that switching the 100 MHz
+parent to P_GPLL0 with a divider of 8 resolves the issue.
 
 Best regards,
 Hikmah Gumelar
 
-Pada Jum, 27 Nov 2026 pukul 23.34 Barnab=C3=A1s Cz=C3=A9m=C3=A1n
-<barnabas.czeman@mainlining.org> menulis:
+Pada Jum, 27 Nov 2026 pukul 23.11 Bryan O'Donoghue <bod@kernel.org> menulis:
 >
-> On 2026-11-25 13:31, Hikmah Gumelar wrote:
-> > Enable CAMSS, CCI, CSIPHY0/CSIPHY2 ports, and the OmniVision OV12A10
+> On 27/11/2026 13:45, Hikmah Gumelar wrote:
+> > The 100 MHz entry in ftbl_csi_phytimer_clk_src selects P_GPLL0_DIV2
 > >
-> > rear and Samsung S5K5E8 front image sensors on the Xiaomi Mi A1.
+> > with a divider of 4, leaving gcc_camss_csi0phytimer_clk stuck off on
+>
+> "stuck at on" or "stuck at off"
+>
+> > MSM8953 platforms such as Xiaomi Mi A1 (tissot).
+>
+> ah I see.
+>
+> "leaving gcc_camss_csi0phytimer_clk stuck off" you can drop the fragment
+>
+> "MSM8953 platforms such as Xiaomi Mi A1 (tissot)."
+>
+> > Switch the 100 MHz parent to P_GPLL0 with a divider of 8.
+>
+> What is the data-source you used for this change ? You should describe
+> how you know this to be a correct change - the code is simple and
+> describes its own change.
+>
+> For example citing drivers/clk/qcom/gcc-msm8953.c and
+> drivers/clk/qcom/gcc-msm8939.c since they are very similar controllers
+> and the 8939 does it the way you describe below. Also "it works" is
+> another good reason. Inferred from your patch but not stated.
+>
+> More accuracy is required here.
+>
 > >
-> > Signed-off-by: Hikmah Gumelar <hikmahgumelar@gmail.com>
+> > Fixes: 9bb6cfc3c77e ("clk: qcom: Add Global Clock Controller driver for MSM8953")
+> > Signed-off-by: Hikmah Gumelar<hikmahgumelar@gmail.com>
 > > ---
-> >  .../boot/dts/qcom/msm8953-xiaomi-tissot.dts   | 124 ++++++++++++++++++
-> >  1 file changed, 124 insertions(+)
+> >   drivers/clk/qcom/gcc-msm8953.c | 2 +-
+> >   1 file changed, 1 insertion(+), 1 deletion(-)
 > >
-> > diff --git a/arch/arm64/boot/dts/qcom/msm8953-xiaomi-tissot.dts
-> > b/arch/arm64/boot/dts/qcom/msm8953-xiaomi-tissot.dts
-> > index fccb9c4360ca..87db6b18d191 100644
-> > --- a/arch/arm64/boot/dts/qcom/msm8953-xiaomi-tissot.dts
-> > +++ b/arch/arm64/boot/dts/qcom/msm8953-xiaomi-tissot.dts
-> > @@ -74,6 +74,108 @@ vph_pwr: vph-pwr-regulator {
-> >               regulator-always-on;
-> >               regulator-boot-on;
-> >       };
-> nitpick: add an empty line here
-> > +     vreg_cam_avdd: regulator-cam-avdd {
-> > +             compatible =3D "regulator-fixed";
-> > +             regulator-name =3D "vreg_cam_avdd";
-> > +             regulator-min-microvolt =3D <2800000>;
-> > +             regulator-max-microvolt =3D <2800000>;
-> > +             gpio =3D <&tlmm 62 GPIO_ACTIVE_HIGH>;
-> > +             enable-active-high;
-> > +             pinctrl-0 =3D <&cam_vreg_avdd_default>;
-> > +             pinctrl-names =3D "default";
-> > +     };
-> > +};
-> > +
-> > +&camss {
-> > +     vdda-supply =3D <&pm8953_s3>;
-> > +     status =3D "okay";
-> > +
-> > +     ports {
-> > +             port@0 {
-> > +                     reg =3D <0>;
-> > +
-> > +                     csiphy0_ep: endpoint {
-> > +                             clock-lanes =3D <7>;
-> > +                             data-lanes =3D <0 1 2 3>;
-> > +                             remote-endpoint =3D <&rear_cam_ep>;
-> > +                     };
-> > +             };
-> > +
-> > +             port@2 {
-> > +                     reg =3D <2>;
-> > +
-> > +                     csiphy2_ep: endpoint {
-> > +                             clock-lanes =3D <7>;
-> > +                             data-lanes =3D <0 1>;
-> > +                             remote-endpoint =3D <&front_cam_ep>;
-> > +                     };
-> > +             };
-> > +     };
-> > +};
-> > +
-> > +&cci {
-> > +     status =3D "okay";
-> > +};
-> > +
-> > +&cci_i2c0 {
-> > +     camera@10 {
-> > +             compatible =3D "ovti,ov12a10";
-> > +             reg =3D <0x10>;
-> > +
-> > +             clocks =3D <&gcc GCC_CAMSS_MCLK0_CLK>;
-> > +             assigned-clocks =3D <&gcc GCC_CAMSS_MCLK0_CLK>;
-> > +             assigned-clock-rates =3D <24000000>;
-> > +             pinctrl-0 =3D <&cam_sensor_rear_default &camss_mclk0_defa=
-ult>;
-> > +             pinctrl-names =3D "default";
-> > +
-> > +             reset-gpios =3D <&tlmm 33 GPIO_ACTIVE_LOW>;
-> > +             powerdown-gpios =3D <&tlmm 39 GPIO_ACTIVE_LOW>;
-> > +
-> > +             avdd-supply =3D <&vreg_cam_avdd>;
-> > +             dvdd-supply =3D <&pm8953_l2>;
-> > +             dovdd-supply =3D <&pm8953_l6>;
-> > +
-> > +             rotation =3D <270>;
-> > +             orientation =3D <1>;
-> > +
-> > +             port {
-> > +                     rear_cam_ep: endpoint {
-> > +                             data-lanes =3D <1 2 3 4>;
-> > +                             link-frequencies =3D /bits/ 64 <216000000=
->;
-> > +                             remote-endpoint =3D <&csiphy0_ep>;
-> > +                     };
-> > +             };
-> > +     };
-> > +};
-> > +
-> > +&cci_i2c1 {
-> > +     camera@2d {
-> > +             compatible =3D "samsung,s5k5e8";
-> xiaomi-tissot can come with ov5675 also.
-> > +             reg =3D <0x2d>;
-> > +
-> > +             clocks =3D <&gcc GCC_CAMSS_MCLK1_CLK>;
-> > +             assigned-clocks =3D <&gcc GCC_CAMSS_MCLK1_CLK>;
-> > +             assigned-clock-rates =3D <24000000>;
-> > +             pinctrl-0 =3D <&cam_sensor_front_default &camss_mclk1_def=
-ault>;
-> > +             pinctrl-names =3D "default";
-> > +
-> > +             reset-gpios =3D <&tlmm 129 GPIO_ACTIVE_LOW>;
-> > +
-> > +             avdd-supply =3D <&pm8953_l22>;
-> > +             dvdd-supply =3D <&pm8953_l23>;
-> > +             dovdd-supply =3D <&pm8953_l6>;
-> > +
-> > +             rotation =3D <90>;
-> > +             orientation =3D <0>;
-> > +
-> > +             port {
-> > +                     front_cam_ep: endpoint {
-> > +                             data-lanes =3D <1 2>;
-> > +                             link-frequencies =3D /bits/ 64 <418000000=
->;
-> > +                             remote-endpoint =3D <&csiphy2_ep>;
-> > +                     };
-> > +             };
-> > +     };
-> >  };
+> > diff --git a/drivers/clk/qcom/gcc-msm8953.c b/drivers/clk/qcom/gcc-msm8953.c
+> > index 8fe1d3e42144..8aec5600e837 100644
+> > --- a/drivers/clk/qcom/gcc-msm8953.c
+> > +++ b/drivers/clk/qcom/gcc-msm8953.c
+> > @@ -964,7 +964,7 @@ static struct clk_rcg2 csi2p_clk_src = {
+> >   };
 > >
-> >  &hsusb_phy {
-> > @@ -154,6 +256,7 @@ &pmi8950_wled {
-> >  };
-> >
-> >  &rpm_requests {
-> > +     vdd_l23-supply =3D <&pm8953_s3>;
-> It should be placed under vdd_l9_l10_l17_l18_l22-supply =3D <&vph_pwr>;
-> >       regulators {
-> >               compatible =3D "qcom,rpm-pm8953-regulators";
-> >
-> > @@ -302,6 +405,27 @@ gpio_hall_sensor_default: gpio-hall-sensor-state {
-> >               bias-pull-up;
-> >       };
-> >
-> > +     cam_sensor_front_default: cam-sensor-front-default-state {
-> > +             pins =3D "gpio129";
-> > +             function =3D "gpio";
-> > +             drive-strength =3D <2>;
-> > +             bias-disable;
-> > +     };
-> > +
-> > +     cam_sensor_rear_default: cam-sensor-rear-default-state {
-> > +             pins =3D "gpio33", "gpio39";
-> > +             function =3D "gpio";
-> > +             drive-strength =3D <2>;
-> > +             bias-disable;
-> > +     };
-> > +
-> > +     cam_vreg_avdd_default: cam-vreg-avdd-default-state {
-> > +             pins =3D "gpio62";
-> > +             function =3D "gpio";
-> > +             drive-strength =3D <2>;
-> > +             bias-disable;
-> > +     };
-> > +
-> >       ts_int_default: ts-int-default-state {
-> >               pins =3D "gpio65";
-> >               function =3D "gpio";
+> >   static const struct freq_tbl ftbl_csi_phytimer_clk_src[] = {
+> > -     F(100000000, P_GPLL0_DIV2, 4, 0, 0),
+> > +     F(100000000, P_GPLL0, 8, 0, 0),
+> >       F(200000000, P_GPLL0, 4, 0, 0),
+>
+>
 
 
-
---=20
+-- 
 Best regards,
 Hikmah Gumelar
