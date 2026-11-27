@@ -1,57 +1,47 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795780788;
-	b=tonXezBZW9YOcDfUqhBzERbJFINZ89UltfHVEN1WOAHSJNc7XJ0E16pDssUQmtE7O5mQ
-	 WK8NNs+XKFMN1HVBBnerSjLWfqOUOYVt6cnPLgF8ByKwN94w2K9i7/fGxceoj4rDFFxTw
-	 KRh70sWOiecsy46aCkXfHYIXx9DeQbAXqe62R2u7S8sjnR4+ib4qSHqS/nX0gTG0OnO7u
-	 agF84IWNkcTicw6j6rooFtNu7qm80Su7pPuRz22qTM2tLdc5pJYZHtreXXBM/axDlT0ck
-	 9KZxzGLs75qDZ3wv1CmsU635/lu9zybxr0PqVjgqOV41uZtJOCQYEGeZKGItBKH/6Ow==
+	t=1795781035;
+	b=pFBBDnxJVZciol4GYB9ayGfTJRVaD7ZumMashR8pQDJCk223sUSsfgB+ee30WuXUxMbk
+	 zB75wmtT9ydyjlE1g8BZe2hMC9FLQ4/mxX4yyr8MqmcfiaIYDhJIReQ0/RjspYYzILMg8
+	 LuIsNXdEw/GpyWAyo6dAZJ5jc70ezjFCUfIccuCkBh57FMU1lkfdaUtsSNSZ7uc16yFlV
+	 V1DgCLfivms7+ZBm1En9IK3tYfZlaW5vRLBX7l/FZff7mf8OkumYzx9m48M/mIFHSOgbz
+	 1i3SotxOFW+DEfCH+y/DuXV/x93Zj5GxpF83IPUTzDzN8RlAaSamtialM6Xq5N+n4SQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795780788;
-	h=Received:DKIM-Signature:Message-ID:From:Subject:Reply-To:To:Cc:
-	 In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date;
-	bh=DWvdXdNhFnJ0O9DoJ8Tn8ak0LEXNXrkgh+s7K3f4xnI=;
-	b=Rm+1bEEY+Oz0G74ixHIC0QI4/zUwc1tdJpceHYsE/nxwC3yXT63eQ3iPwL2MJh7SLvw/
-	 9JPbGzFPREsL5JHP6D9cApNh+LqGYIS6ZAPRfpm7cxABmSpoFH0ewYH339Bn6ndjs41nH
-	 eKHPzGnCaiaoMZwdE65KcTGNFZNHS0d+CoNOnYNPhTXKkER0s/dfcFaOlxVOCzRS2TG86
-	 m69hIfR2pY0qHS0G+V1wLIgz85VkNhQRGFLENj/nllm/uF+uLR7Na0uagY1kpNzaDHVF0
-	 llOKUMCXYCzgAECeybX9tAj5G7WKGEND7StH2QFvJGb2hVndVEns+XuFfgBje5E6nWw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795781035;
+	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
+	 Subject:To:Cc:References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding;
+	bh=Yik/n8iz7h63HECswpB5ExxSWT0WENJmafy9QiCrTEA=;
+	b=2ol8mdx6sRsTYTvePDndJssAUviIwxoB/ExMYwIDyB9EsWBJSIOp1l10FBKRIdpkGMYg
+	 sffdEkrWY6N68+QnuziA4xeHKPUJ5V6cQAOIvcUwckiX15OgfK07Vzbxpct8YIGc1Lm8P
+	 oVJjmagb7WeQ6R+vTgGScHMDbhKkK5Sdxn8aLKb4fOuuOIW6PAfusnutRaZ4X47vDAG2V
+	 vYhzVsdoD2gya8pnuyd3uzUk/WOxkSAi7Sv1LbcIp1L3w9rAKJegyrMJRkbYbcbWzrBAP
+	 v0swaOsNn+Uil3PUvSUKLoCAc2CYDKND9s+4vjEtFyVgyY7sWsBxIaiFOlYXz6ZZXEQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=l0I0ZftD;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=gaC6ydv1;
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37C26606A31C;
-	Fri, 27 Nov 2026 11:59:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74D76606A31E;
+	Fri, 27 Nov 2026 12:03:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=l0I0ZftD
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60B501F0089C;
-	Fri, 27 Nov 2026 11:59:47 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=gaC6ydv1
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 846271F000C1;
+	Fri, 27 Nov 2026 12:03:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795780787;
-	bh=DWvdXdNhFnJ0O9DoJ8Tn8ak0LEXNXrkgh+s7K3f4xnI=;
-	h=From:Subject:Reply-To:To:Cc:In-Reply-To:References:Date;
-	b=l0I0ZftDXD4AB2bf9n4f4oN32BKlNolMQUSDPy+tt3tMkzwytHKrNwF0S9fmmEN6K
-	 tRrPFEPgAjbOyYsuSsH2G3/EYYTZAjQM/veZpA55LKcue0PK+vtv4YnlLzPvsI6veT
-	 nn15pCa7Jqi48wJnkvtViYi85U5YzMRnx4H/ZT9UcR2XA5yKFSpsKjLNgmfi13U9ID
-	 ykrz/af1no7QhfHIYG+PUUlLLRzqt1v2KCdj1mjasH0a8Opavyd98pvjQNVu0hhxQ0
-	 S3hWFPGla9hXUdxg9C9U3ylYMpPJ61bi0kUSWUhrfJahBsOY9CmgxOXwZzdlZdGuss
-	 umTW/rLXaW3Aw==
-Message-ID: <sashiko-outbox-237308@kernel.org>
-From: sashiko-bot@kernel.org
-Subject: Re: [PATCH 3/6] dt-bindings: clock: qcom: document the Seca TCSR
- Clock Controller
-Reply-To: sashiko-reviews@lists.linux.dev
-To: "Bartosz Golaszewski" <bartosz.golaszewski@oss.qualcomm.com>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org
-In-Reply-To: <20261127-seca-clocks-v1-3-1781298e658b@oss.qualcomm.com>
-References: <20261127-seca-clocks-v1-0-1781298e658b@oss.qualcomm.com>
- <20261127-seca-clocks-v1-3-1781298e658b@oss.qualcomm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Date: Fri, 27 Nov 2026 11:59:45 +0000
+	s=k20260515; t=1795781035;
+	bh=Yik/n8iz7h63HECswpB5ExxSWT0WENJmafy9QiCrTEA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=gaC6ydv1hliAiu3WeXY2K5PW5f2w1B6vK3CXq/gu+3ee3Oykh3etdYgg/tAac4LNt
+	 Y6M7jEJ/5ZzRCGemihEVG/FK5/pSiJz5GKfAFQClS36cRY8GZNx2MBGActTeXPYkSv
+	 N5ycNTCj+bh2j0s4PvsEwrhDgrRjddG3aURXM3CzIRxRtvbfx42maDnqg7PseBs40X
+	 SOa9QiEkwG2fSbc5IiS+ykt7jOA+CO3BGZwb+vl+k+RZR5xkMuoJqL50S76vPIwM+r
+	 b10bD3PhT1w+GjvQNqPPAg9EC1wwn+fAtKeBgUxCjEIbjXsp1dpYU9o8ECealBwxLT
+	 tMP2GQo7DGj9g==
+Message-ID: <ec5e728c-e266-4df2-bdeb-6564444a7222@kernel.org>
+Date: Fri, 27 Nov 2026 14:03:50 +0200
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -60,74 +50,45 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] clk: qcom: gcc-qdu1000: Add sentinel to GPLL0 even
+ post divider table
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Bjorn Andersson <andersson@kernel.org>, Abel Vesa <abelvesa@kernel.org>
+Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
+ Jerome Brunet <jbrunet+clk@baylibre.com>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Dmitry Baryshkov <lumag@kernel.org>, Taniya Das
+ <taniya.das@oss.qualcomm.com>, Melody Olvera
+ <melody.olvera@oss.qualcomm.com>, linux-arm-msm@vger.kernel.org,
+ linux-clk@vger.kernel.org
+References: <20261125213433.1438537-1-vladimir.zapolskiy@linaro.org>
+ <20261125213433.1438537-3-vladimir.zapolskiy@linaro.org>
+ <67b17c55-e87c-464d-8c1d-fb015041be2f@oss.qualcomm.com>
+From: Vladimir Zapolskiy <vz@kernel.org>
+In-Reply-To: <67b17c55-e87c-464d-8c1d-fb015041be2f@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Thank you for your contribution! Sashiko AI review found 2 potential
-issues to consider:
-- [Low] dt-bindings: clock: qcom: clocks listed before reg in
-  qcom,seca-tcsr.yaml
-- [Low] dt-bindings: clock: qcom: inaccurate description in
-  qcom,seca-tcsr.yaml
---
+On 11/27/26 13:04, Konrad Dybcio wrote:
+> On 11/25/26 10:34 PM, Vladimir Zapolskiy wrote:
+>> The GPLL0 even output post divider table is not terminated by an empty
+>> entry, the table is passed to divider_determine_rate(), and the generic
+>> clock divider helpers iterate over a table until they find an entry with
+>> a zero divider, thus they may read past the end of the array.
+> 
+> But there's a .num_post_div?
 
-commit 79f9dfc2c2abd664b75d0b9d8b416fefd80c9efe
-Author: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+That is used by driver/clk/qcom/clk-alpha-pll.c internally. In fact, and
+in my opinion, it might be better to remove it and to rely on a sentinel
+only, if you also find it wanted and acceptable.
 
-dt-bindings: clock: qcom: document the Seca TCSR Clock Controller
+And if you look at clk_trion_pll_postdiv_determine_rate() or
+clk_alpha_pll_postdiv_fabia_determine_rate(), then, as it is stated, it
+becomes clear that the table without the sentinel is passed down to clock
+framework functions, and that's the critical problem fixed by this changeset.
 
-This commit adds the devicetree binding schema and clock ID header for the
-Top Control and Status Register Clock Controller on Qualcomm Seca SoCs.
-
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,seca-tcsr.yaml =
-b/Documentation/devicetree/bindings/clock/qcom,seca-tcsr.yaml
-> new file mode 100644
-> index 0000000000000..1349f70b5672a
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/qcom,seca-tcsr.yaml
-> @@ -0,0 +1,65 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/qcom,seca-tcsr.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Top Control and Status Register Clock Controller on Qualcomm Seca=
- SoC
-> +
-> +maintainers:
-> +  - Bartosz Golaszewski <brgl@kernel.org>
-> +
-> +description: |
-> +  Qualcomm TCSR clock control module provides the clocks, resets and pow=
-er
-> +  domains on the Seca SoC.
-
-[Severity: Low]
-Does the Seca TCSR clock controller provide resets or power domains?  The
-schema only defines #clock-cells, and include/dt-bindings/clock/qcom,seca-t=
-csrcc.h
-only defines TCSR_*_CLKREF_EN reference clocks, so mentioning resets and
-power domains here looks inaccurate (compare with qcom,x1e80100-tcsr.yaml).
-
-> +
-> +  See also:
-> +  - include/dt-bindings/clock/qcom,seca-tcsrcc.h
-> +
-> +properties:
-> +  compatible:
-> +    const: qcom,seca-tcsr
-> +
-> +  clocks:
-> +    items:
-> +      - description: TCXO pad clock
-> +
-> +  reg:
-> +    maxItems: 1
-
-[Severity: Low]
-Should reg be placed immediately after compatible and before clocks under
-properties, matching the canonical DT binding property order used in
-required and examples below?
-
---=20
-Sashiko AI review =C2=B7 https://sashiko.dev/#/patchset/20261127-seca-clock=
-s-v1-0-1781298e658b@oss.qualcomm.com?part=3D3
+-- 
+Best wishes,
+Vladimir
