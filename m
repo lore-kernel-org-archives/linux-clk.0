@@ -1,57 +1,86 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.42
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795779154;
-	b=Y7EnVGrVvGYPgGwdwMJaDez96+RQJKH5QvP/Y24kLMvmchUxCYbLHl1dt6v7CgWp33ww
-	 rSBBmVwZ18+VHMUNns6R1PHGxWr/PajSqeFdWUflmkP7VHIpGwHq2hBjzCr9FzJSf7aoj
-	 xE+id8CUQB6RdfXJnyM3UW3RRjgQkN7g6gpHX0QGDXheto5XQBL4/hnyAVbQsM5bJhyKI
-	 wErQBwAX+nHvKlZbFJSdVes6++R9IGPnhDP7Sx15BDlcdQYopROlk1y2MuG8+0x/4cEtq
-	 hI8b+xCZ0ZB5ZBewk7MhBWLS58Fq1bxVXrpJ18YZVdWagh/vZQgjTManWj3ZAg0RUyg==
+	t=1795779622;
+	b=i/ZGF8HsmaxNZrtSIZMfiBiyCUQPQhnaSO3p8qUamWOx5LDk7EpGsj+BEGP0oTHwDTho
+	 wehS0YbJsI5h5jPLMwbzIQww4ZDYoZt7weKyP6y+d3GB+zXRFYJSDG8zw7PVyPEA0PMVp
+	 AGNCng0rGO0jpeTnJtWwhg2PlapWmyjrja6QupJGcWlWZQZcSLsmY04TRsj7El8jPRtgy
+	 pFb4QPUi4E7AT2q88cBWh8fj+0MnoSyLPwoxt3KwnXH/juZc6p9J6hXVaRUaTktb4S8nx
+	 rHMBS2LxrDRb5d1NeLBgERi+EekRyGDL4Q+rdoRCzzTMChUh99w5Mk7Pkmns3Wv2n0A==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795779154;
-	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:In-Reply-To;
-	bh=wX/FVCUzVIh9tUuN5iJYqAoQF6PWVCKZHLN6FXdcM2w=;
-	b=okzVzppbnDQypmNHO829uYRwCVmEZhxGpivScN4S4QbZZ5llOaDc+Vk63+V3m+mMbsL1
-	 UlfIpv2AHJfDvQy7zFwJ4i7jraGW5w6nUWWJ4nZCrYrbTAjqSBich0/Q7bzi08/+UVe6o
-	 TdIJ373Uwn9f7aDRY7dd8f95ZnpOcn+6CVR2XFUEpw2xq+1jbPzGeB8/ITtTyoIgz5HQ2
-	 6UbeQ1INprk8hqE2L8FwcWcJXSxJTjoPzHJHHVZhOE06ZjQ3etdzOwivgwQzRXlV7k0Ag
-	 NZhG8gPnfkynKGwHnaK18z7KSsJWx0FlPhmhwChPrHVbwjrfcTsMjZozthUwtwv45tQ==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795779622;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 Message-ID:Date:MIME-Version:User-Agent:Subject:To:Cc:References:From:
+	 Content-Language:In-Reply-To:Content-Type:Content-Transfer-Encoding;
+	bh=Zty8k92Xw8D3zu7C7Tcy3SekI9L2+sn5YpLaa5BKAmA=;
+	b=h3Q01rkpe/ZSNPzSiJ2rw6DrvFHkPW5EQ1fq78PMfsa+r7sjQos38w6DwBK8wpiO9xQG
+	 Y9oOX+S7xdjI47QbJy8XdmMp/ekpEnCHzmMnTEe7P+wSg1/IDQMc5E21Noz7lR+9U1Z5f
+	 9+y2yr2gusgBE9pN6LFAGoJR2UprgzjppfQBFc6XdM71mN3LR4/UNxFXxRefT2nhmurF/
+	 Wt7hNCmCoENfagHepBtVowo9SMncU3mr7zebBbac0WJTRyvB1j+qYqepi1nx2raU72tO5
+	 V9XCdOtOuLLBAA4NtGHcSPPzPlKsR5f2Cm4hbwbf+mJ9lAyBrryvHB62GB4GzcZmNSQ==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ZRRuUfkx;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=linaro.org;
+	spf=pass smtp.mailfrom=linaro.org;
+	dkim=pass header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=V4HFTwzC;
+	arc=none smtp.remote-ip=209.85.128.42
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with UTF8SMTPS id 55933606A31F;
-	Fri, 27 Nov 2026 11:32:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE83D606A31C
+	for <linux-clk@vger.kernel.org>; Fri, 27 Nov 2026 11:40:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org EE83D606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ZRRuUfkx
-Received: by smtp.kernel.org (Postfix) with UTF8SMTPSA id 5EB971F0089C;
-	Fri, 27 Nov 2026 11:32:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795779153;
-	bh=wX/FVCUzVIh9tUuN5iJYqAoQF6PWVCKZHLN6FXdcM2w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=ZRRuUfkxfTyVqsxa0619jUylpIgFMfJ6lDjCL2nbNS67VXHa0Ni0C8STG8WMMK9IT
-	 wqt6CU1IIZtnDihdrxClId1wOj/rKt0r6pz2oFLFcNT8Usf+nBJOEPUvi1ElFdnF2f
-	 IuoE2S1YRWHElrKmo3EAH4QlHcHn2NN27SlY2R1s5k247F6kp3EyVspJ0moVEMu61n
-	 pxD3i+rzlWAZ24RWov3SGRXuE+1rmLX82xOEbHYkLhpky0rA9iLP+mwTDYTAR8+mgZ
-	 olRu4xDnZzP6TGWx/KuZsG51w2x6qzqnesaRMGyPq9omvDtPMQYpl40Tfhkx9aR6hF
-	 an5mI4H/C50mA==
-Date: Fri, 27 Nov 2026 12:32:31 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: Vladislav Leonov <vlad@zlab.su>
-Cc: linux-rockchip@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org, Simon Glass <sjg@chromium.org>, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
-	Heiko Stuebner <heiko@sntech.de>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Rob Herring <robh@kernel.org>, linux-pwm@vger.kernel.org
-Subject: Re: [PATCH 24/25] dt-bindings: pwm: rockchip: Add RV1106 compatible
-Message-ID: <awlpwN73zsCPPpdF@monoceros>
-References: <20260810121121.210040-1-vlad@zlab.su>
- <20260810121121.210040-25-vlad@zlab.su>
- <anq1YM2KzkycOzNm@monoceros>
+	dkim=pass (2048-bit key, unprotected) header.d=linaro.org header.i=@linaro.org header.a=rsa-sha256 header.s=google header.b=V4HFTwzC
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-49d05d51553so56346915e9.2
+        for <linux-clk@vger.kernel.org>; Fri, 27 Nov 2026 03:40:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1795779620; x=1796384420; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to:content-type;
+        bh=Zty8k92Xw8D3zu7C7Tcy3SekI9L2+sn5YpLaa5BKAmA=;
+        b=V4HFTwzCm3kQS+qyVyn3ZcPjuiuJzOciFrSzzZWbmUiX0V/qW3gB3+kjHgiJ/4S0TY
+         E30XodvHDrlX4Fj0LqjacnXxaERpiOfbDD6F19/A8Q4k3EMxugB5RaiEeymT+wqWUy0r
+         OT3N7E8WXRqDihwAPl8fFyDpZ/zj9YQK0w1Z++WA5kXxhWP53VZ1+VGZFeMZl9tS4Tbt
+         ds/F/xVSFNRcecbpnp0zMubqHaugYVwsKmjbI4jKfrxvJyvfT6+0lCaq2lcWv3QMoMew
+         xgV73mGnuBRH7Won4jBcO/WyUwYFnKxZvB9xchwYbwgd8YRqEk8nyg3F4t4hHAOoNP4b
+         k5lQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795779620; x=1796384420;
+        h=content-transfer-encoding:content-type:in-reply-to:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=Zty8k92Xw8D3zu7C7Tcy3SekI9L2+sn5YpLaa5BKAmA=;
+        b=GWqVn7a7nwpVYwNYLWaTj4xlkqLYuvBFGHLpVn/i4ffVCsFUf7S8pVxb6YG9FbTmKq
+         xL08c2wQa0SAvuzCyLwmcbYB/lKiXVVJu/J6C72xjH8rDU9m2y0fhRxytKU0CI9Hpr04
+         BoZSUPtpGbvQS4kA2ce/q+g0V9WeKSEn9Vu+PRKRbN/GCt3wEDWb69SWD2M0w2gtFy7r
+         0yHJnlhoW3P9M+jFcegtrmx+sgG5uZ+T9nR/u3WFjkSI5mK6qDcTFnHpDwnPEBWzbwCR
+         tMBGuvWMuYzWzDPsa6Yn55qgPnltahDg8qlPILDB6VccLxBaL24TMgyl3YyK0wegQyNN
+         SSIA==
+X-Forwarded-Encrypted: i=1; AL+hErGnycYC3cglRECwGAxAQFdudqLFO0GCz2lIn1Sd4sajaS84dpUcREeCM/YLnCWfYFTfJJTLRqxz9ZM=@vger.kernel.org
+X-Gm-Message-State: APuU4Z81MVUgT3ma2imAr9GW2lwlleI1qBb18G/bdQYt/NMoNc81urVb
+	xutsJvK/3JjtbvvaO77+/TKkmQYvRGymHGqFautjS0vEkkydrPuYBdMl9SDR50im8yY=
+X-Gm-Gg: AZFdTZf2WDjLL0zqRTSnzCij/olcbwfLxhDDRb+UUWLBYPPRkXkqUgzVhBOkkK1SXh/
+	6PmX/ZQeInEyO5KHM5bgI8LtUs8pYw4DJj6G6CfLSj+ugh9s4sBQ7rmPdwExUYqFJi/HojK/9Ff
+	qq0ZzgJmRoARuGDsMlm12HIor997Dpy+rHcRhtwLIsozhzOtmSld0thNN7AR8fNy3NOzees+sND
+	YYlmg3mCori+qMulbEvw/Y34uEjlul2WY0ZUZUDLTzJUp/sbfg8pUzAbwH4m6j9KvtsxVXOrNK5
+	5JO8KH31Bg9R/wYZOOrW4s7TKyZ2McLBtc9XzZ3by+sG3SVxivOqmUcbMDKRXdeet2jsKhTi9So
+	o1XYmzOhV5X3ZHiJ/7onqwUFA7DI3VDgWnYHBiloCY/B5SWLXJytxsgW37uuMvQPqPZRMpdjGIy
+	nnXW+3jyZFUVz2ML3KJQfWfz6jTkkK+o8tzJu64uj/KHaEwkMLFXuMw0JclnBw/DAAfTkJ4rhOY
+	TQfxz3s2P9mnahW2C3z1RxLwU1IGCoGMxJn/SQ3XZQw0BAwW8U8785rZz00bqdWH0zCW0aD7Zpd
+	3/HN1++PXx6uLtUUdd3Ph+wAsSKoJsuXgQCIFZds
+X-Received: by 2002:a05:600c:3b9e:b0:4a1:cf60:dcc3 with SMTP id 5b1f17b1804b1-4bb88820687mr559198225e9.29.1795779620276;
+        Fri, 27 Nov 2026 03:40:20 -0800 (PST)
+Received: from [192.168.0.167] ([109.79.27.52])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4ab6b110d56sm46119407f8f.40.2026.11.27.03.40.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 27 Nov 2026 03:40:19 -0800 (PST)
+Message-ID: <ccd91b1f-7476-430e-abdb-3e63be5e8c4e@linaro.org>
+Date: Fri, 27 Nov 2026 11:40:18 +0000
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -61,55 +90,60 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="4yohrfi6hcwzkpgi"
-Content-Disposition: inline
-In-Reply-To: <anq1YM2KzkycOzNm@monoceros>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] clk: qcom: gcc-qdu1000: Add sentinel to GPLL0 even
+ post divider table
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>, Abel Vesa <abelvesa@kernel.org>
+Cc: Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>,
+ Jerome Brunet <jbrunet+clk@baylibre.com>, Dmitry Baryshkov
+ <lumag@kernel.org>, Taniya Das <taniya.das@oss.qualcomm.com>,
+ Melody Olvera <melody.olvera@oss.qualcomm.com>,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20261125213433.1438537-1-vladimir.zapolskiy@linaro.org>
+ <20261125213433.1438537-3-vladimir.zapolskiy@linaro.org>
+ <67b17c55-e87c-464d-8c1d-fb015041be2f@oss.qualcomm.com>
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Content-Language: en-GB
+In-Reply-To: <67b17c55-e87c-464d-8c1d-fb015041be2f@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 27/11/2026 11:04, Konrad Dybcio wrote:
+> On 11/25/26 10:34 PM, Vladimir Zapolskiy wrote:
+>> The GPLL0 even output post divider table is not terminated by an empty
+>> entry, the table is passed to divider_determine_rate(), and the generic
+>> clock divider helpers iterate over a table until they find an entry with
+>> a zero divider, thus they may read past the end of the array.
+> 
+> But there's a .num_post_div?
+> 
+> Konrad
 
---4yohrfi6hcwzkpgi
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 24/25] dt-bindings: pwm: rockchip: Add RV1106 compatible
-MIME-Version: 1.0
+I think divider_determine_rate() takes the bare table and requires the 
+sentinel.
 
-On Tue, Aug 11, 2026 at 07:39:37AM +0200, Uwe Kleine-K=F6nig wrote:
-> Hello,
->=20
-> On Mon, Aug 10, 2026 at 03:11:15PM +0300, Vladislav Leonov wrote:
-> > +  interrupts:
-> > +    minItems: 1
-> > +    maxItems: 2
-> > +    description:
-> > +      Some PWM channels (e.g. on rockchip,rv1106-pwm) additionally
-> > +      support capture mode and use a second interrupt for that.
->=20
-> Is it clear what the first irq is about? Maybe spend a word on that,
-> too?
->=20
-> Otherwise looks fine for me.
+A more salient point is why there is a difference at all. TBH I thought 
+the sentinel was stylistic not functional but, it seems that is not so, 
+there are two differing interpretations of the same data.
 
-I marked this patch as changes-requested in patchwork now and discard it
-=66rom my inbox. Please send an update mentioning the purpose of the first
-irq if/when you care about it.
+Should be one of those consistently...
 
-Best regards
-Uwe
+Actually include/linux/clk-provider.h:716
 
---4yohrfi6hcwzkpgi
-Content-Type: application/pgp-signature; name="signature.asc"
+/**
+  * struct clk_divider - adjustable divider clock
+  *
+  * @hw:         handle between common and hardware-specific interfaces
+  * @reg:        register containing the divider
+  * @shift:      shift to the divider bit field
+  * @width:      width of the divider bit field
+  * @table:      array of value/divider pairs, last entry should have 
+div = 0
+  * @lock:       register lock
 
------BEGIN PGP SIGNATURE-----
+=> every table should have a last dummy entry
 
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmsJakoACgkQj4D7WH0S
-/k7RyQf9GwSgCvWfCEuntvedN0BuWWwDO37M+L0I+K+oTL94nW/JVSeKxnCG0gTT
-s/M8cJ9Vr2DmJ79LzcaXq6+FQJ6qr+ONq6amEq8jt5M36qBMVmVjIphE/VegAfCv
-pL/GO5t7X30eVr5Dmhe9G3lZ9Ud94PdiC9PCaHDPU8nmQz/PnH42FQTnm6BICnkC
-867tlVXHSIHENDN+P3rjSLsgzVH4uYwJOtrQURHpzaE7PQi5GomAcS46c50/asni
-zYOeeLd2cRO/QF2mQUZ496dfaHg2h5t602Kwx81Wc8dAeUwCx01dAslF53OW0mI6
-ya9O1cZmBYu8gzwG+YB7vaTkboHUcw==
-=p8HE
------END PGP SIGNATURE-----
-
---4yohrfi6hcwzkpgi--
+---
+bod
