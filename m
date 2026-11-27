@@ -1,79 +1,70 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795812641;
-	b=mDFuWLGcvNWzVDoG8Att+ISl83OcujJbQddV4yikjgRkuI2u0fCCAv9AAdGRTlNIhDC5
-	 5JR2sA+UY4x6FpyKBzLM1KoikCgHsFX17izzjUKie/d1pmhbf6jBhMgBad9yPCM93a2Yq
-	 MyRx6Q64ihz+4Z6aCl13V9vqGRFew4j2AFa3xQjCbX5l7WFNp+jRIMVEYamjZ86YyrRkX
-	 U0N6wXUw2pQMMrmx7hiEYTBE9FRBrPnZh3jHe+n5dYxqn+Ipg5fItiwveiMNokFE//6rc
-	 yCwI6dXMsmxCtGiRnnGIqIu8m1t9zV9kA87SggSPtNQCgZ2RbKBTQB8/LE5VnUJdsjg==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795812641;
-	h=Received:DKIM-Signature:Received:From:Date:Subject:MIME-Version:
-	 Content-Type:Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=v0Bgz1EHTknoJx8oeNdoRh3CgliIR7tsH8ZHa/1EmAg=;
-	b=ZUFH35MW0Jn8jr1YHt9VtMDoM20MgBp6nUJy1fhgAcPxZln6yzD+JyhJec3gtorFf4QN
-	 UoXkdq6kzjz2oB1sxbytpiOPQinW6rToFayT7cVnd06b3D6rKrQ71tTBQInwDoFUhV077
-	 IYGhOo1jNXW6pFCryXVI1N0AB4zZTHv8u7GhmcXCOjN0LCtZ9SIZ2mt0lIrZhCNa8sNFg
-	 j+XYF4KnG4xHOFfObULnVcmwY4GPpumO2Zv1o6exnDhKQBKN4O18jy82sDb26NRbMHxz4
-	 G8qpq2XfB7+5Yd/7VnZGwMQILLbrYECwK3FqS6EwaYzS0UTK6hUzPYM64spK/0VkspQ==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=k6xKnT2G;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=185.11.138.130
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1795815060;
+	b=z6giBwB0suIqwxbPz0KcEHEieOsK50VtM105XzywyKGOh5mfXDaczI7/iWUiUG48WDLX
+	 Dl33R4u1wiI+9MsLJHoKALizwbjjaD3vf951/HSvHhzXdDDI1mRD42JjViFfj6HKIX1xB
+	 ZrbVo1MOlaUi/kYTTR/CizeIQCTmfBIzOVxYw0VZR9UI1DC9LH2j7julBNrxVWVngJa25
+	 D9O56ZwnFLgpt2cri12wrjbKLokWAAPSBwIDojHnuX2v6nVlMEwffXqoji0QhQ3w+0iDA
+	 r7nk7iqPIJkPwnmdVqNRTtMG/6W/sO8zQF44YUyty2bDcpjZfXijbWoE2DWukpgr0MQ==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795815060;
+	h=DMARC-Filter:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:
+	 X-Mailer:In-Reply-To:References:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding;
+	bh=q3m2yyt50RINKi6ioBAszyxO/hF+Qz9GpX0rwheQRCQ=;
+	b=L30VgIvQHh8DUaGKoi5SQI7wUp4pA0+Y4eQ08MxXfwcQLxcB57S1Mo7Q/KBkG434D3Ll
+	 XtQKQHBVNTwJu3ciQ0y6mGL0hSmG/8CUoF3k5chgptgK7QAUwuOTxLzJRUegBWZ6bB9pl
+	 Y7jywf97fToGUQdO1qctfyjtcdO953PuHNmHbzdwOiZl6NwKoaEWR0pZypE+KV2ngU/I/
+	 fNxf0QAz1FOL8BxjApJedvVcW0e7srwELGWrM1DsNNs6xHMRVQvt/crkhn+rLmPXvxd6+
+	 NRcV6LgQQcalDrIS02CN3VcKfNGJljzKSg/wLaSt1tkmfECmllgPfW18NL1z8FRZELQ==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=sntech.de;
+	spf=pass smtp.mailfrom=sntech.de;
+	dkim=pass header.d=sntech.de header.i=@sntech.de header.a=rsa-sha256 header.s=gloria202408 header.b=e5V8y1Ur;
+	arc=none smtp.remote-ip=185.11.138.130
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	 key-exchange ECDHE (prime256v1) server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BDEB606A68C;
-	Fri, 27 Nov 2026 20:50:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F238606A31C;
+	Fri, 27 Nov 2026 21:30:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 7F238606A31C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=k6xKnT2G
-Authentication-Results: smtp.kernel.org; arc=none smtp.remote-ip=100.80.115.77
-ARC-Seal: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256; cv=none;
-	t=1795812641;
-	b=YAoxr8KfGz6q8ndRc+OWwnp5djkLlpPsG+6HHk2P3yhKeNGerDF8vRWzsKzHze3WHHIN
-	 fw+c6lz2S1KA4HkICYSlnpwN9i0X7Fj5O0+F30+umv0S/MgQVfc9iuRkryecs9CkA8uwO
-	 N1+dRvYVVy8ZSLJtR12VMjCgONILcg6DqRXZH0CnFLIs0lbDucwmQD3aeoR+bHAfKS3eD
-	 La6SCrtEhISsTwEQZzOnLI5mY+wJbSuLTtQGwU9DzifCoW6M2pHucO9Ixnq+Mgfw/thRG
-	 3Mpkx/X7SDpkNcbR08o5u8g1rJZlvjI9qomSB7tCE3h8uonEV0y6dqf/ivYjlzYE/Mw==
-ARC-Message-Signature: i=1; d=kernel.org; s=arc20260519; a=rsa-sha256;
-	c=relaxed/relaxed; t=1795812641;
-	h=DKIM-Signature:Received:From:Date:Subject:MIME-Version:Content-Type:
-	 Message-Id:References:In-Reply-To:To:Cc:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key:X-Endpoint-Received:
-	 X-Original-From:Reply-To:Content-Transfer-Encoding;
-	bh=v0Bgz1EHTknoJx8oeNdoRh3CgliIR7tsH8ZHa/1EmAg=;
-	b=X2b/PgujOop2ugryfiNGP/JTbJ5gtJkIeWTFS647GApGJxwOefLzpNWJc8AVNhiE+WWJ
-	 6S40Q7L+YT4DibtypONGJUNRsVKyxvlooCRfXOb9EFvqu4nqaV1Oe0mKNHlriitVoYeNk
-	 GkzXJyhXxiFPCIOmjAadyoAsUe0p5Vfefu7HWGg1odp8jc19KMVVqdHeSWw+Y9Zx12hnq
-	 ZvYLNrJ0lBv2NCgJEvMzLDkBKaBcZlQTL06lsEquyyGcMJzfQwZrkjV8ZqTiq4MWNxpxc
-	 +WUklO9lEZHgxyFsYIcGlboOwrIuXLv6yNmcK0WBJjth+ZfJqzvzA4zaR/joAkDT9ww==
-ARC-Authentication-Results: i=1; smtp.kernel.org; 
-	arc=none smtp.remote-ip=100.80.115.77
-Received: from lkml.kernel.org (nexus.subspace.kernel.org [100.80.115.77])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	by smtp.kernel.org (Postfix) with ESMTPS id 81DA71F00898;
-	Fri, 27 Nov 2026 20:50:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795812641;
-	bh=v0Bgz1EHTknoJx8oeNdoRh3CgliIR7tsH8ZHa/1EmAg=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To;
-	b=k6xKnT2GVqpfs/o4bHqhPmpTvlbhgx0y24BGc9e/pj30L3il2zCV03Kqbi14JNICf
-	 c5Cg8hTT7K7TFGVuDLURl9f156iW9KRDZjFWwLz4rWwioImfFcT7coUn7t1yiFczFZ
-	 yahj4KDfNAZbZScQ1nZNMzRBGrAbJU+YcKgHJ3udXALVApoln6HzsjjCU82Ael3rSe
-	 6WcJaYem7ZlPiYNykRT66eFmpoMknyz8+hvLf6cShfhmwwR1pb7Lf34eHaCjeXnfuU
-	 OYptMXn+lRyIXYLMg1aNL92Dp3Ok3z+AoCulJgWw0yZiGdtST+sBh3fnAO1DYnOVEC
-	 2vlYt+sTQFUQA==
-Received: from nexus.subspace.kernel.org (localhost [IPv6:::1])
-	by lkml.kernel.org (Postfix) with ESMTP id 0E2834DDCF;
-	Fri, 27 Nov 2026 20:50:27 +0000 (UTC)
-From: Fil Dunsky via B4 Relay <devnull+filipp.dunsky.gmail.com@kernel.org>
-Date: Fri, 27 Nov 2026 23:50:26 +0300
-Subject: [PATCH v5 1/6] dt-bindings: soc: Add Cortina Systems CS7542 global
- controls
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.a=rsa-sha256 header.s=gloria202408 header.b=e5V8y1Ur
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
+	bh=q3m2yyt50RINKi6ioBAszyxO/hF+Qz9GpX0rwheQRCQ=; b=e5V8y1UrtccmyPxmIkUjF2ky3U
+	exC1EK59wpjZe9T+uL8fDgx5yQnFLqvPPdf5wVpYR4AJDFvFarpaJ0we3NixMOBz5+Laf3+VkDQ7c
+	gGFyGoHCP2domoIm+STqlYwwvxhnqjGKFJp4CATKCk7mjuX4buNRea9eF2/OCuvT5QKSOsg9LJtxy
+	nBhWutwfY3LNRTLq8udK7VI8Xer4qBRRmVo6k5Yy53uJn5cAssMH+2HjAOh2r6o05sUCp5yAxDq/q
+	iZx2haoFDURMSaUDE0TqY/u7XuVnsgsJF/a+SomX4q0VkDbQ5+b83JCXnYzlI8whw7zKYHkXjGKJQ
+	7BICBRrQ==;
+From: Heiko Stuebner <heiko@sntech.de>
+To: Sebastian Reichel <sebastian.reichel@collabora.com>
+Cc: Heiko Stuebner <heiko@sntech.de>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Brian Masney <bmasney+clk@redhat.com>,
+	Jerome Brunet <jbrunet+clk@baylibre.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chanwoo Choi <cwchoi00@gmail.com>,
+	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	kernel@collabora.com
+Subject: Re: [PATCH v3 0/6] arm64: dts: rockchip: add RK3588 DFI clocks and RK3576 DFI
+Date: Fri, 27 Nov 2026 22:30:41 +0100
+Message-ID: <179581499871.254621.2470437130945394639.b4-ty@b4>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20261126-dfi-clocks-and-rk3576-support-v3-0-0f33c1b8df48@collabora.com>
+References: <20261126-dfi-clocks-and-rk3576-support-v3-0-0f33c1b8df48@collabora.com>
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -84,153 +75,34 @@ List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Message-Id: <20261127-cs7542-syscon-v5-1-d5a373c72b05@gmail.com>
-References: <20261127-cs7542-syscon-v5-0-d5a373c72b05@gmail.com>
-In-Reply-To: <20261127-cs7542-syscon-v5-0-d5a373c72b05@gmail.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
- Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
- Jerome Brunet <jbrunet+clk@baylibre.com>, Linus Walleij <linusw@kernel.org>, 
- Bartosz Golaszewski <brgl@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-gpio@vger.kernel.org
-X-Mailer: b4 0.16.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1795812625; l=4089;
- i=filipp.dunsky@gmail.com; s=20260930; h=from:subject:message-id;
- bh=LqNLTAcu72EDE3AcsaBdidyY70NNKo0WkG3SoF8q1Nw=;
- b=djRcgSWO+zkDwMw7wDWzAQirZzaOzurj7yO9pZ01NSw+4gGR/mx7A6DzYkhFRjnTVU7SpfsyR
- ZRk27Py5e30DdRR3hyBPOsg5F62R96zbA8lUlGKD9TEhRdpegoiyA1/
-X-Developer-Key: i=filipp.dunsky@gmail.com; a=ed25519;
- pk=JAYP8e2rJ54DHOmhNtXud8rl1igAaAXoOHxtJmVXI1g=
-X-Endpoint-Received: by B4 Relay for filipp.dunsky@gmail.com/20260930 with
- auth_id=1085
-X-Original-From: Fil Dunsky <filipp.dunsky@gmail.com>
-Reply-To: filipp.dunsky@gmail.com
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-From: Fil Dunsky <filipp.dunsky@gmail.com>
 
-Describe the shared syscon, its strap-selected clocks, three PCIe
-gates and level resets. Reserve the former group reset ID and assign
-individual IDs to the seven network reset signals.
+On Thu, 26 Nov 2026 15:52:35 +0100, Sebastian Reichel wrote:
+> When RK3588 DFI support was added, support for the clocks was missed.
+> This series fixes that and also adds the clocks for RK3576 as well as
+> RK3576 DFI node itself.
+> 
+> The DT binding for the DFI side already got merged together with the
+> driver changes today, so there is no dependencies for this series:
+> 
+> [...]
 
-Signed-off-by: Fil Dunsky <filipp.dunsky@gmail.com>
----
- .../soc/cortina/cortina,cs7542-syscon.yaml         | 56 ++++++++++++++++++++++
- include/dt-bindings/clock/cortina,cs7542-clock.h   | 13 +++++
- include/dt-bindings/reset/cortina,cs7542-reset.h   | 20 ++++++++
- 3 files changed, 89 insertions(+)
+Applied, thanks!
 
-diff --git a/Documentation/devicetree/bindings/soc/cortina/cortina,cs7542-syscon.yaml b/Documentation/devicetree/bindings/soc/cortina/cortina,cs7542-syscon.yaml
-new file mode 100644
-index 000000000..59bd1cfe3
---- /dev/null
-+++ b/Documentation/devicetree/bindings/soc/cortina/cortina,cs7542-syscon.yaml
-@@ -0,0 +1,56 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/soc/cortina/cortina,cs7542-syscon.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Cortina Systems CS7542 global control block
-+
-+maintainers:
-+  - Fil Dunsky <filipp.dunsky@gmail.com>
-+
-+description:
-+  The global control block contains the boot strap status, GPIO/peripheral
-+  mux registers, reset controls and the secondary CPU release register.
-+  It provides the APB, CPU and AXI clock rates selected by the boot straps,
-+  and the three PCIe clock gates and controller reset lines. Individual
-+  reset lines control NI, FE, TM, scheduler, QM, NI XRAM and the entire DMA
-+  block (LSO and SSP). The network engine consumer must acquire all seven
-+  lines exclusively; it cannot run concurrently with a separate SSP DMA
-+  user. The flash controller has a separate reset. SDRAM is excluded.
-+  Reset identifier 3 is reserved.
-+  Clock specifiers are defined in dt-bindings/clock/cortina,cs7542-clock.h;
-+  reset specifiers are defined in dt-bindings/reset/cortina,cs7542-reset.h.
-+  The pin controller uses the same register map through its parent syscon.
-+
-+properties:
-+  compatible:
-+    items:
-+      - const: cortina,cs7542-syscon
-+      - const: syscon
-+      - const: simple-mfd
-+
-+  reg:
-+    maxItems: 1
-+
-+  "#clock-cells":
-+    const: 1
-+
-+  "#reset-cells":
-+    const: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - "#clock-cells"
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    syscon@f0000000 {
-+        compatible = "cortina,cs7542-syscon", "syscon", "simple-mfd";
-+        reg = <0xf0000000 0x100>;
-+        #clock-cells = <1>;
-+        #reset-cells = <1>;
-+    };
-diff --git a/include/dt-bindings/clock/cortina,cs7542-clock.h b/include/dt-bindings/clock/cortina,cs7542-clock.h
-new file mode 100644
-index 000000000..c68c6ba20
---- /dev/null
-+++ b/include/dt-bindings/clock/cortina,cs7542-clock.h
-@@ -0,0 +1,13 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-+#ifndef _DT_BINDINGS_CLOCK_CORTINA_CS7542_H
-+#define _DT_BINDINGS_CLOCK_CORTINA_CS7542_H
-+
-+#define CS7542_CLK_APB	0
-+#define CS7542_CLK_CPU	1
-+#define CS7542_CLK_AXI	2
-+
-+#define CS7542_CLK_PCIE0	3
-+#define CS7542_CLK_PCIE1	4
-+#define CS7542_CLK_PCIE2	5
-+
-+#endif
-diff --git a/include/dt-bindings/reset/cortina,cs7542-reset.h b/include/dt-bindings/reset/cortina,cs7542-reset.h
-new file mode 100644
-index 000000000..136d21432
---- /dev/null
-+++ b/include/dt-bindings/reset/cortina,cs7542-reset.h
-@@ -0,0 +1,20 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-+#ifndef _DT_BINDINGS_RESET_CORTINA_CS7542_H
-+#define _DT_BINDINGS_RESET_CORTINA_CS7542_H
-+
-+#define CS7542_RESET_PCIE0	0
-+#define CS7542_RESET_PCIE1	1
-+#define CS7542_RESET_PCIE2	2
-+
-+/* Reserved legacy composite ID; never reinterpret it as an individual line. */
-+#define CS7542_RESET_NE		3
-+#define CS7542_RESET_NI		4
-+#define CS7542_RESET_FE		5
-+#define CS7542_RESET_TM		6
-+#define CS7542_RESET_SCH		7
-+#define CS7542_RESET_QM		8
-+#define CS7542_RESET_DMA		9
-+#define CS7542_RESET_NI_XRAM	10
-+#define CS7542_RESET_FLASH	11
-+
-+#endif
+[1/6] dt-bindings: clock: rk3588: add PCLK_DDR_MON_CH clocks
+      commit: 76c1bc06e04007247ca47e45d7313c24ac0b2570
+[2/6] dt-bindings: clock: rk3576: add more DFI clocks
+      commit: 2268455f297ec61b42ab44dfeaf982d2af370255
+[3/6] clk: rockchip: rk3588: add PCLK_DDR_MON_CH gate branches
+      commit: 2fb95541b66c05384c75259f06d51efa69e16bca
+[4/6] clk: rockchip: rk3576: add missing DFI clock branch
+      commit: 8b8862a19dc62e1fd838ce3eafd43382f78d4d01
+[5/6] arm64: dts: rockchip: add dfi clocks on RK3588
+      commit: 6046a394edaff1e6f67911ebe4ef0f508a9f82cf
+[6/6] arm64: dts: rockchip: add DFI node to RK3576
+      commit: b4f857a1d2ca5999295247933d29ebaf3b5377db
 
+Best regards,
 -- 
-2.53.0
-
-
+Heiko Stuebner <heiko@sntech.de>
