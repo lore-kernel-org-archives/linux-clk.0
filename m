@@ -1,72 +1,85 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.208.43
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795802687;
-	b=vTQV1WN9HRV1fGKC3pb6anKSI14jYrteyhKY0afSYacXsVdEflg68chCWFKbwSo1ADvq
-	 Jgy9pG/hExnENI1cdgsL/dT6an7B32HDfa1bNrFrSPta8ueVG8Y69RHF9XdPtLC0r87Va
-	 QE+NA7RGLNAYF0IcS92VM0B4BCnH0/5qe3KX5XNQkdeMeWlztNuoHkW8yLUvY2gx65WSa
-	 G570j0z5kdiVhgjH8i4oENnTpV/b0fU+oH9hIQB5C1z3UO4dwvg+Tyd3OM1jyvCtDFSX5
-	 DyR+lelSHiImJJV4Hst+L+na7W6H+WaOgBUvzwaWrtEDrUKVC2gYfQ/9jroTj13Lf/Q==
+	t=1795802699;
+	b=FELa+O2vN1hd/NYbS9mBnNANqpGChE+dbpltsuSEtyrgto+NQqmiN2XSWvo8q6gD5dh4
+	 fXdd6HW4eawvPi3Yy43TQjWIaRYHLN8uzLfDpuJ+pZH9OROpRqShZMmgjw3oo9KyJ+0/e
+	 +IkNDpLowy8jQEBqHNCDNnpsOmYa15RssuOajwlbZahfJQ54RZCch/qPyMZvvG9svnF5v
+	 GKBL4+Tux2gnfrCBJW9uS3BJ38nAHlfgHUYvwLdUX0uYpHcoa3gtxn5bzR1AtTWLSKOUf
+	 9UPqy2ZF9Q72KkS9gd2ZkkEZ0Kg/tYPPwBmAT97jtAKSeUTSOA7Kj98kDn1DkPMXZ7g==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795802687;
-	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:X-Mailer:
-	 In-Reply-To:References:MIME-Version:Content-Transfer-Encoding;
-	bh=iykf3X3+ChvaN5G6+M6V6y4Wk8M+xXCVPSQCEvNKrTU=;
-	b=KR40RVlwL2z09CtWCsjtep+X1EbYWvMIEvh9zDILs2TAs9v9hFmMpJD3X1Sc/F4RIeev
-	 72MOfzMsEOfsx3t2IWoIBz0n4Zwy3YGH+3QlLNOAOrg/ADsZ+C2UHdWhLohjf1juIm0JS
-	 0iKLGZx0S2qjVrMUNeC5oQvttUz5x9kYfJ8td7yXJIILZQW0Siz4/l2AIbxljoBLSmsiI
-	 gbbof9bc2jEf0MIOlnM5sb0k0UPE8hKUjnBcdEWl3TZvcTqGIs+XtJ8+p7GJ+iCj34y5e
-	 UNFOHJWYvVZlHyjB8YtNz1Vs0bcrgGQ4qt7SJ84gyD0p2AwtNKQunNzv6wPKIw3U3yw==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795802699;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding:Subject:From:To:
+	 Cc:In-Reply-To:References:Date:Message-Id:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key;
+	bh=RqlkJ/I+EH0yMfrfHVvBSdwYQQPjzHS4s9eY4ppBylg=;
+	b=F7hteVufOOaKv5vNPqPQcy1NiayjH3j2LZR/K//5xvJXXwLLmkHo+dbHEiqQNraSGdcb
+	 ckhPwkJUMpV35MldCprnWXUPotirA6sUJQvYPdKMlyvJ7/eTckGNdUDoIl5P4bgm7CDFb
+	 fJ2Lk5pJNXUUBSRmoo1Lg3Fmy7cd6gwy9o65WaMNVIQUfpMlrhEz5UON/93XCRZoPvhCH
+	 vq5MgKOtApceI+KhHt238yb5IozYVsnMAg05IpIdwnPPc6fVQEFFUTl1GJTw2IqgkjG9H
+	 R7SHZCiyAr58EEgUATcJU5u4skd/JfZId9g5XBhMw3u5N2WFBbxqBw+nFBmR/VI3l2Q==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ob4KMCsV;
-	arc=none smtp.remote-ip=100.103.45.18
-Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1))
+	dmarc=pass header.from=baylibre.com;
+	spf=pass smtp.mailfrom=baylibre.com;
+	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=Iy9+aEIQ;
+	arc=none smtp.remote-ip=209.85.208.43
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6641606A31C;
-	Fri, 27 Nov 2026 18:04:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D43F606A323
+	for <linux-clk@vger.kernel.org>; Fri, 27 Nov 2026 18:04:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 5D43F606A323
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=ob4KMCsV
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 862641F00898;
-	Fri, 27 Nov 2026 18:04:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795802687;
-	bh=iykf3X3+ChvaN5G6+M6V6y4Wk8M+xXCVPSQCEvNKrTU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=ob4KMCsVkExvdgaqNV6wLZvGUCB+/eupYkApP5vlMV5j5lqflUu7lS+AFAAMwYa2s
-	 9/fOdJ/te3QMjOgbQCxT22xPn9BR6HFrmhdeL4WU2bsG4vwkOQX7rGT+tHJxH0q3KS
-	 kRZD3frB7FIAyzrIo6/x3M4IMxCEW7AkeWzkhR3L9PSQxyaGrEdYHsybn92mSTTEEZ
-	 nMEkd7OqOjP1pjxSr6B7gqjULfNWdObrOAk4IPshj3CGeO7ztMduCXHL7FvLrzEpjC
-	 HRBQAPCGyjtwyfWrlI88MMHYybvHlLeZaoBudd4YuNi8reRzOlnNu4rOxUjcrU40ah
-	 3LGW9WyVo8vxQ==
-From: Lee Jones <lee@kernel.org>
-To: lee@kernel.org,
-	Jesper Nilsson <jesper.nilsson@axis.com>,
-	Lars Persson <lars.persson@axis.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	SeonGu Kang <ksk4725@coasia.com>,
-	Ravi Patel <ravi.patel@samsung.com>,
-	Varada Pavani <v.pavani@samsung.com>,
-	Hakyeong Kim <hgkim05@coasia.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-arm-kernel@axis.com,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org
-Subject: [PATCH 03/12] clk: samsung: artpec8: Terminate PLL rate table with sentinel
-Date: Fri, 27 Nov 2026 18:03:11 +0000
-Message-ID: <20261127180416.3277544-4-lee@kernel.org>
-X-Mailer: git-send-email 2.56.1.839.g22a8290db9-goog
-In-Reply-To: <20261127180416.3277544-1-lee@kernel.org>
-References: <20261127180416.3277544-1-lee@kernel.org>
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=Iy9+aEIQ
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-6b167ffd132so13044319a12.1
+        for <linux-clk@vger.kernel.org>; Fri, 27 Nov 2026 10:04:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre.com; s=google; t=1795802697; x=1796407497; darn=vger.kernel.org;
+        h=message-id:date:references:in-reply-to:cc:to:from:subject
+         :content-transfer-encoding:content-type:mime-version:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=RqlkJ/I+EH0yMfrfHVvBSdwYQQPjzHS4s9eY4ppBylg=;
+        b=Iy9+aEIQ/sKkgpla/Kw3npoC6iqmm4ymf2V9QCMEc3ojxV5crKQVO3j0cnHzP3E4zH
+         VDe45YUOG1Ojd2XuSLfQhsZ/2uHqVH+fPlScXcw0cEB3Nv0u5aj9MjxEAT/MUUc5qpvH
+         aW75lYxib8O/r48eqz5Nytk6Sr+3trLin+yzkvuRTo0Mf4tmY3pPTf8F5WbsHohWx5zo
+         9XcqlXTnJZ9oYO1CfvignZLNzJtpP1K14ziis2ygXPr6wcSm14s04ME6oU6iLXEXA980
+         3zhsdRAkRDcGZS4e3vsRjAiXzxgoVGFLbHwvcr2gcstiPxxpSggocz02Qboy11izNIlH
+         NXdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795802697; x=1796407497;
+        h=message-id:date:references:in-reply-to:cc:to:from:subject
+         :content-transfer-encoding:content-type:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=RqlkJ/I+EH0yMfrfHVvBSdwYQQPjzHS4s9eY4ppBylg=;
+        b=p9rEbzf1Mi4v7nxEDbXfEBdByl7Fxb8mHk8Pv9BdMTF7IlcDOWMARxnpHKywU1XcPC
+         EvIMSfg2X6eyUb7ExdnTPziQ56GvQJ/t4ETM6LyK8ZbheCvEcv5XBh+yPwirbwYZTtfP
+         k6EJqDkpxp5d5TdD/VDbsmouyFtDI37aIbyOUHYnxdgVFV9ykLImGenmIhhf5t1Jn1Is
+         YrZuOxGKCXkJlzXHQe6BleMgKe7DcpLmQaYhqhzCuIjgymssF9pVlvgVsa+csEQ4YvWD
+         9k06rs8HGwiMfbrxoijmxYelaOqTd+LZ1hHp3VtwyeNa5mc5CB9Z2TE8Ymb3rwvAjzcp
+         b4xg==
+X-Forwarded-Encrypted: i=1; AL+hErGyWlfdt8z+ZPGnLxvp6EVvVw7rWPMiI2L3pD7waVaB+/RPX0j8Mm5rq0fEpt7ToBYpgPcqtd9+dCA=@vger.kernel.org
+X-Gm-Message-State: APuU4Z/A7vNYZqyOrwDm6BHjovzXJxXL+W6iQJ6Kz4XYTCwMJ93HYZ/S
+	emne27/iX0PR3s8EqgAZEeNHSvDDPt02NmCXTc5wkEGYZFlybng2elQOX9x11MLpiFk=
+X-Gm-Gg: AZFdTZdJqFo/m3ncwr88hWH5+XOu4i5tPTpo1cxA1+LJoL3EpxxY78GDk1qqBnK+icl
+	atTYNY9HrsmBG4E41qLCc+W4flip9guplN9ko2OwpYhDMmvcEyzWW6MYF2jXfaqn8vYRJkoepiu
+	3ilat3T8oyJlsOwuszmOee3KYZOznHdLthsJiTaSoZ9oDBzH6aNcaQojPMoX7ZSW0xaW+6WYX0Z
+	snYMiWGLX9736tvXM0iGXiQUCjAi0AeqXMAroGBK+sabe/Yjs5iWw9ps7H6NcbVfP0smiPe9ARo
+	dOSCNjrPrD8TMvH6QcGBogOE2JU+57wCO5LBP+fC/ZoHylH8rn7GmLVAAT2c3uHz1BL0VcFOkCS
+	fMxrbYzk4HjeAZgydMOUnZlSANr0B1zVGVwffke5uM6MCCA4Y5pstvBPb39cuzEizLrusMFNxKm
+	5ohDabZOpwU1pBYbyS0YfwCuCteQoVThCGsr84HeZ/tLidjjmleykX7qQ9N9hv0bjVDl6qlCaJo
+	loK3xNd3UpdigW6aUst3xfJKBIvcToTLgddslG4rWDMjXzs9YKbtyR9yGM7G7Z28TlbnDoV+edZ
+	pOq2bMIh6+/TyDIz4pk+k8pMjc4yiAqK6hh5i5ORkQi64d2d
+X-Received: by 2002:aa7:d94b:0:b0:6b7:df0c:18bc with SMTP id 4fb4d7f45d1cf-6ba37d3b56bmr13992034a12.17.1795802696609;
+        Fri, 27 Nov 2026 10:04:56 -0800 (PST)
+Received: from localhost (82-67-6-57.subs.proxad.net. [82.67.6.57])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6ba9b131d3bsm8376099a12.34.2026.11.27.10.04.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 27 Nov 2026 10:04:55 -0800 (PST)
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -76,35 +89,82 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v6 5/7] rust: clk: add devres-managed clks
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Daniel Almeida <daniel.almeida@collabora.com>
+Cc: Gary Guo <gary@garyguo.net>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Viresh Kumar <viresh.kumar@linaro.org>, Danilo Krummrich <dakr@kernel.org>, 
+ Alice Ryhl <aliceryhl@google.com>, David Airlie <airlied@gmail.com>, 
+ Simona Vetter <simona@ffwll.ch>, 
+ Michal Wilczynski <m.wilczynski@samsung.com>, 
+ Drew Fustini <fustini@kernel.org>, Guo Ren <guoren@kernel.org>, 
+ Fu Wei <wefu@redhat.com>, 
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
+ Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>, Miguel Ojeda <ojeda@kernel.org>, 
+ Boqun Feng <boqun@kernel.org>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+ Trevor Gross <tmgross@umich.edu>, Tamir Duberstein <tamird@kernel.org>, 
+ Alexandre Courbot <acourbot@nvidia.com>, linux-pm@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ linux-riscv@lists.infradead.org, linux-pwm@vger.kernel.org, 
+ linux-clk@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+ Boris Brezillon <boris.brezillon@collabora.com>, 
+ =?utf-8?q?Onur_=C3=96zkan?= <work@onurozkan.dev>, 
+ Maurice Hieronymus <mhi@mailbox.org>, Jerome Brunet <jbrunet@baylibre.com>
+In-Reply-To: <189F36A9-D1C1-478A-A195-F94D037E4376@collabora.com>
+References: <20261013-clk-type-state-v6-0-a5e9977b3509@collabora.com>
+ <20261013-clk-type-state-v6-5-a5e9977b3509@collabora.com>
+ <DMYELN5M09W3.1SYPKW7DZ70E1@garyguo.net>
+ <189F36A9-D1C1-478A-A195-F94D037E4376@collabora.com>
+Date: Fri, 27 Nov 2026 19:04:53 +0100
+Message-Id: <179580269373.2809466.3866997464599192193.b4-reply@b4>
+X-Mailer: b4 0.17-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1455; i=jbrunet@baylibre.com;
+ h=from:subject:message-id; bh=EVdcrIGg5JsCx0X3upJdG2WoVOOBbQm+FMplR+16eVc=;
+ b=owGbwMvMwCW2VtK+WnvWU3HG02pJDNmcx1wf2nxO/vlS7391p4r88j3CD8rvTtqo+zJHx/l4O
+ F/jc7mfHaUsDGJcDLJiiiw13NXi7yS1vsyarnMbZg4rE8gQBi5OAZiImTYjwzur9Ptm8U6ip4rk
+ vVaFZW/7m3dS40HhpwtLzNJM1yWbmDP8s+KdsNvXYe+JLxfuuvhc1WqSbtuQczJ5c3eeFEuIet0
+ GNgA=
+X-Developer-Key: i=jbrunet@baylibre.com; a=openpgp;
+ fpr=F29F26CF27BAE1A9719AE6BDC3C92AAF3E60AED9
 
-_samsung_clk_register_pll() sizes each PLL rate table by scanning until
-it encounters an entry with .rate == 0, then copies the counted entries
-into pll->rate_table.  However, artpec8_pll_audio_rates omits a
-terminating zero sentinel, causing out-of-bounds reads into adjacent
-read-only data and populating pll->rate_table with bogus entries.
+On 2026-11-18 11:47 -0300, Daniel Almeida wrote:
+> 
+> 
+> > On 18 Nov 2026, at 11:24, Gary Guo <gary@garyguo.net> wrote:
+> > 
+> > On Tue Oct 13, 2026 at 6:07 PM BST, Daniel Almeida wrote:
+> >> Many drivers only need a clock running for as long as the device is
+> >> bound and never touch it afterwards. In C, devm_clk_get_enabled() and
+> >> devm_clk_get_optional_enabled() cover this case.
+> >> 
+> >> Add devm_enable(), devm_enable_optional() and
+> >> devm_enable_optional_with_rate(), which wrap the C helpers. They return
+> >> no handle, so the driver keeps nothing in its data and cannot change the
+> >> state of the clock. The clock is disabled, unprepared and put when the
+> >> device is unbound.
+> >> 
+> >> This mirrors regulator::devm_enable() and devm_enable_optional().
+> >> 
+> >> Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
+> >> Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
+> > 
+> > Given all the device resource lifetime changes, do we still need this now, or
+> > would putting a guard in driver private data to be dropped automatically upon
+> > unbind be sufficient?
+> 
+> I think we should still provide this. Many drivers only care that the clock be
+> enabled at a given rate, and do not care about the handle. I think this has
+> little to do with C or Rust and should be supported in Rust too.
+> 
+> — Daniel
 
-Append a sentinel entry to artpec8_pll_audio_rates.
+Gary, is this OK with you ? if it is, I can take as it is.
 
-Fixes: bd5336e3f704 ("clk: samsung: artpec-8: Add initial clock support for ARTPEC-8 SoC")
-Cc: stable@vger.kernel.org
-Signed-off-by: Lee Jones <lee@kernel.org>
----
- drivers/clk/samsung/clk-artpec8.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/clk/samsung/clk-artpec8.c b/drivers/clk/samsung/clk-artpec8.c
-index 0ea7c8b58674..fd35643be2e3 100644
---- a/drivers/clk/samsung/clk-artpec8.c
-+++ b/drivers/clk/samsung/clk-artpec8.c
-@@ -173,6 +173,7 @@ static const struct samsung_pll_rate_table artpec8_pll_audio_rates[] __initconst
- 	PLL_36XX_RATE(25 * MHZ, 100000000U, 32, 2, 2, 0),
- 	PLL_36XX_RATE(25 * MHZ,  98303985U, 47, 3, 2, 12184),
- 	PLL_36XX_RATE(25 * MHZ,  49151992U, 47, 3, 3, 12184),
-+	{ /* sentinel */ }
- };
- 
- static const struct samsung_pll_clock cmu_cmu_pll_clks[] __initconst = {
 -- 
-2.56.1.839.g22a8290db9-goog
+Jerome
 
