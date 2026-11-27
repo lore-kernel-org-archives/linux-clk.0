@@ -1,47 +1,47 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795795904;
-	b=ll5WT+fXw4ed6A6j3ZaJ2QlPNxgzBIfDNLEWVAIpW9IJylbrYXxrjyZ4IR9Z0sOzQRvU
-	 nUTG7nutzaAeIUVcSnj9cWKqsqPGTzlbQtYRW3V0vpl4PKypZ32aT8qyT1/l8bssovMMP
-	 y20Df/EE4u+P1tAZuBYU6WCtgH1KpLmPsw09MagF4TLvHotfUrNOONyuWHzTfsoOCxdyP
-	 R0dyZ8akrfdMIn3yvlPCV8XpBKxngcJpPb/8cdumaj+ty1EhvgHaD2M7UxLkbinP5gDZU
-	 L8dsM6Ls3jGcp4VVPak5cBYd4UHZ/KcX7TFLfwV5Sq1Nk5R3GKaBARhS+Bn+37ym4NQ==
+	t=1795796066;
+	b=U4LICDr/Cjmimequ+J+Uz7ENmcVYKVeU+klOXGJz+tpIgLEfpeeP3gFxD+Ty9TeNArEb
+	 5UOU1SOEwoUV3eYrG281Q5kuIZps/ZuPaVsUn4U1aoKnzQZ73p3EExaqPrbLiYQrakZi0
+	 naccDE/8DpJZfHvJdHljHi95ThHKX/WKKmZN8WalkxTzx5Rp8ZL7XwNrUaGdD8gCXY15o
+	 n6oCeMbyb5irYHbccZNjkZy92p4+hugK8IuR0Q2BNisBg9DvVya4CAWO0avaALwxk4MOb
+	 ZQK9xDoFjxDeiJj1h3g74EDz88jkEbnpX3DoYBzrk7cHAtQs3bEtj+TUh2qtFRjXRIA==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795795904;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795796066;
 	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
 	 Subject:To:Cc:References:From:Content-Language:Autocrypt:In-Reply-To:
 	 Content-Type:Content-Transfer-Encoding;
-	bh=/jSStMEANCnMO4ZzPmB5Im+yepvb5/yuDaHPbOparnI=;
-	b=dGpXqA81c9v/C3ycYR5VgI/GRdHo65d3VVvxhfG6QEdrrXVe9gckaDT8STz4MwpBpBxv
-	 w2zpwFN1mI7BfnHN3aZodyb8a2lb4FbZFchGdQAbopxvAEKQtugEgMMIgFSBqAyEFaQ/h
-	 hMiTxdOifNluw1C8Z876HydgPj83uSphLjvVEDUbRmisapcZTPffLclXZyfO2k9sftlYk
-	 n5rRIs0TJkpRzL16rEY1saQqccnehqeVmFvnns3vKgM9MJnYvpZur0rKolCE4ESBUgDXD
-	 VfUVplhGZzVIghFkyLHEGyHcCGb6DRkdPbxlySvciVm1Ezg4uwuNgZ3SJStaY+XUiZQ==
+	bh=PiMjljHAXEnxkN3fZddDPsELEz/91yYiiyEN+s6dHEs=;
+	b=okz6STFi2qeJZpaEsp7TTcZ1TLK1f0IHnwY0an11sRTaf2r7pwydqwggPesV6V1FJMqE
+	 1TUWcDccniZpRJi76GNAOD2j3XLxt1diSZWFsfZlIHXz3Flwzk0TRmIEWwMSMgjz/5zOy
+	 bMOEM9qVrt8ohYlbta3g7frY+QkgJf31nysYrIDpYmDi3lJNRaIpUZyg0lWT0mNFMRDT9
+	 EdsX+2PcHlhAdfIyMXlIX6gStvwElRrazGwjoKRwTwlej/QXK1Ekd7NvqOqbZCJri0Xgn
+	 uufB5DvyaIdkxfJxe8cwuZiPB1vssQC6wuMlt7YolDvUH06m/5F6wdZ2JnNzPtaPV+g==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=aYyX3maC;
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b="GN/zhOW0";
 	arc=none smtp.remote-ip=100.103.45.18
 Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB697606A31E;
-	Fri, 27 Nov 2026 16:11:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE4A1606A31C;
+	Fri, 27 Nov 2026 16:14:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=aYyX3maC
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60E591F000C1;
-	Fri, 27 Nov 2026 16:11:40 +0000 (UTC)
+	dkim=pass (2048-bit key, unprotected) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=GN/zhOW0
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAE891F00898;
+	Fri, 27 Nov 2026 16:14:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
-	s=k20260515; t=1795795903;
-	bh=/jSStMEANCnMO4ZzPmB5Im+yepvb5/yuDaHPbOparnI=;
+	s=k20260515; t=1795796066;
+	bh=PiMjljHAXEnxkN3fZddDPsELEz/91yYiiyEN+s6dHEs=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=aYyX3maCFB3FY/uEeH7D0KLT8rWWrsjQkll/47CQiowoRih1gVKWLX1i9z8rvyycm
-	 t4lQCkaNrR/rzJFpiUX530ZLhUFYWzRztQWXZvzT9apWyUzCJxmVO1ElU9nAVINgi2
-	 ZYO9bFx1N26PjOEZlJU37gmcjbVzDxPxrz3ZQfa9xeJOK6+g+W1/IbIiz1UL282hU8
-	 VmP+EfSG6QHIj7xEzm7GCwHWYKWQUGHk7MRF9XfwHLkHhaX+aPrsLD2qksKcDcGYm/
-	 U+FkSwKcnvm70t07dUUtl17gNCH8kfKUx2mqlcOfQYCbW+muaZbkY2pJp+NvggOP9f
-	 GDp7iGgSimLWg==
-Message-ID: <a8ee91a3-fc4c-4268-97c1-b4ddeff2558f@kernel.org>
-Date: Fri, 27 Nov 2026 16:11:38 +0000
+	b=GN/zhOW0t/Dtz2TZSw9Gc4aXbaArAcBLAuNvI60Chq1Vyqgi9Z4UoJ2RfQN9DKmf7
+	 xA5Uc8LCrZGkkoDfkCpYcLhV+JPn/wLLUOyvuPKiuF3JFWBfYYp0E/chumHr1lfhzf
+	 W7W+/3lUdOVZrCdsNpP1Iuz5mgIaLolp6AsXz6qFIdrTlNX8+oiYTVmZKYWNGwlJv1
+	 2eZigogyjhLpncCvdpOCkEBdbQc/22ZrjcsDsqBj7skDTG6aE4EG4UXBOSZu5tP1iW
+	 Q+snHLR3V3dKhbMolZexgdDTvPDwRzU6CF1qvWQOu75RteTrwdO/TMY+3f4EHtPe67
+	 ELfpKTgOJkF8g==
+Message-ID: <012855be-7a95-436f-b0ab-11ae3134ced8@kernel.org>
+Date: Fri, 27 Nov 2026 16:14:20 +0000
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -52,8 +52,8 @@ List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/7] clk: qcom: gcc-msm8953: fix csi_phytimer_clk_src
- 100MHz parent
+Subject: Re: [PATCH v5 0/7] Enable front and rear cameras on Xiaomi Mi A1
+ (tissot)
 To: Hikmah Gumelar <hikmahgumelar@gmail.com>,
  Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
@@ -65,9 +65,8 @@ To: Hikmah Gumelar <hikmahgumelar@gmail.com>,
 Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
  linux-clk@vger.kernel.org, Abel Vesa <abelvesa@kernel.org>
-References: <20261127134507.125513-1-hikmahgumelar@gmail.com>
- <LKFsWplUk1yOr4M1dEHqZ20-Oo7ya-QA5qkF8u2lcfPUsbJYq0AoJhyjIEBwg6PPzlPSMYfqn6CB-sQBOuQDKQ==@protonmail.internalid>
- <20261127134507.125513-2-hikmahgumelar@gmail.com>
+References: <__OIHsqpwOqb8kxVYcd2PoPvNYDhN8XO6vyXiYMCCK6o3sfyJ1gl1GNdhcGYhdfBf43tQmn6Dt6cWXcSD1uiPA==@protonmail.internalid>
+ <20261127134507.125513-1-hikmahgumelar@gmail.com>
 From: Bryan O'Donoghue <bod@kernel.org>
 Content-Language: en-GB
 Autocrypt: addr=bod@kernel.org; keydata=
@@ -113,55 +112,47 @@ Autocrypt: addr=bod@kernel.org; keydata=
  LKSGEglMpiX07M1AotgvylN5C8fjbouoK+/RAMsXkk8jba6rPfuuXPaDjCyyKn6zSVHETnHW
  3AJbgVY50T8STpnxayBQvWbCvu+6NOEjXCbyaOJig+5l0zlGN9XHjdANXC5HnwmyaGRL9YDq
  Jh2nVXVJDincOdQRdKcJjYLqaOAoWrYWSDi1iZGspHBTDrnOvfMQzzHY
-In-Reply-To: <20261127134507.125513-2-hikmahgumelar@gmail.com>
+In-Reply-To: <20261127134507.125513-1-hikmahgumelar@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 27/11/2026 13:45, Hikmah Gumelar wrote:
-> The 100 MHz entry in ftbl_csi_phytimer_clk_src selects P_GPLL0_DIV2
+> This series enables the front (Samsung S5K5E8) and rear (OmniVision OV12A10)
+> cameras on the Xiaomi Mi A1 (msm8953-xiaomi-tissot), along with the required
+> MSM8953 CAMSS clock fix, sensor DT bindings, V4L2 subdev drivers, and SoC/board
+> devicetree updates.
 > 
-> with a divider of 4, leaving gcc_camss_csi0phytimer_clk stuck off on
-
-"stuck at on" or "stuck at off"
-
-> MSM8953 platforms such as Xiaomi Mi A1 (tissot).
-
-ah I see.
-
-"leaving gcc_camss_csi0phytimer_clk stuck off" you can drop the fragment
-
-"MSM8953 platforms such as Xiaomi Mi A1 (tissot)."
-
-> Switch the 100 MHz parent to P_GPLL0 with a divider of 8.
-
-What is the data-source you used for this change ? You should describe 
-how you know this to be a correct change - the code is simple and 
-describes its own change.
-
-For example citing drivers/clk/qcom/gcc-msm8953.c and 
-drivers/clk/qcom/gcc-msm8939.c since they are very similar controllers 
-and the 8939 does it the way you describe below. Also "it works" is 
-another good reason. Inferred from your patch but not stated.
-
-More accuracy is required here.
-
+> Changes in v5:
+> - Restore missing `select V4L2_CCI_I2C` lines across existing camera sensor
+>    entries in drivers/media/i2c/Kconfig.
+> - Move ov12a10 Kconfig/Makefile entries from the s5k5e8 driver patch into the
+>    ov12a10 driver patch to preserve per-commit bisectability, and add
+>    MAINTAINERS entries for both bindings and drivers.
+> - ov12a10: Call pm_runtime_enable() before registering the async subdev, add
+>    v4l2_subdev_cleanup() in the probe error unwind path, update the active
+>    subdev state and return -EBUSY when streaming in set_fmt, add the 35 ms
+>    post-powerdown delay when reset_gpio is absent, and match the initial
+>    V4L2_CID_EXPOSURE maximum (3372) to the default mode.
+> - msm8953-xiaomi-tissot.dts: Move `vdd_l23-supply` inside the `regulators`
+>    child node under `&rpm_requests`.
+> - Include base-commit metadata via git format-patch --base.
 > 
-> Fixes: 9bb6cfc3c77e ("clk: qcom: Add Global Clock Controller driver for MSM8953")
-> Signed-off-by: Hikmah Gumelar<hikmahgumelar@gmail.com>
-> ---
->   drivers/clk/qcom/gcc-msm8953.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/qcom/gcc-msm8953.c b/drivers/clk/qcom/gcc-msm8953.c
-> index 8fe1d3e42144..8aec5600e837 100644
-> --- a/drivers/clk/qcom/gcc-msm8953.c
-> +++ b/drivers/clk/qcom/gcc-msm8953.c
-> @@ -964,7 +964,7 @@ static struct clk_rcg2 csi2p_clk_src = {
->   };
-> 
->   static const struct freq_tbl ftbl_csi_phytimer_clk_src[] = {
-> -	F(100000000, P_GPLL0_DIV2, 4, 0, 0),
-> +	F(100000000, P_GPLL0, 8, 0, 0),
->   	F(200000000, P_GPLL0, 4, 0, 0),
+> Hikmah Gumelar (7):
+>    clk: qcom: gcc-msm8953: fix csi_phytimer_clk_src 100MHz parent
+>    media: dt-bindings: media: i2c: add Samsung S5K5E8
+>    media: i2c: add s5k5e8 image sensor driver
+>    media: dt-bindings: media: i2c: add OmniVision OV12A10
+>    media: i2c: add ov12a10 image sensor driver
+>    arm64: dts: qcom: msm8953: add CAMSS node and MCLK pinctrl states
+>    arm64: dts: qcom: msm8953-xiaomi-tissot: enable front and rear cameras
+I recommend breaking up your patches in three separate series.
 
+1. s5k5e8
+2. ov12a10
+3. SoC depends
 
+with #3 depending on #1 and #2. As is you need people to pick up patches 
+individually within a series which is always tougher.
+
+---
+bod
