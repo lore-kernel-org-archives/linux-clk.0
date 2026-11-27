@@ -1,61 +1,60 @@
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=119.15.109.137
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795764819;
-	b=2P5v7Zi6HNnfKPx2qaR20ldcFtkoeVb5S4igUZMADhwuZeuDKcSVNZx87WQgnnQmdnTy
-	 chIZ6w3En3ELJGsRO5I6RRCkzjmZQw0escjjQqUlT4ilD2jA6pV342eaUy8ks3yvlQPOL
-	 RZzkH/LfFm9emBYDw/bEX8BCIluw44oBukMhkGdCMUhP1QcRVavyBtlS8jZ7qgLih+sHx
-	 CvtdmAVIpxsS2jY/IGUFpx4Cb/DqZWPbpyIN4CGdZ0US2LL4eY45F7VSAjdMrCMP0S7Os
-	 Uty0vjBm+VZhIuE5dtICz6NK1xTQ+UCOck35G1ssHq/wvi2Ki2pdcyHO2Fn65JLetRA==
+	t=1795764826;
+	b=smC9HzRk1v+UZxhQQizLtGzTzsMDHPD74m9bSXUx2hiAD3D8IrEw/XIdCR/JbD9RZskC
+	 k4/C6Tndg9pFKjwI90R9YrgYlr+hl5XElOwr504cIQnnzAhDn4Jn7Q6ggN4TuQj5NfdP/
+	 Aboo0G+gCvxs0mcgs0zOrp+TVj2IDknIE7aLB2P+1FCU+zpUnip7NUgg3QT9cQ1+yqNVY
+	 pXYwzITxsRMZ/x8Dn/qOMaZwxqgMRT3YEd04MkgrIp284nTFCOQqMjHXEPDPaHROlzKrV
+	 rWeetUMM+MvtHfm9Wd+gE1918iy843dF+925YVHreufa5gqk6z3fQIAFqZouqUF8RjQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795764819;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795764826;
 	h=DMARC-Filter:Received:DKIM-Signature:X-GPT-Reason:From:To:Cc:Subject:
 	 Date:Message-ID:X-Mailer:In-Reply-To:References:MIME-Version:
 	 Content-Transfer-Encoding;
-	bh=ZQnPEju6KfsvOVnoWN6Y7e8NURws113vktNgMx0Bbf8=;
-	b=W++P5/JzOof+a5hwtmrNKKH+rJo3Zdum4oSp64EOcH/OOJNJSfEHV8ldhTlxUJ9KNK9u
-	 l0Z1Vs8PWrNVXatb329f9jQYvk6mgAyM2V80nO06sEqIWfrCH0E9chsRM8e9Rz6fFoZ5S
-	 Bc8210WG4OZSYzSOeyeVAFdVuSFjrPGv8s8SC9qH8tcULcByfxujf88X0UnGGY6vgX4pd
-	 /rRMEC5hdnr1vdX69j8Z7qsrIoa3TDxZL+a0LmTpKOEK5Vp1B2Wc+f6sIGv8uYRgTog3e
-	 gfLZtZ5o/40pzb+6mxYqn3Y3kWHITqU10yWQ5kbOI7XtQPT7BAFY0SArg0Ih3l/QJLw==
+	bh=jB/1U0fWdj0DZ0gZKs1wUQuMfdnKTfbWdwKCxQuzKHM=;
+	b=xUW9iLH20FB6PCViIfLagdgV1aCHhdaxfz1KEytX7yGBdKhwZ0o7VrpuST3B73NbEuV4
+	 r3ZR+wUC+zlHKcE1VD1hfMcqBmzFhWLvdhaPzLAy5DEpo3vKU/jd855oPT2F2ClpbP/ej
+	 z2XZlvg9Y8r8VxP/YjaIlKDWI6BctDzpZhGqDA/UdZnvIjZdVEyMqpRfhl21W39Ljy8PW
+	 A1GhQ4mLIdkv1KMcA1wo5DSRIhYgbfnhApCjt59ei02gCRWzt7HbnytGUVtA3pgy78cm5
+	 c76PGCKl7Aq23Q0UcJq3s6tZEOGuKK7BkH5f5txN3ynMajPdvST9vjeSdGpnut+0fqA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
 	dmarc=pass header.from=d-silva.org;
 	spf=pass smtp.mailfrom=d-silva.org;
-	dkim=pass header.d=d-silva.org header.i=@d-silva.org header.a=rsa-sha256 header.s=2025a header.b=Wd+zN8D5;
+	dkim=pass header.d=d-silva.org header.i=@d-silva.org header.a=rsa-sha256 header.s=2025a header.b=d055oxr6;
 	arc=none smtp.remote-ip=119.15.109.137
 Received: from www.nmnhosting.com (watt.d-silva.org [119.15.109.137])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C870D606A31E;
-	Fri, 27 Nov 2026 07:33:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org C870D606A31E
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D20A606A331;
+	Fri, 27 Nov 2026 07:33:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 1D20A606A331
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=d-silva.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=d-silva.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=d-silva.org header.i=@d-silva.org header.a=rsa-sha256 header.s=2025a header.b=Wd+zN8D5
+	dkim=pass (2048-bit key) header.d=d-silva.org header.i=@d-silva.org header.a=rsa-sha256 header.s=2025a header.b=d055oxr6
 Received: from Hawking.lan (hawking.lan [10.0.1.4])
-	by www.nmnhosting.com (Postfix) with ESMTP id 5D56F4C975;
-	Fri, 27 Nov 2026 18:33:31 +1100 (AEDT)
+	by www.nmnhosting.com (Postfix) with ESMTP id 7F3814C976;
+	Fri, 27 Nov 2026 18:33:37 +1100 (AEDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=d-silva.org; s=2025a;
-	t=1795764811;
+	t=1795764817;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ZQnPEju6KfsvOVnoWN6Y7e8NURws113vktNgMx0Bbf8=;
-	b=Wd+zN8D5SsiTKFbMkRvB3K3EE3aQfWbf2lOYZjTZUfTWs9PQ/PmgtTp5AdUwmz+nSCgbgX
-	rCBy90MG2pCsTmzHYsdJ0oQtciBQXVe8Ur8z5H60BhC25ee41idgNv2GTjh6OCjYWFw4KH
-	yeieOOfoFdgTyoQmyI7uG4JzP3h/lXNP9QivheaoUIivlZ1+fUl02JJWrNmLt9zfnM8WpS
-	iB4fm0V7Q5147Kzq4rKE2le/KS2Sxz+c0CzUNVJ/Hm+EHrfPopWNTrw3A+BnxtnS6N7MYC
-	feCVIxvfxTNm3ExuMkkwou3pEM0vbxK7BjTxH83zZ6RW8hXgrKwzDxqd87dByQ==
-X-GPT-Reason: legitimate_personal_correspondence: The email is
-	a technical patch submission regarding Linux kernel drivers (usb:
-	dwc3) which aligns perfectly with the mailbox purpose for
-	alastair@d-silva.org. The "From" domain (d-silva.org) matches
-	the recipient domain, and the content follows standard open-source
-	development practices with a clear technical subject line and
-	signed-off-by footer. There are no phishing indicators, urgency
-	tactics, or suspicious links.
+	bh=jB/1U0fWdj0DZ0gZKs1wUQuMfdnKTfbWdwKCxQuzKHM=;
+	b=d055oxr6bmNIOiZGMOutOvgPFjWMp9gLQ7booQZCfRN2wr3hzQbwKZVw2cN1LWwgs2PkNp
+	PADh+QlFkhM5kFsM4QfNvjRO9UdjcGUBEuDrVuCB4wxvlRxnilpjs43MN8HWNcgC8evPEg
+	GqR/ksoGl/hfrvT5G4lLMll/yMGL18vSOq9AjT6PKzjZJA7qT9sNLn4wWxjDHqjCuxsHQ1
+	y0V+vBIvsRx8/LGHunxKBvHQS0mzmPRegWNTewojjqBZ6TNc3IVkyDsJPRpmkdKW7Aifjn
+	IHdiB5YG6lCyKSv9/qtwG9DNBJvW1BY3YzUZ1lbKMnAcb5iQhHgTp/lbCRn4dg==
+X-GPT-Reason: legitimate personal/professional communication; the
+	message is a technical Linux kernel patch description (usb: host:
+	xhci) that perfectly aligns with the sender's identity
+	(alastair@d-silva.org) and the recipient's mailbox (alastair@d-silva.org);
+	the content is technical, non-promotional, and contains no phishing
+	indicators, urgency, or external links; the From/Return-Path domains
+	match the personal/business domain of the user.
 From: Alastair D'Silva <alastair@d-silva.org>
 To: Vinod Koul <vkoul@kernel.org>,
 	Neil Armstrong <neil.armstrong@linaro.org>,
@@ -79,9 +78,9 @@ Cc: linux-phy@lists.infradead.org,
 	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Alastair D'Silva <alastair@d-silva.org>
-Subject: [PATCH 08/11] usb: dwc3: Add Allwinner A733 DWC3 support
-Date: Fri, 27 Nov 2026 18:32:28 +1100
-Message-ID: <20261127073231.1776847-9-alastair@d-silva.org>
+Subject: [PATCH 09/11] usb: host: xhci: Add W1C port change quirk for Allwinner A733
+Date: Fri, 27 Nov 2026 18:32:29 +1100
+Message-ID: <20261127073231.1776847-10-alastair@d-silva.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20261127073231.1776847-1-alastair@d-silva.org>
 References: <20261127073231.1776847-1-alastair@d-silva.org>
@@ -96,190 +95,157 @@ Precedence: list
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add inverted sync header support, A733 match data, and post-reset PHY
-calibration on host start.
+Allwinner A733 xHCI PORTSC change bits do not clear on write-1-to-clear
+when a SuperSpeed device is active. Track cleared bits per port and
+sync connection state when reading PORTSC. Use warm port reset on
+SuperSpeed port reset.
 
 Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
 ---
- drivers/usb/dwc3/core.c              | 18 +++++++++++++++---
- drivers/usb/dwc3/core.h              |  8 ++++++++
- drivers/usb/dwc3/dwc3-generic-plat.c | 15 +++++++++++++--
- drivers/usb/dwc3/glue.h              |  6 ++++++
- drivers/usb/dwc3/host.c              | 10 ++++++++++
- 5 files changed, 52 insertions(+), 5 deletions(-)
+ drivers/usb/host/xhci-hub.c  | 53 +++++++++++++++++++++++++++++++++++-
+ drivers/usb/host/xhci-plat.c |  3 ++
+ drivers/usb/host/xhci.h      |  2 ++
+ 3 files changed, 57 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
-index f4aa6a01e500..3fe68d085a85 100644
---- a/drivers/usb/dwc3/core.c
-+++ b/drivers/usb/dwc3/core.c
-@@ -1503,13 +1503,16 @@ int dwc3_core_init(struct dwc3 *dwc)
- 	dwc3_config_threshold(dwc);
+diff --git a/drivers/usb/host/xhci-hub.c b/drivers/usb/host/xhci-hub.c
+index 55430b673f1e..566cebbd0998 100644
+--- a/drivers/usb/host/xhci-hub.c
++++ b/drivers/usb/host/xhci-hub.c
+@@ -623,6 +623,9 @@ static void xhci_clear_port_change_bit(struct xhci_hcd *xhci, u16 wValue, struct
+ 	xhci_portsc_writel(port, portsc | status);
+ 	portsc = xhci_portsc_readl(port);
  
- 	if (hw_mode != DWC3_GHWPARAMS0_MODE_GADGET &&
--	    (DWC3_IP_IS(DWC31)) &&
--	    dwc->maximum_speed == USB_SPEED_SUPER) {
-+	    DWC3_IP_IS(DWC31) &&
-+	    (dwc->maximum_speed == USB_SPEED_SUPER || dwc->inv_sync_hdr)) {
- 		int i;
- 
- 		for (i = 0; i < dwc->num_usb3_ports; i++) {
- 			reg = dwc3_readl(dwc, DWC3_LLUCTL(i));
--			reg |= DWC3_LLUCTL_FORCE_GEN1;
-+			if (dwc->maximum_speed == USB_SPEED_SUPER)
-+				reg |= DWC3_LLUCTL_FORCE_GEN1;
-+			if (dwc->inv_sync_hdr)
-+				reg |= DWC3_LLUCTL_INV_SYNC_HDR;
- 			dwc3_writel(dwc, DWC3_LLUCTL(i), reg);
- 		}
++	if (xhci->quirks & XHCI_W1C_PORT_CHANGE_QUIRK)
++		port->cleared_change_bits |= (portsc & status);
++
+ 	xhci_dbg(xhci, "clear port%d %s change, portsc: 0x%x\n",
+ 		 port->hcd_portnum + 1, port_change_bit, portsc);
+ }
+@@ -1122,6 +1125,33 @@ static void xhci_get_usb2_port_status(struct xhci_port *port, u32 *status,
  	}
-@@ -1694,6 +1697,15 @@ static void dwc3_get_software_properties(struct dwc3 *dwc,
- 	if (properties->needs_full_reinit)
- 		dwc->needs_full_reinit = true;
- 
-+	if (properties->inv_sync_hdr)
-+		dwc->inv_sync_hdr = true;
-+
-+	if (properties->calibrate_on_start)
-+		dwc->calibrate_on_start = true;
-+
-+	if (properties->xhci_w1c_port_change)
-+		dwc->xhci_w1c_port_change = true;
-+
- 	dwc->gsbuscfg0_reqinfo = DWC3_GSBUSCFG0_REQINFO_UNSPECIFIED;
- 
- 	if (properties->gsbuscfg0_reqinfo !=
-diff --git a/drivers/usb/dwc3/core.h b/drivers/usb/dwc3/core.h
-index f635a9fbc151..e65629f9d437 100644
---- a/drivers/usb/dwc3/core.h
-+++ b/drivers/usb/dwc3/core.h
-@@ -677,6 +677,8 @@
- 
- /* Force Gen1 speed on Gen2 link */
- #define DWC3_LLUCTL_FORCE_GEN1		BIT(10)
-+/* Invert sync header on Cadence SerDes */
-+#define DWC3_LLUCTL_INV_SYNC_HDR	BIT(30)
- 
- /* Structures */
- 
-@@ -1151,6 +1153,9 @@ struct dwc3_glue_ops {
-  * @dis_u1_entry_quirk: set if link entering into U1 state needs to be disabled.
-  * @dis_u2_entry_quirk: set if link entering into U2 state needs to be disabled.
-  * @dis_rxdet_inp3_quirk: set if we disable Rx.Detect in P3
-+ * @inv_sync_hdr: set if Cadence SerDes requires inverted sync header
-+ * @calibrate_on_start: calibrate USB3 PHYs after xHCI reset
-+ * @xhci_w1c_port_change: enable xHCI W1C port change quirk
-  * @async_callbacks: if set, indicate that async callbacks will be used.
-  *
-  * @dis_u2_freeclk_exists_quirk : set if we clear u2_freeclk_exists
-@@ -1419,6 +1424,9 @@ struct dwc3 {
- 	unsigned		dis_u1_entry_quirk:1;
- 	unsigned		dis_u2_entry_quirk:1;
- 	unsigned		dis_rxdet_inp3_quirk:1;
-+	unsigned		inv_sync_hdr:1;
-+	unsigned		calibrate_on_start:1;
-+	unsigned		xhci_w1c_port_change:1;
- 	unsigned		dis_u2_freeclk_exists_quirk:1;
- 	unsigned		dis_del_phy_power_chg_quirk:1;
- 	unsigned		dis_tx_ipgap_linecheck_quirk:1;
-diff --git a/drivers/usb/dwc3/dwc3-generic-plat.c b/drivers/usb/dwc3/dwc3-generic-plat.c
-index 3e90ddf25809..568fa1a26379 100644
---- a/drivers/usb/dwc3/dwc3-generic-plat.c
-+++ b/drivers/usb/dwc3/dwc3-generic-plat.c
-@@ -72,7 +72,7 @@ static int dwc3_eic7700_init(struct dwc3_generic *dwc3g)
- 	return 0;
  }
  
--static int dwc3_spacemit_k1_init(struct dwc3_generic *dwc3g)
-+static int dwc3_host_vbus_init(struct dwc3_generic *dwc3g)
- {
- 	struct device *dev = dwc3g->dev;
- 
-@@ -219,10 +219,20 @@ static const struct dev_pm_ops dwc3_generic_dev_pm_ops = {
- };
- 
- static const struct dwc3_generic_config spacemit_k1_dwc3 = {
--	.init = dwc3_spacemit_k1_init,
-+	.init = dwc3_host_vbus_init,
- 	.properties = DWC3_DEFAULT_PROPERTIES,
- };
- 
-+static const struct dwc3_generic_config sun60i_a733_dwc3 = {
-+	.init = dwc3_host_vbus_init,
-+	.properties = {
-+		.gsbuscfg0_reqinfo = DWC3_GSBUSCFG0_REQINFO_UNSPECIFIED,
-+		.inv_sync_hdr = true,
-+		.calibrate_on_start = true,
-+		.xhci_w1c_port_change = true,
-+	},
-+};
++static u32 xhci_w1c_filter_portsc(struct xhci_hcd *xhci, struct xhci_port *port,
++				  u32 portsc)
++{
++	u32 pls;
 +
- static const struct dwc3_generic_config fsl_ls1028_dwc3 = {
- 	.properties.gsbuscfg0_reqinfo = 0x2222,
- };
-@@ -233,6 +243,7 @@ static const struct dwc3_generic_config eic7700_dwc3 =  {
- };
- 
- static const struct of_device_id dwc3_generic_of_match[] = {
-+	{ .compatible = "allwinner,sun60i-a733-dwc3", &sun60i_a733_dwc3 },
- 	{ .compatible = "spacemit,k1-dwc3", &spacemit_k1_dwc3},
- 	{ .compatible = "spacemit,k3-dwc3", },
- 	{ .compatible = "fsl,ls1028a-dwc3", &fsl_ls1028_dwc3},
-diff --git a/drivers/usb/dwc3/glue.h b/drivers/usb/dwc3/glue.h
-index a1284c481390..12a24e9016eb 100644
---- a/drivers/usb/dwc3/glue.h
-+++ b/drivers/usb/dwc3/glue.h
-@@ -14,10 +14,16 @@
-  * @gsbuscfg0_reqinfo: Value to be programmed in the GSBUSCFG0.REQINFO field
-  * @needs_full_reinit: indicate the controller may not remain power during system
-  *			pm and need full initialization
-+ * @inv_sync_hdr: set DWC3_LLUCTL_INV_SYNC_HDR for Cadence SerDes
-+ * @calibrate_on_start: calibrate USB3 PHYs after xHCI reset
-+ * @xhci_w1c_port_change: enable xHCI W1C port change quirk
-  */
- struct dwc3_properties {
- 	u32 gsbuscfg0_reqinfo;
- 	unsigned needs_full_reinit:1;
-+	unsigned inv_sync_hdr:1;
-+	unsigned calibrate_on_start:1;
-+	unsigned xhci_w1c_port_change:1;
- };
- 
- #define DWC3_DEFAULT_PROPERTIES ((struct dwc3_properties){		\
-diff --git a/drivers/usb/dwc3/host.c b/drivers/usb/dwc3/host.c
-index cd1e5204ac3a..e45d8b14b60c 100644
---- a/drivers/usb/dwc3/host.c
-+++ b/drivers/usb/dwc3/host.c
-@@ -68,6 +68,7 @@ static void dwc3_xhci_plat_start(struct usb_hcd *hcd)
- {
- 	struct platform_device *pdev;
- 	struct dwc3 *dwc;
-+	int i;
- 
- 	if (!usb_hcd_is_primary_hcd(hcd))
- 		return;
-@@ -75,6 +76,12 @@ static void dwc3_xhci_plat_start(struct usb_hcd *hcd)
- 	pdev = to_platform_device(hcd->self.controller);
- 	dwc = dev_get_drvdata(pdev->dev.parent);
- 
-+	/* Calibrate PHYs after xHCI reset to complete clock handover. */
-+	if (dwc->calibrate_on_start) {
-+		for (i = 0; i < dwc->num_usb3_ports; i++)
-+			phy_calibrate(dwc->usb3_generic_phy[i]);
++	if (!(xhci->quirks & XHCI_W1C_PORT_CHANGE_QUIRK))
++		return portsc;
++
++	/*
++	 * Stuck W1C bits prevent new Port Status Change Events after initial
++	 * attach, so keep port->connected and port->link_inactive synced here.
++	 */
++	pls = portsc & PORT_PLS_MASK;
++	if (!(portsc & PORT_RESET)) {
++		port->link_inactive = (pls == XDEV_INACTIVE);
++		port->connected = !!(portsc & PORT_CONNECT);
 +	}
 +
- 	dwc3_enable_susphy(dwc, true);
- }
- 
-@@ -174,6 +181,9 @@ int dwc3_host_init(struct dwc3 *dwc)
- 	if (dwc->usb2_lpm_disable)
- 		props[prop_idx++] = PROPERTY_ENTRY_BOOL("usb2-lpm-disable");
- 
-+	if (dwc->xhci_w1c_port_change)
-+		props[prop_idx++] = PROPERTY_ENTRY_BOOL("xhci-w1c-port-change-quirk");
++	if (!(portsc & PORT_CONNECT) || pls == XDEV_RXDETECT ||
++	    pls == XDEV_DISABLED || pls == XDEV_INACTIVE) {
++		port->cleared_change_bits = 0;
++		return portsc;
++	}
 +
- 	/**
- 	 * WORKAROUND: dwc3 revisions <=3.00a have a limitation
- 	 * where Port Disable command doesn't work.
++	return portsc & ~port->cleared_change_bits;
++}
++
+ /*
+  * Converts a raw xHCI port status into the format that external USB 2.0 or USB
+  * 3.0 hubs use.
+@@ -1138,12 +1168,15 @@ static u32 xhci_get_port_status(struct usb_hcd *hcd, struct xhci_bus_state *bus_
+ 	__acquires(&xhci->lock)
+ {
+ 	u32 status = 0;
++	struct xhci_hcd *xhci = hcd_to_xhci(hcd);
+ 	struct xhci_hub *rhub;
+ 	struct xhci_port *port;
+ 
+ 	rhub = xhci_get_rhub(hcd);
+ 	port = rhub->ports[portnum];
+ 
++	portsc = xhci_w1c_filter_portsc(xhci, port, portsc);
++
+ 	/* common wPortChange bits */
+ 	if (portsc & PORT_CSC)
+ 		status |= USB_PORT_STAT_C_CONNECTION << 16;
+@@ -1472,7 +1505,21 @@ int xhci_hub_control(struct usb_hcd *hcd, u16 typeReq, u16 wValue,
+ 			xhci_set_port_power(xhci, port, true, &flags);
+ 			break;
+ 		case USB_PORT_FEAT_RESET:
+-			portsc |= PORT_RESET;
++			if (xhci->quirks & XHCI_W1C_PORT_CHANGE_QUIRK) {
++				port->cleared_change_bits &= ~PORT_RC;
++				/*
++				 * A733 SuperSpeed ports fail to re-enumerate
++				 * after a hot reset; issue a warm reset.
++				 */
++				if (hcd->speed >= HCD_USB3) {
++					port->cleared_change_bits &= ~PORT_WRC;
++					portsc |= PORT_WR;
++				} else {
++					portsc |= PORT_RESET;
++				}
++			} else {
++				portsc |= PORT_RESET;
++			}
+ 			xhci_portsc_writel(port, portsc);
+ 
+ 			portsc = xhci_portsc_readl(port);
+@@ -1487,6 +1534,8 @@ int xhci_hub_control(struct usb_hcd *hcd, u16 typeReq, u16 wValue,
+ 				 hcd->self.busnum, portnum + 1, portsc);
+ 			break;
+ 		case USB_PORT_FEAT_BH_PORT_RESET:
++			if (xhci->quirks & XHCI_W1C_PORT_CHANGE_QUIRK)
++				port->cleared_change_bits &= ~PORT_WRC;
+ 			portsc |= PORT_WR;
+ 			xhci_portsc_writel(port, portsc);
+ 			portsc = xhci_portsc_readl(port);
+@@ -1667,6 +1716,8 @@ int xhci_hub_status_data(struct usb_hcd *hcd, char *buf)
+ 		}
+ 		trace_xhci_hub_status_data(ports[i], temp);
+ 
++		temp = xhci_w1c_filter_portsc(xhci, ports[i], temp);
++
+ 		if ((temp & mask) != 0 ||
+ 			(bus_state->port_c_suspend & 1 << i) ||
+ 			(ports[i]->resume_timestamp && time_after_eq(
+diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
+index 6fd595f81a30..a3307135b3ac 100644
+--- a/drivers/usb/host/xhci-plat.c
++++ b/drivers/usb/host/xhci-plat.c
+@@ -277,6 +277,9 @@ int xhci_plat_probe(struct platform_device *pdev, struct device *sysdev, const s
+ 		if (device_property_read_bool(tmpdev, "xhci-skip-phy-init-quirk"))
+ 			xhci->quirks |= XHCI_SKIP_PHY_INIT;
+ 
++		if (device_property_read_bool(tmpdev, "xhci-w1c-port-change-quirk"))
++			xhci->quirks |= XHCI_W1C_PORT_CHANGE_QUIRK;
++
+ 		device_property_read_u32(tmpdev, "imod-interval-ns",
+ 					 &xhci->imod_interval);
+ 		device_property_read_u16(tmpdev, "num-hc-interrupters",
+diff --git a/drivers/usb/host/xhci.h b/drivers/usb/host/xhci.h
+index 86a615c6fd2b..70135907e4c0 100644
+--- a/drivers/usb/host/xhci.h
++++ b/drivers/usb/host/xhci.h
+@@ -1491,6 +1491,7 @@ struct xhci_port {
+ 	int			slot_id;
+ 	struct completion	rexit_done;
+ 	struct completion	u3exit_done;
++	u32			cleared_change_bits;
+ };
+ 
+ struct xhci_hub {
+@@ -1652,6 +1653,7 @@ struct xhci_hcd {
+ #define XHCI_CDNS_SCTX_QUIRK	BIT_ULL(48)
+ #define XHCI_ETRON_HOST	BIT_ULL(49)
+ #define XHCI_LIMIT_ENDPOINT_INTERVAL_9 BIT_ULL(50)
++#define XHCI_W1C_PORT_CHANGE_QUIRK	BIT_ULL(51)
+ 
+ 	unsigned int		num_active_eps;
+ 	unsigned int		limit_active_eps;
 -- 
 2.53.0
 
