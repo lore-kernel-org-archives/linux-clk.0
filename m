@@ -1,110 +1,85 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.72.12
-ARC-Seal: i=2; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=pass;
-	t=1795793336;
-	b=SeD0iVK4uwwtd3MjQ3w7kKxYW7wEGaoG+cwZup5/hJnWGeBGGzK5Wa7MYB1s/nD9Odan
-	 pKAyyaFjI/UWKVe/XzBbkliPpODp4CXk11n731/RrJLzo1l1ApHEZ7XrHWNGzyXFgN0Gb
-	 CVi1mqZzw3ulyj8sg/0ZkTKT0PgAyk1s4fGZXcniQ2JyJFQUfF4f3itFIK7V2Ay7PuwPL
-	 5hMOIlQhTDNZKZ9dWKnuQD3oRtOeZBYmYTfXfyAE+8SWhNHN8vd931SGB9dznT6pxBmB4
-	 JrW+TNK/x0Pk8mRSnHYKArWfbWDx5ZPtME7tQWVrMmOwx6GHu0mavEojtm0BXtuERMA==
-ARC-Message-Signature: i=2; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795793336;
-	h=DMARC-Filter:DKIM-Signature:Received:Received:Date:From:To:Cc:
-	 Subject:Message-ID:References:Content-Type:Content-Disposition:
-	 In-Reply-To:X-ClientProxiedBy:MIME-Version:X-MS-PublicTrafficType:
-	 X-MS-TrafficTypeDiagnostic:X-MS-Office365-Filtering-Correlation-Id:
-	 X-MS-Exchange-SenderADCheck:X-MS-Exchange-AntiSpam-Relay:
-	 X-Microsoft-Antispam:X-Microsoft-Antispam-Message-Info:
-	 X-Forefront-Antispam-Report:
-	 X-MS-Exchange-AntiSpam-MessageData-ChunkCount:
-	 X-MS-Exchange-AntiSpam-MessageData-0:X-OriginatorOrg:
-	 X-MS-Exchange-CrossTenant-Network-Message-Id:
-	 X-MS-Exchange-CrossTenant-AuthSource:X-MS-Exchange-CrossTenant-AuthAs:
-	 X-MS-Exchange-CrossTenant-OriginalArrivalTime:
-	 X-MS-Exchange-CrossTenant-FromEntityHeader:
-	 X-MS-Exchange-CrossTenant-Id:X-MS-Exchange-CrossTenant-MailboxType:
-	 X-MS-Exchange-CrossTenant-UserPrincipalName:
-	 X-MS-Exchange-Transport-CrossTenantHeadersStamped;
-	bh=e7lJU2yXjKEMQUztoownYxmSUo5xLYjYP3p+fKIDals=;
-	b=V0v186vQBVZ1SmFHHmrxF2nRsju4G8BDrgehnD8ZH17ULohXYH1hOF+NHdouDjdyWfDS
-	 0zz3taqtO1IR7lZWY6q5BRyM4oCJJS2rMNxO38zmoZpZ/dHZ5TaFBPa4NLbIoHv0MChH0
-	 DxxAyoAxRLDyPcSl1DHvK/9HjHZ07rgHf6Ck5K8nwIXGCKOdjcaOc46ncZF5YjqRoeIuX
-	 nPut5ybfpBTBfwGi1588oCioJXRYGSSKC7UQJ/zEAaEGY5mQAf+28GYTtrkG1+/Cr06wb
-	 XQ8BAJ4YelkTbaLhDJ8eL/LLJwA5/MHcKHPiFdgXg5FKpOyBY/tMT8P6tYvepWqKopw==
-ARC-Authentication-Results: i=2; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=oss.nxp.com;
-	spf=pass smtp.mailfrom=oss.nxp.com;
-	dkim=pass header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.a=rsa-sha256 header.s=selector1-NXP1-onmicrosoft-com header.b=fO65uMAa;
-	arc=pass header.oldest-pass=0 smtp.remote-ip=52.101.72.12
-Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11013012.outbound.protection.outlook.com [52.101.72.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (secp384r1) server-signature ECDSA (prime256v1) server-digest SHA256)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.208.47
+ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
+	t=1795794935;
+	b=zqhSxCnjjZyAOW+5D47/wsktTRSFypTxFru5yR/Q5X3c5aitvOmo6A+zsTTjgU1oHmgf
+	 RxryIpghQjdENzok4IsD/8MmcBUKJhFusZ3wbXtpE163sfAUeF8aqM71ECYC9AP8CGnai
+	 tGDnj69NBwuPNr3/ZYUnyUm16bs5QoJ3NnUtsurYhFJsQH6oMVww8WKTxe6bvzTzu71vj
+	 OIi9bIqhRN2iXphI3pyYwielTOZXrjotMTAnUaquHoOBgq3aG4u68pwzyF4izHUcc85Nk
+	 S4QKxcjF+zZqwMcc+kOseJyOejqeTMLh2ZPgEP/L1Uf2LJIK/l7HnQ5kvCHIsBknPug==
+ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
+	a=rsa-sha256; c=relaxed/relaxed; t=1795794935;
+	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding:Subject:From:To:
+	 Cc:In-Reply-To:References:Date:Message-Id:X-Mailer:
+	 X-Developer-Signature:X-Developer-Key;
+	bh=aamHFFzwS0CuBXIurBQ2i5axgQPtqXRYIqnraY6fuvo=;
+	b=n3jaeM58WtE3Js9lDVzWazPdMjluVZFpSBnIoSnGSd6SU3epPo6e5Tfn2rMzkxSZlwWW
+	 Jeqhdt9cCYjwRcy5D9gEzAAp5kRO1bsdoRQlf/oE4QHfU7q8/whUvKE7svK6aNX6ZuJDJ
+	 VDalFdk3HCGLiTul1xlDHT8S8UoGGL1xGtSC0jDyPO3NSzwkOblSMOA4ulnr4UNs62hX3
+	 HNW8S2tkz8nKIkjC8/AKU4S5XQeFk3TuGvvCn8ybStlZszOaXAPo3ThiKRBRPkX6qYrsT
+	 zVYzjj/csDLUFAimycgwOlXgUlZXh9KLIU9jX7q8aSbae3Z/F+jsEX5DYvgDOh+Yr4g==
+ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
+	dmarc=pass header.from=baylibre.com;
+	spf=pass smtp.mailfrom=baylibre.com;
+	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=STCmbWQ4;
+	arc=none smtp.remote-ip=209.85.208.47
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62CCC60A380E;
-	Fri, 27 Nov 2026 15:28:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 62CCC60A380E
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED10C606A33D
+	for <linux-clk@vger.kernel.org>; Fri, 27 Nov 2026 15:55:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org ED10C606A33D
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.a=rsa-sha256 header.s=selector1-NXP1-onmicrosoft-com header.b=fO65uMAa
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ee0BaKGRkzMEoH4FVrXa+MFpSksLPjr/5FdKgKu0/J4YWVS+gXglySKUv+pO2p3RYkG+WLcceZ1Bq6iuJO7Yh43AlDXshOwf80Shr5ZRYla6UrKYih/oKGheElvwXAuGDrRrULEwCUeW8KazsnoI9LbwzEupM7SC76Y2vzpcqGE4F0i4jjCWTy8NP603KfsinAi0qwxQb4r0FxLuAz1sok5l6IjzNRl0I0g0eEpyAZ8IVD4zqzk378Ui/PHBQBQvyRF4nEMR5uXqSOvZF8CTcmmXUY5701xNhqEELEiWDffEEsmWSaQry2cXXHBLDor/PCJ6/reK4laiurJuKF7L9g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=e7lJU2yXjKEMQUztoownYxmSUo5xLYjYP3p+fKIDals=;
- b=Rufz8q9JZZDB0MXhsn1DaGb4+hSIyEvq8hO63WZzOq39iecU4A5hQb4acnYMxIMC4804d0Q18rRrVaqrfK3D9mLieiiKV1NU5qLSYQSRgQ6sbp6aOVYTJzE79GEGRCfCF42QjRwRZEhjtebuERwpFXvkYQViBJql2x/EoVFrtVHmdeojXe+HCbz5JBhDUTppmLb6ZAE3szwFYBWeSrGZPusjUcxCLYu7iDyZNPP7mPkVAwe9Jx8oT33HVaJsetIM/JdU34V/+P1owf8S5klLDeA45VewkIdBefXE7oKvKENlfnfN7UaD5SmFtEiXOq3ZlTbD8OSPH+HHCJt7V1v8SQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=e7lJU2yXjKEMQUztoownYxmSUo5xLYjYP3p+fKIDals=;
- b=fO65uMAa/2y2ONOGcPEWjVG2+2zRxXzlVLmeq8RazSAPyXORFC/Fbd9FQKccLSqLxfXFcRDES5b/uXLz8KhRFLpGxQQ2vpUyzEagZPRHlHnhJ5YBBG4aF7lo0NwYb+EmXKSu3YJXbTZwQ7k3EZNvXqEC05KIVrdZyrMyhY5yPj308vhyuKmccwdKk/RKUQNC+nhAHD6pSXV5UDbTKgmBH6nv51LrVFTLaCwqXqQjxeqaXFzNgrXWeOKt068hU1SSTZTlKXU/fno7p0RiwcAcouhWCCWNa5WYORROc3F+krSttDiXswywBwEuuzDJuk7xaNBRCIA2whrVykOZiAR/3w==
-Authentication-Results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from MI3PR04MB12438.eurprd04.prod.outlook.com (2603:10a6:290:76::14)
- by AS8PR04MB7525.eurprd04.prod.outlook.com (2603:10a6:20b:29b::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.662.6; Fri, 27 Nov
- 2026 15:28:52 +0000
-Received: from MI3PR04MB12438.eurprd04.prod.outlook.com
- ([fe80::c715:c32:8bb1:b70b]) by MI3PR04MB12438.eurprd04.prod.outlook.com
- ([fe80::c715:c32:8bb1:b70b%4]) with mapi id 15.21.0662.004; Fri, 27 Nov 2026
- 15:28:52 +0000
-Date: Fri, 27 Nov 2026 09:28:36 -0600
-From: Frank Li <Frank.li@oss.nxp.com>
-To: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Cc: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
-	Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Frank Li <Frank.Li@nxp.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	linux-clk@vger.kernel.org, imx@lists.linux.dev,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v13 0/5] Add support for i.MX94 DCIF
-Message-ID: <awmhpFuAOF4BmmEO@SMW015318>
-References: <20261120-dcif-upstreaming-v13-0-966ac248773f@oss.nxp.com>
- <awmGCp4e2pgtxsqr@vm>
- <DN63BMGBI07A.1IC73REGZ7NXZ@bootlin.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DN63BMGBI07A.1IC73REGZ7NXZ@bootlin.com>
-X-ClientProxiedBy: PH5P222CA0003.NAMP222.PROD.OUTLOOK.COM
- (2603:10b6:510:34b::17) To MI3PR04MB12438.eurprd04.prod.outlook.com
- (2603:10a6:290:76::14)
+	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=STCmbWQ4
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-6a642495d81so12862144a12.2
+        for <linux-clk@vger.kernel.org>; Fri, 27 Nov 2026 07:55:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre.com; s=google; t=1795794932; x=1796399732; darn=vger.kernel.org;
+        h=message-id:date:references:in-reply-to:cc:to:from:subject
+         :content-transfer-encoding:content-type:mime-version:from:to:cc
+         :subject:date:message-id:reply-to:content-type;
+        bh=aamHFFzwS0CuBXIurBQ2i5axgQPtqXRYIqnraY6fuvo=;
+        b=STCmbWQ4UewMFNdT1uhAQMvGxDQ+Czwg0A/LpYUQwYPo4acKkvPsx8o7EYjxc3JOXj
+         0fqsMScXdhYDWKFXgtqS1udFUxPMdZ88Ga+isgQekxQZYQaxKf65iVCeKDoZF2w/JO/t
+         AzETHsvchFXd20ugammQpkBx7ZeiY+QnSGU4VJ0HWFgHzLJsMj7IBRzjhJH1MA+8zE49
+         Vi0hb1MAeWBYT9Pfq6AQnJJuu02YlG9k0W+ipeVG9dF6f21mePSC9HNc2hukTN2POCa7
+         UNa81yms15zWe/TBVSIe75pi3TYN9NTp9baFvLSGi8iNL8GiPwrQ/CI/UawvYTxTogCB
+         eL4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795794932; x=1796399732;
+        h=message-id:date:references:in-reply-to:cc:to:from:subject
+         :content-transfer-encoding:content-type:mime-version:x-gm-gg
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :content-type;
+        bh=aamHFFzwS0CuBXIurBQ2i5axgQPtqXRYIqnraY6fuvo=;
+        b=02ghLXOaEVp8rq00KxoAJhRgXOLoTbJa2JiXb1zcM2Ab6Jig2y6A5b1FpF41zZcBHC
+         mg1MAxoVrJFMW7orqlak4W0C8blY/AGJnLGCzOqwIei5NLCaPCZuAcNkYtJvhQ3kBn5t
+         MvvJI7rzlLP07jV8A5mZxTkst9aUg1woAkJXtEtMiLfZ8JZERqO+1Jbt2Vc2C+IcCyqo
+         4zDpFfQctwDCDmsu0VPERKQe5eb1fZcprLNZSXy5RPOH9q2pTu8291U9/SEcgrJLswjS
+         16TOQcLgFcN9FcgYiPL9GBMTQk+MXy46Ha6UZD0/LOXKxR5gPNXdRbY/LOXBmrroX90g
+         cDcA==
+X-Forwarded-Encrypted: i=1; AL+hErE1gmFSIBrQZdLIdtUJkNWVOmCsNE9lVPnCFi1Jv4Htd34bQZNntPhlOWqSq+6QdN9G/LKlWtxSH68=@vger.kernel.org
+X-Gm-Message-State: APuU4Z/hV2ROLVrciazDV0BiTy2vyFrrkT1QOj1cv2aWD2StQhqKZmSP
+	1vghwgRdkvjUmwlSGUgbeU1oi+Nu+hzW83UMlQ4af8V0Q+9qqAWuA/ShLzEHhu/XMa8=
+X-Gm-Gg: AZFdTZeSWWIX9ynSVqxCnA1CXrJTZxNIEDRTvxVU2UAkZJl6VIz6H605v/FzioJcYMT
+	6sP4U12ETJn18QF/YdOpc/nSOOhLcGlOzlvGKaYzeGNq5vbmgMQXZNK4v1Xu67g5VyZ+DwXK2O7
+	hhmXHpYPDR6ssGEzbU4+D/N9Fa3p9DW67iBvIKXdvJP332Qt9dOaBGya0A4RW/6Td1tE3may6G4
+	O0qvNjm2L4vet7z2x29QV6rrBNrUJ4IGHALo8Ss5vfZnk876OsKQ4uoVeJn5JxQW/vLHVrzKulg
+	7XzXCIx+YcxT+F2S0fQa3DH2AG9AVabOBG//cda5HwFmeN+cyGcIYAVLk+PxKrAZWWkzNYUK0Zh
+	053C33R5+haZXCsOhddNjLt6aX/t0a9oGzVyx4QUIBPiCMtEQYMtf+87JbDQ3N/QfZ3l5TVjjjq
+	R5nXAyo1FR2Bzaskogj+NOHxPVX1lepIaDRP6oMJ0PtlVmQVIvaFVEAhfUXyw5oCC8Uu7E21itE
+	ksEEL2CxtzIN6U81nMWoD+yaQE1d/E4g5tZ9+Z2NMJgO6N8XnfDzHMfMxqjJv+ooRJk+js4idK0
+	BKAjGDFMow6SxxqhPnBZkXciJTb1h5VNht84rpu4lrZ52Qi3
+X-Received: by 2002:a05:6402:42d5:b0:6ba:b20f:60ef with SMTP id 4fb4d7f45d1cf-6bab20f6810mr13142715a12.14.1795794931858;
+        Fri, 27 Nov 2026 07:55:31 -0800 (PST)
+Received: from localhost (82-67-6-57.subs.proxad.net. [82.67.6.57])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6ba370fbf0esm11127032a12.23.2026.11.27.07.55.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 27 Nov 2026 07:55:31 -0800 (PST)
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -114,88 +89,99 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MI3PR04MB12438:EE_|AS8PR04MB7525:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7f6837c3-5db3-4af6-c9b9-08df4c9b242e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|19092799006|7416014|376014|23010399003|1800799024|366016|4143699003|18002099003|22082099003|56012099006|11063799006|10067099003;
-X-Microsoft-Antispam-Message-Info:
-	7JCBMu0Y6YgLM/qt5gLbKNCm094IrCFfVjyVVdAbgzlT1ZHl4IKyQrXc88LfsRv9MDGNnHdgoFDJOCkSPr+B02kkgZM9/U1Cjy5LZ992+B0vjPcGfwb6jOVcvIJoAvT4bwmUqjlkBk7gjCoXikTUt96+vybtWugzBpjSfnhe9AC5BNgjkataveXOghxXegDd51CQMX/xjx3rqhj4yM1MbwzImyz0JrJSYCjd/urX9cQoEs/i+NQ7dppIYduh0J8Ep2dpXFpQ9WRzcry7P7gw2fUAJbUXKz/bGzyRe5unNvrbc3KS9Gc6X1gI8bfeW9xJiiJbSEBybWSiTxL9M/UbQORn2oeCgS1s33aBwLoT8LBTgq9id5Q3yoQzCxTOmA5XGb1DxiR/yDwzw1Fy9cRm1+Wqzhu8TtROPhoqgeogjjkKYwrUfk8OFZ5eJSoVbl/K8iqRasD/abeRzmCeCRFLaw+gdDEY+h3ToPZceJljPBBfrzm69GBUZl90ZxYJJqvqfSzLVDLhl99DraT2eVJUHzlg2VjCWQTYUHiMFYx7rxwP13BaLXybfmqVv4wN8NaNBhjvfUUjpiML8ydsEugLjq04vYtYoDOPLuWuffo6dmo=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MI3PR04MB12438.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(7416014)(376014)(23010399003)(1800799024)(366016)(4143699003)(18002099003)(22082099003)(56012099006)(11063799006)(10067099003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?9HlGUE4m7Q9D6WFfIL9Ad7+Z1JtyYYLa9XqGrm7Au2fta7FoeTsyPoYf2WMG?=
- =?us-ascii?Q?kykvCWnI+VHpFbrCuv8swvSkM2LUSBz5xBD8XuzjlKldllhzRaiQzfR6+vc4?=
- =?us-ascii?Q?LfnrwXSYagtYymcmRRVAEuUIeJnQxBDk90pa7Utv/Fm3Re7s2PSsgYxk6mAX?=
- =?us-ascii?Q?ehhLv0MCx4XGgjbL68Uy54WlgvzE2u28yHbfnjAa3FCP4xbX7YHms/8mihDy?=
- =?us-ascii?Q?4dntO7mT+R6wwpp2Rrfw2/BLsOb/8TpXaYz5xtyCSyxW5fmPI3XryNKLIttM?=
- =?us-ascii?Q?XMvleeGxTHfqr1Izk5npfKELQxVRvwoNNpP0b9wS8VlvKVMCMpBeqTes4F+j?=
- =?us-ascii?Q?QqSEslu5LCb4gsQpGyLbU6MAQzcqg6cBl0MyMJ8D2ulXQH7wU502wuq2+q48?=
- =?us-ascii?Q?RRB+dcdvJWe1/+Xfq37XrHUTcMaby62HO0S9XiP/x3eoFwAckrGiPBW9iWjr?=
- =?us-ascii?Q?ZCdXicz+u/VcTuqqVe1VhtxfAF0ZYgOpGAN3qq63wzGv1Q7vAo7xMYx/I/5u?=
- =?us-ascii?Q?ZQMhksRJh1ieUJnvo5rJoIz51eZVaD5RwpOMWrESTKne95fqSSI5eFZ4sYOd?=
- =?us-ascii?Q?hLK0NwaKViz88GaAAjfCterWhnHDQpAPd0Sr04J5w/dBUhv93t0BdGX0qhF2?=
- =?us-ascii?Q?cTxM69Ih87dK8omSDCJtToTeYCpZeRYrgNt0P4WCR9dhCAR3ZPM6iXP8t4Mf?=
- =?us-ascii?Q?YSlaIehO5T9CQLQJ+ZFssGedp9YkAcVd2o6C3uy+fhJrQCDNVlMxdVv+GZRp?=
- =?us-ascii?Q?gr+SFF5DKxSIZPVTO1bz0Mbo3y/IT5TFmH2QEehG3EoY+asrE9L+lNGbinjE?=
- =?us-ascii?Q?P/jrhFCNjmzc/PL72jlbQpFrU9OnjA5E6AqW5KBDssUj1c1fp0umfnlx7L+u?=
- =?us-ascii?Q?9Kd/JdnujQFhLQlaVf8syXy1k3Sa8bydzM+nrcrT4AULE7A4ZqO8k1wCVvb6?=
- =?us-ascii?Q?IsC2yxVbdcZCizL22aG2SzCusxeQB9C2PfwdH1nT8eJPYZmcuRdWWw7p1+st?=
- =?us-ascii?Q?eKsfybf63DbXUGRQt/8Nhep0ZZ4EmMnjAB9e+la9zI3IyVhBVLRpIMIEwUIM?=
- =?us-ascii?Q?3mAA9oY2Ou+TPzRkpltsRggeoa6cYrErXcQb3scAy8N4AE0bwDf6IWZPHA9i?=
- =?us-ascii?Q?MtQ68cPOet22csd+KRLReDe2OILkDgXdumtQOysdzCz3PnXZb3OpObdg/mJC?=
- =?us-ascii?Q?5VREsaSVYUxINYFXkjYHMVUSoNUh8aJ3YyTGHH0UTC424VJUxd7t+Vxw6tOs?=
- =?us-ascii?Q?vvpOZAt4NCnOu+07CG7OC0+DOnJSWu78iAd+erbSsRDgulFSfAMhMfNObM+4?=
- =?us-ascii?Q?LthTtmZZRKw9bICQe0qLhRzqwomMtNbiilMkm3wzXNM1hRUvUOlaBQHXIdy0?=
- =?us-ascii?Q?GSBu+4TjK1ezTgs/OQ7Wme2wLlauEL9cJ7yq7N0gvlwyitoMhChAABQq7p7M?=
- =?us-ascii?Q?nDj7hI3aoQl0AujAxfHoLGJ+C2lWcEpnhJQTDR5scACSJdsdftpolMPSySpO?=
- =?us-ascii?Q?MPkO6ScSMpp/ppxB+FX1qaTuu6niIFwJLetjv6w4LDkknVlWqAqD05JpGayO?=
- =?us-ascii?Q?cPoCwn7mx/7bLqiKnZq9BV6g6cegorRYZua5K2P/za5zlhgBcTZKOTgG612f?=
- =?us-ascii?Q?irha38MAUoYEASzwgZUvWvGY9ikwX3ygdgHMpp0ao1wzXKfPQMuvFiV6hSN+?=
- =?us-ascii?Q?zu0QERwamSJMpR0LetSNnaKPyicuakYwLJSj+1qI2yqljbmweLH3EgQyMw6x?=
- =?us-ascii?Q?3gSvcTab4HdnfsjNSo4oR860LR/+hCMATHzDSUIY0zNO+vSPWMMu?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7f6837c3-5db3-4af6-c9b9-08df4c9b242e
-X-MS-Exchange-CrossTenant-AuthSource: MI3PR04MB12438.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Nov 2026 15:28:52.2730
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: EVLke28aOskgWTQk3ipnbLUPu0/yZRTvqPemsSs1JD4hn15jNiuqwcUq7N2ZCZKavA184irctWLmM6GBI+SiTzbUGg9QEoCnncuWMS0l+3k2gxcz4Px3w3oSEztO2jmQ
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB7525
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v11 1/2] dt-bindings: clock: Add gpio-enabled-clock
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Vyacheslav Yurkov <V.Yurkov.EXT@bruker.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Brian Masney <bmasney@redhat.com>, 
+ Brian Masney <bmasney+clk@redhat.com>, 
+ Jerome Brunet <jbrunet+clk@baylibre.com>, Jyri Sarha <jsarha@ti.com>, 
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, Vyacheslav Yurkov <uvv.mail@gmail.com>, 
+ Jerome Brunet <jbrunet@baylibre.com>
+In-Reply-To: <20261121-feature-clock-guard-v11-1-00c633a667a2@bruker.com>
+References: <20261121-feature-clock-guard-v11-0-00c633a667a2@bruker.com>
+ <20261121-feature-clock-guard-v11-1-00c633a667a2@bruker.com>
+Date: Fri, 27 Nov 2026 16:55:28 +0100
+Message-Id: <179579492872.2809466.854994706444744625.b4-review@b4>
+X-Mailer: b4 0.17-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2274; i=jbrunet@baylibre.com;
+ h=from:subject:message-id; bh=EINX0tsXJyuIqPfhhtODzW0RYgk1o8pIb3kiWYxd32o=;
+ b=owGbwMvMwCW2VtK+WnvWU3HG02pJDNmcyz9NeeSvuvxluoj/fc+eDxPTeFoyO7wUhVVepi4+E
+ iT7z2V1RykLgxgXg6yYIksNd7X4O0mtL7Om69yGmcPKBDKEgYtTACZiWMTIcEhN6OOtXNeedfw7
+ qyo8PxZ6pGjGTGJI0/pyNvvtxZeNrxgZ+u94BJycfCmGgS3E4NYx+V4240lqPgrX/p6K6+0tiE9
+ iAAA=
+X-Developer-Key: i=jbrunet@baylibre.com; a=openpgp;
+ fpr=F29F26CF27BAE1A9719AE6BDC3C92AAF3E60AED9
 
-On Fri, Nov 27, 2026 at 04:15:28PM +0100, Luca Ceresoli wrote:
-> On Fri Nov 27, 2026 at 2:41 PM CET, Laurentiu Palcu wrote:
-> > Hi Luca, Frank,
-> >
-> > All patches in v13 now have review tags. Since we are approaching -rc6,
-> > would it be possible to pick this up for 7.5?
-> >
-> > Luca: could you apply 1/5 and 2/5 to drm-misc-next?
+> Some clocks are switched on and off by hardware outside software
+> control, which reports through a GPIO whether the clock is currently
+> running. Software cannot enable such a clock, but its consumers must
+> not use it before the GPIO indicates that it is running.
+> 
+> Add a binding for a clock that passes its parent clock through
+> unchanged and is considered enabled only while a GPIO signal is
+> asserted. The parent clock determines the rate. The status GPIO is
+> given by enabled-gpios, and poll-timeout-us bounds how long a consumer
+> waits for the clock to become available.
+> 
+> Signed-off-by: Vyacheslav Yurkov <V.Yurkov.EXT@bruker.com>
+> ---
+> Our use case: peripheral clocks generated by FPGA PLLs, with the
+> PLL-lock signals routed to GPIOs of the SoC.
+> ---
+>  .../bindings/clock/gpio-enabled-clock.yaml         | 55 ++++++++++++++++++++++
+>  1 file changed, 55 insertions(+)
 >
-> I plan to apply these next week. I ususally leave at least 1w after a patch
-> is reviewed before applying it, in case someone has objections.
->
-> > Frank: could 3/5-5/5 go through i.MX tree?
+> diff --git a/Documentation/devicetree/bindings/clock/gpio-enabled-clock.yaml b/Documentation/devicetree/bindings/clock/gpio-enabled-clock.yaml
+> new file mode 100644
+> index 000000000000..4861c87ae5e0
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/gpio-enabled-clock.yaml
+> @@ -0,0 +1,55 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/gpio-enabled-clock.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: GPIO Enabled Clock
+> +
+> +maintainers:
+> +  - Vyacheslav Yurkov <V.Yurkov.EXT@bruker.com>
+> +
+> +properties:
+> +  compatible:
+> +    const: gpio-enabled-clock
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  "#clock-cells":
+> +    const: 0
+> +
+> +  clock-output-names:
+> +    maxItems: 1
+> +
+> +  enabled-gpios:
+> +    description: GPIO that indicates whether the clock is enabled or disabled.
+> +    maxItems: 1
+> +
+> +  poll-timeout-us:
+> +    description: Timeout in microseconds for waiting for a GPIO signal.
+> +    default: 10
+> +    minimum: 10
+> +    maximum: 1000
 
-I will pick 4 and 5 after you pick others to avoid conflict with other dts.
+Those limits are made up. I'm not sure they make sense for a generic device.
+It surely need a value, i'd prefer if it was required then.
 
-Abel Vesa:
+I'll wait for the DT folks view on this before applying it
 
-patch 3, should be picked by Abel Vesa. If he agree, I can also pick it.
+-- 
+Jerome
 
-Frank
-
->
-> Luca
->
-> --
-> Luca Ceresoli, Bootlin
-> Embedded Linux and Kernel engineering
-> https://bootlin.com
->
