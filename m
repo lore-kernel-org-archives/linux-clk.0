@@ -1,85 +1,111 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=205.220.180.131
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795785696;
-	b=ya80k0JIWDL/qo91g2JHRElE75kf5GGhN5IUcHqwy5FW1iOW6XQ3RnczKkfX/en/4pHX
-	 Zjjj5b37obNqNHWmCxS110S33aRKb0kN50kj28GwYOi7htE62IYB2rDO2z0xa+eCk40U5
-	 Oq8G3byX1Ii4QQuQPRQzXCoCcWLGNfEUBlqh3CGbPYxswrRA7s7rKcwrzAT/GrNWMNSeo
-	 Gp8B5tru46Psax2Fc14ZPBukncULtYHnzOCWX1vcOOki05XalnqQt8a/bHgPyzOL4ZXLU
-	 T39Bl7P5sdqzCYGpSbmnMYmKmnM+jiCF00dlGlrq6cdEKZbHNzN9oKB+XD7crL7QsPg==
+	t=1795785980;
+	b=Mbhn2z2I0RhsrvfmWQNjyoh1IUMleBhPyRx8AegFHlSUWeHh90sNmTLZsGf4GsrwFQrr
+	 sgkZGcSJEOWaSiAgfJSS/r7RO/Jn6XN6P9fDzLVGJckTagGxb0q2ENK/4l6AyixLbHYKl
+	 MNI4f2ZN2QCWDX+kbG42LyNIHA7zVOQAkzeStiXxtbaZP9AZbSF3ud7QDHzx+kO3oFLln
+	 zH6uDLNnruYNUaUoLUS2u1sByR5C3kX9CWIxpWRwvn7KyWPp0zlHGdzEzu8O13nBYJuvO
+	 a66Zn0LSbwFi7gG+vRc6XhU2qvOUER/L2VI+ZE1wydRO5at57Z5iI1C/PVOqkTg6EEg==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795785696;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 MIME-Version:Content-Type:Content-Transfer-Encoding:Subject:From:To:
-	 Cc:In-Reply-To:References:Date:Message-Id:X-Mailer:
-	 X-Developer-Signature:X-Developer-Key;
-	bh=RDUoKetlpdAW6F7tqFiNvozrVLWT1jW3suYfmlHrOCM=;
-	b=j903QYmmsFcuofQu/iPWsCec9HRLEeU2mKukE3mAV4kMN+Upi0LpzHXhzLZhKLpJrUco
-	 31HrFC3SRGThx/59zw3PiFdM9jwXSJYhUEKeM8uFDWc8aiZPVaxV6lkWhBu17Kk10psrY
-	 oiX7KPZaU9dB7XLom0EDikJhYK+0a7jUVWL12Y9siuVZGy+FPxGaMFSssJpBsYsMcxAXY
-	 QxmTO9hQkfmYYV70S62TmLT9aUncciINmmfxn45DzIsmu5tGHJg1b2lJuf6EBewLN+Fo1
-	 uMRr3eZ/0NT+7qFFKyCkqw7KqkNW+w0Gu8yyGjx8PoSgFuVc4HSghHa/Q3N/vrXdo8Q==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795785980;
+	h=DMARC-Filter:Received:DKIM-Signature:Received:Received:
+	 DKIM-Signature:X-Google-DKIM-Signature:X-Forwarded-Encrypted:
+	 X-Gm-Message-State:X-Gm-Gg:X-Received:X-Received:Received:Message-ID:
+	 Date:MIME-Version:User-Agent:Subject:To:Cc:References:
+	 Content-Language:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:X-Proofpoint-Spam-Info:X-Proofpoint-GUID:
+	 X-Proofpoint-Spam-Details-Enc:X-Authority-Analysis:
+	 X-Proofpoint-ORIG-GUID:X-Proofpoint-Virus-Version:
+	 X-Proofpoint-Spam-Details;
+	bh=iHRL8I+yz0kGiE+hySJDhurRqoWQ+O/WzGFuI1MAlmw=;
+	b=kudagka4cCULQ6ymbb9L3Dn9P9jJfWY7AZ636Ybie8pnrj37TBoP6BbdP+oVIo73jtnf
+	 unaEXfhMJgURoqpXpKTIxnSVMQlR4TgJx+yZ4ntdhV8JxcHKwsXEJbxzNVcWUZ8+bbkD2
+	 X1ESBtkw2eW+vp8gEYTTGoUQwjPJ1+nVE/DaTHJCZ+f7pY01s99XNOqXnP4NjjnTV7zVo
+	 uQchQa2mtlFnIn1t0Av0N2Ljp16eYns1QCQgp0y4BREy9dtcPTD9nL2c25a+nmxTWOZtd
+	 FW93s8qtlDwcitaw/HInJx/QPLWEsgntXKvyGsE4qKkN99OcyKCwY2sfLy9TGH2KVdA==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=baylibre.com;
-	spf=pass smtp.mailfrom=baylibre.com;
-	dkim=pass header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=Pbb7m09g;
-	arc=none smtp.remote-ip=209.85.128.51
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	dmarc=pass header.from=oss.qualcomm.com;
+	spf=pass smtp.mailfrom=oss.qualcomm.com;
+	dkim=pass header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=gTala7n0;
+	dkim=pass header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b="fL/GMGNI";
+	arc=none smtp.remote-ip=205.220.180.131
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E4C7606A31F
-	for <linux-clk@vger.kernel.org>; Fri, 27 Nov 2026 13:21:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 5E4C7606A31F
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 804CA606A32C
+	for <linux-clk@vger.kernel.org>; Fri, 27 Nov 2026 13:26:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org 804CA606A32C
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre.com header.i=@baylibre.com header.a=rsa-sha256 header.s=google header.b=Pbb7m09g
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4b79502c27aso81892055e9.1
-        for <linux-clk@vger.kernel.org>; Fri, 27 Nov 2026 05:21:36 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.a=rsa-sha256 header.s=qcppdkim1 header.b=gTala7n0;
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.a=rsa-sha256 header.s=google header.b=fL/GMGNI
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 6ARCh9hr2920818
+	for <linux-clk@vger.kernel.org>; Fri, 27 Nov 2026 13:26:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	iHRL8I+yz0kGiE+hySJDhurRqoWQ+O/WzGFuI1MAlmw=; b=gTala7n01tU2cB5+
+	uWdw4rRZjX40s/buTh7RST/DQvNqQZxeIR7KLjvn9b51gNUHMAOJ+5qyMNQf7frF
+	POCODruCSV5+xvJDW9IpznqFYKKOPrdGJ4+QOu5rqQejswufFT+jHnzWLMqxEKDh
+	oF/7nAVfA7bNXsy11cplSq9kjqD+zLe/mJhGdP26o9RvzF+lVEP+/dQlyTwXqs2+
+	B/3UmXCR8mJzpqmvJDZzyVKQhamVnP3auznLs6io1lkIhqYn4qAzhll2khaUorKf
+	hqXYa6kN4FiqzL+pui5EV5kur0E+Y6htRxOkea0xaz5UHrK52TzrtI/G/eYkKuA0
+	CMDU1g==
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4j74gh9jy9-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-clk@vger.kernel.org>; Fri, 27 Nov 2026 13:26:18 +0000 (GMT)
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-9212f132d16so8786736d6.0
+        for <linux-clk@vger.kernel.org>; Fri, 27 Nov 2026 05:26:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre.com; s=google; t=1795785695; x=1796390495; darn=vger.kernel.org;
-        h=message-id:date:references:in-reply-to:cc:to:from:subject
-         :content-transfer-encoding:content-type:mime-version:from:to:cc
-         :subject:date:message-id:reply-to:content-type;
-        bh=RDUoKetlpdAW6F7tqFiNvozrVLWT1jW3suYfmlHrOCM=;
-        b=Pbb7m09gBe6kP6kILHdvs0AlMAV1ogSIxa0U7v5OcRc6H08gRCIAf5oA0PUjFb7r5X
-         yYK5Woq6XNmqp1MqdWBffmyeZNZQd3o7cA6+7+kAuqpRhoqRlBuVTb2D3pIaJTHGwKTl
-         W66PkXIMgXal5xKa+SHzd0rK2EadfPmKQUntN63lHu0hFbVWyL1Xe/n9xEUidXS4kO2/
-         NCmBkzTrsL5FJt8mafg1U4TMUDZL79zvSJ5fp/o6NtnY0lBjhH0i1y3dbEKT7JMt6che
-         lm7UI+4cjoMJE7GW+BO++/llW2KokVHBU4Ircyy4H6TsYDIc8V1o/pA+1nfKIhA3XzzK
-         kzyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795785695; x=1796390495;
-        h=message-id:date:references:in-reply-to:cc:to:from:subject
-         :content-transfer-encoding:content-type:mime-version:x-gm-gg
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+        d=oss.qualcomm.com; s=google; t=1795785978; x=1796390778; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to
          :content-type;
-        bh=RDUoKetlpdAW6F7tqFiNvozrVLWT1jW3suYfmlHrOCM=;
-        b=po6OFKkmUrekVz0DLMbDvZgNBZ+oNJEjFpuiK0JKzSZrr3jX3hDV5S58RFiTnpV7wT
-         ELy7PdB3GYFxcBGszgNYlVt4mbO1GTybyRyevq4ERwIUMf4EIVcuLagEgZGJil0IU9Dl
-         Y0TEnlcZ+bOnBzbQ/yrNi/VNv4RRR+txRu2UYV5M43xT6PoE3MrqK9e54/9khqdHF5HW
-         L50KqKcRRn9LrZbtBGHw8s3CYLuEI9UPOFhUBR18PB/s+IpZiqnIU7VqCdprudg5l432
-         npMIJstj9RtjxGXXHOFeIMW1TNSGCEUe/srU3SEqZguFIOGdjltls45Ln0bjEJTR/mjA
-         PnZw==
-X-Forwarded-Encrypted: i=1; AL+hErFeqdrN6zN3ms9ETid6ZY6T3c6Rn++XoJtWIRgo1gsSkniPQ1+IPF8+wkXDsE0uaCVTje4wvqpeZNI=@vger.kernel.org
-X-Gm-Message-State: APuU4Z8EnD4xfx95605L5+U3CvKennM+v/JpxPV3gSic4cbzO0Q2ENfO
-	n0juMrukqc8BCHx953XQHXKr+Sgc+LtPq4YiW6kup0MnLt+TI3WEYPlu7DaoZGRlXgc=
-X-Gm-Gg: AZFdTZenCWOer1VsRpGxn7ohAqNv46TGeTmE9j4egYuXGZnQwjsCU/eWlYWbz6QsoJ4
-	ZfbSTpRgdZfKjSB2DKn+PQQfR7YcCmKL2gXQ1YLgd08J0AfHMdTbb2ah+upWyrMtnfozyckhjkx
-	UZEc1jHuC00Ulv4P6WGlUejScEDc/zi67kwGURxJIxeEHAhh5WLPc+aMyUPqIXmX0VHZWL5TVUt
-	mPc+JVVE9FCeu1phvJV65BXi4I/xuCQb6UWKw6oCAoT9ltSrPZwCJoPPp9Hxh14yJMLQN6Thz/T
-	56On3pY3Ob41WPxYClQMdic2HlrCxwzYb8N3Eja6azNOZ62Kva6vjnhfgya4IG1548Cuf4Lkcsq
-	jI/kelaJ9V7kv6zIBRFcuPj+U0cWv/boZDmaqrBB7Qp+C0WvaAd8UfzfY6d9uQ07mC17KjLp1bU
-	JuM2RMXEL+lmAjrYjlY/+P2Us87o6P5p2p4HywY0f0O/6nnvpIYBkXlG7kWahhvzIFiqKap2u5E
-	2IiT+9BI5HEYSFIMSM09ko/vEn3tw06hh2JVix21sdnzrBTCQQbReQ3+mCjFZ13Jny6bzGyFDkr
-	RjpXzRJfpRybNolHL9dwz7rI2IZNtr5sGq7VmTCOZpLOKTw6
-X-Received: by 2002:a05:600c:1389:b0:4af:83ad:8f70 with SMTP id 5b1f17b1804b1-4bb88924f66mr492570985e9.35.1795785693896;
-        Fri, 27 Nov 2026 05:21:33 -0800 (PST)
-Received: from localhost (82-67-6-57.subs.proxad.net. [82.67.6.57])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb853a9687sm772362675e9.10.2026.11.27.05.21.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Nov 2026 05:21:33 -0800 (PST)
+        bh=iHRL8I+yz0kGiE+hySJDhurRqoWQ+O/WzGFuI1MAlmw=;
+        b=fL/GMGNIXRzTak0MXqfvh1GykEEbv+J63o3Kf+vl3839bOE0G7z3HTHY24DHEdHSjS
+         bAoCG0IMf6M3nkcUViMxSXCf1ucg3SeOmDomdNVcAdTZ5OahW1iP/reVjVV1JEnFtjIi
+         UrYBqp8ZlRpIJhKWTXYsl/SyVXhzD5PAGVZXcVBolp/XEU5TAEoLB8Z4ZCtGtvSmA0jr
+         6nHYv3J75Ua0TCaVu+t9I+TC2pNvpqjBAtsj5LS4wYXOWsPyskxgCBm/WvXicZsHMB5B
+         rRCGz8CklkgG63APYMdzCMMQohlFhhUs0p9VhsrsYkgzSFgKMCIq173Q64HTt0EXEP4t
+         piLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20260707; t=1795785978; x=1796390778;
+        h=content-transfer-encoding:content-type:in-reply-to:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to:content-type;
+        bh=iHRL8I+yz0kGiE+hySJDhurRqoWQ+O/WzGFuI1MAlmw=;
+        b=EyHrTHjyltJFcSPJu/0dggyHSUMlA/518GxJUnMyYSAa0PxPptpmkcGcg6w3TvKiFN
+         KOFocJ24s+lAb0FXOZNfv2NhdzY0rBuRxDpbh40XYjIbBxrABrYWsd/da1OQCCTx2Uix
+         5rM/ujZsHGEWr+qL29qeyA9SPxWgY5vHSD8TfCjshGwZXv9yZJ+jVMxhT5bbrKfW3y/P
+         YPrbKH1SzkmXgv7kNJOGvH6psj0c9IdLwzMAziub/jdA8lyEC0FWR5XJKFP8KoT+ycf1
+         wz6Ak/Zf/WP4/S8zxkT1FvQeaQXZyDtIb9Y3uoQDK5eWxvMtypHNn92Q+5SfXATOJTUf
+         RYrA==
+X-Forwarded-Encrypted: i=1; AL+hErEENdaYdUa7wRqObZ+wod7eFfskfOIwdbsOi1AHlXiAcqCsmwemvvBo9665zmQXvjIeY7pYcXpUECA=@vger.kernel.org
+X-Gm-Message-State: APuU4Z/pjfRgDjfT7ZW3wZ86LeEToqloGGWAuZCNLnaHpD5D5N7lObkF
+	OVZY7V71DhpQwxabPvsAYWJXZgO6SLmZ1GBXRVGdknOq7rNBEUMeZR0i4Rmn6jYZSPCMCRR+JiT
+	GFArMHdCtMxzfNHqE5hT92ntFPaTJSH9BpfBLrRFxhkhsqWWQNOco9Wxf8ngWnnU=
+X-Gm-Gg: AZFdTZfMY0gSAP30DlrRqz4EXTUN1URDJMWJ4QfuUPLz76d7ILnOHVQRw7bnxLSk8RM
+	72jpIH0SHT6dIdbrwo+Wk/tYRMNJNM1SI1MvbpwH6PUxm3D78IXiY4gbOUKMrJbUxBUeveonHxD
+	fmdIuM9E7KCKeJedYn9o1zTQbJ3Uzxlk00H03hCNkbWbtCrY01MHnFK1eCSKAXpzgE2dgLlD9L+
+	jPIE/THb/8FoDUlAYamAGoL0ovu9wqRkqLbFTWQeh4Ctpdv1rub0MNqXahJWkbTg2bOfQ78AlQx
+	uc0T1xqHTWx10C2C4ZU92EV/ZXe4QRUZbER7QTbRqCM3ti7XU+1ZysiznFOAos/02qfjo4K0/gr
+	hbuZy1VZaCC2bHnJeJ91FXjzfmPYJEMw68AtqLj+s+cvUJwCm+j3uwd+M2qjLTzDGQNZMXeM=
+X-Received: by 2002:a05:620a:a50f:b0:949:a6de:cf5 with SMTP id af79cd13be357-949bab1db0amr4555766485a.5.1795785977665;
+        Fri, 27 Nov 2026 05:26:17 -0800 (PST)
+X-Received: by 2002:a05:620a:a50f:b0:949:a6de:cf5 with SMTP id af79cd13be357-949bab1db0amr4555760785a.5.1795785977172;
+        Fri, 27 Nov 2026 05:26:17 -0800 (PST)
+Received: from [192.168.226.72] ([178.235.128.140])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-c513aec5115sm856186866b.51.2026.11.27.05.26.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 27 Nov 2026 05:26:16 -0800 (PST)
+Message-ID: <1bd90d60-8f5c-492c-8d82-71a1de995a9b@oss.qualcomm.com>
+Date: Fri, 27 Nov 2026 14:26:14 +0100
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -89,177 +115,66 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH RFC RFT v2 3/3] clk: meson: pll: Remove the dedicated n
- parameter
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Jian Hu <jian.hu@amlogic.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Stephen Boyd <sboyd@kernel.org>, 
- Brian Masney <bmasney+clk@redhat.com>, Kevin Hilman <khilman@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
- Jerome Brunet <jbrunet+clk@baylibre.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, linux-amlogic@lists.infradead.org, 
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-In-Reply-To: <98fc8cb8-186b-493e-b74c-d8625d11dab1@amlogic.com>
-References: <20261029-meson_refactor_n-v2-0-ff4ac74e527b@amlogic.com>
- <20261029-meson_refactor_n-v2-3-ff4ac74e527b@amlogic.com>
- <179390104085.2573818.48733523079260500.b4-review@b4>
- <98fc8cb8-186b-493e-b74c-d8625d11dab1@amlogic.com>
-Date: Fri, 27 Nov 2026 14:21:32 +0100
-Message-Id: <179578569228.3130490.14256403264790878680.b4-reply@b4>
-X-Mailer: b4 0.17-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4243; i=jbrunet@baylibre.com;
- h=from:subject:message-id; bh=E4dLgfAPlyGRAwDDbFxbbsD6Cc9CC30EoXytcCxZdeQ=;
- b=owGbwMvMwCW2VtK+WnvWU3HG02pJDNmczXf6cy9W/3oi+bV7cZXnU8vLz/4zK0vWJ22ebHPE8
- 1Rj933DjlIWBjEuBlkxRZYa7mrxd5JaX2ZN17kNM4eVCWQIAxenAEykdjrDX9la7iuLNjZrtM37
- zPl+mruZ18OzH1TXHuZwtM4/pKVmeoLhf2VL+Znd7z8cP9NrZe//sNuyqU+n/2fIGoVzx+ZwPDh
- Txg8A
-X-Developer-Key: i=jbrunet@baylibre.com; a=openpgp;
- fpr=F29F26CF27BAE1A9719AE6BDC3C92AAF3E60AED9
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6/6] clk: qcom: rpmh: add RPMh clocks for Seca
+To: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Abel Vesa <abelvesa@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        Brian Masney <bmasney+clk@redhat.com>,
+        Jerome Brunet <jbrunet+clk@baylibre.com>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Bartosz Golaszewski <brgl@kernel.org>,
+        Taniya Das <taniya.das@oss.qualcomm.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Tyler Baker <tyler.baker@oss.qualcomm.com>
+References: <20261127-seca-clocks-v1-0-1781298e658b@oss.qualcomm.com>
+ <20261127-seca-clocks-v1-6-1781298e658b@oss.qualcomm.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20261127-seca-clocks-v1-6-1781298e658b@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Info: AW1haW4tMjYxMTI3MDA1MyBTYWx0ZWRfX5x+aErQ+ZswA
+ m+WH7Iyxm7oOH+m3lBm5Xt8RzCO8tZHklaoz4jT78znnGz0jLoh4Laufdxfxi8xacgjwluUZFRf
+ mQwDkkE5nUn+Pgkbgw0zyf4B/ZrL+U4=
+X-Proofpoint-GUID: fn9WovKlsTvAgWF6VYTUazWHGdxapfUR
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYxMTI3MDA1MyBTYWx0ZWRfXwZF08iWXi4gc
+ 1v7C7eE+8nSA9Fb2zC1kXJqBLO/F/mIVesZW4DDoxveLGZsd5GSkFqKs5mgRe0KQu9gvu5clgp/
+ QOqNRVmJ1nOJQ5ESzj2BPfPPzIac22ufpw+fGC9pDUKMqgeymstBfqaMGmaGW6rS+8OZ+9b3g18
+ 3c911gGmFh/XaOHU3Ti3s+mcd3E9EVPywjFc5qTj1cqfXTH40BY6sS2YjuOrRc7VpjqqZgbo4C5
+ bYqF8SPGvJcObuPAmE5/69HcY0CJN1S+JfByOrIKGbSzdcuk6w/Esb2ASVAfm5wofCvHcSLkmzG
+ h+Iq9HbeMAMk5KNj6kdGiMViw/zO8NNddW0Hmq1qXJ94eSlD7AUkh2q6B87z3CMG4C8I0rQk6E4
+ t1QmCgcSieVqQ1y4C7vezeiVWpd1zKsJZsPP6wSPSS22X7na4GL7xeKKu3/CbyAO4Xmg9yeoz4n
+ b7AV0bRdR0huMPA1AVw==
+X-Authority-Analysis: v=2.4 cv=U5kHnuru c=1 sm=1 tr=0 ts=6b0984fa cx=c_pps
+ a=7E5Bxpl4vBhpaufnMqZlrw==:117 a=PRfkaYvzSr8QmIIGAkY2Sg==:17
+ a=IkcTkHD0fZMA:10 a=zJRp6_cAMcgA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=u7WPNUs3qKkmUXheDGA7:22 a=_glEPmIy2e8OvE2BGh3C:22
+ a=EUspDBNiAAAA:8 a=0_OSfFgOA50T1ex7QDYA:9 a=QEXdDO2ut3YA:10
+ a=pJ04lnu7RYOZP9TFuWaZ:22
+X-Proofpoint-ORIG-GUID: fn9WovKlsTvAgWF6VYTUazWHGdxapfUR
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.138,FMLib:17.12.100.49
+ definitions=2026-11-27_02,2026-11-27_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 adultscore=0 malwarescore=0 suspectscore=0 spamscore=0
+ priorityscore=1501 lowpriorityscore=0 bulkscore=0 impostorscore=0
+ phishscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2611040001
+ definitions=main-2611270053
 
+On 11/27/26 12:41 PM, Bartosz Golaszewski wrote:
+> Add the RPMh clocks present on the Qualcomm Seca SoC.
+> 
+> Co-developed-by: Tyler Baker <tyler.baker@oss.qualcomm.com>
+> Signed-off-by: Tyler Baker <tyler.baker@oss.qualcomm.com>
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
+> ---
 
-> >> -static const struct pll_params_table axg_pcie_pll_params_table[] = {
-> >> -     {
-> >> -             .m = 200,
-> >> -             .n = 3,
-> >> +/*
-> >> + * A pre-divider value of 3 provides the best performance for
-> >> + * the AXG PCIe PLL.
-> >> + */
-> > Again, define performance here. what does it mean ?
-> 
-> 
-> To clarify what "performance" means in that comment:
-> 
-> Some target frequencies cannot be achieved with N=1, requiring a non 1 
-> pre-divider.
-> 
-> N may not be 1 for Amlogic fixed PLLs and PCIe PLLs.
-> 
-> This AXG PCIe PLL is designed based on N=3 for optimal bandwidth.
-> 
-> 
-> The AXG PCIe PLL rate is:
-> 
-> 24Mhz/3 * 200 /2/8 =100Mhz.
-> 
-> 
-> I will update the comment:
-> 
-> /*
-> 
->   * This AXG PCIe PLL needs pre-divider 3 to hit the target frequency 
-> 100Mhz,
-> 
->   * which also yields optimal bandwidth.
-> 
->   */
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-All I'm seeing in your explanation is "ability" to reach a rate, nothing remotly
-"performance" related. Either drop the word or explain what mean better.
-
-> 
-> >> +static const struct clk_div_table axg_pcie_prediv_div_table[] = {
-> >> +     { .val = 3, .div = 3 },
-> >> +     { /* sentinel */ }
-> >> +};
-> >> +
-> >> +static struct clk_regmap axg_pcie_prediv = {
-> >> +     .data = &(struct clk_regmap_div_data){
-> >> +             .offset = HHI_PCIE_PLL_CNTL,
-> >> +             .shift   = 9,
-> >> +             .width   = 5,
-> >> +             .table = axg_pcie_prediv_div_table,
-> >> +             .flags = CLK_DIVIDER_INVALID_ZERO,
-> >> +     },
-> >> +     .hw.init = &(struct clk_init_data){
-> >> +             .name = "pcie_prediv",
-> >> +             .ops = &clk_regmap_divider_ops,
-> >> +             .parent_data = &(const struct clk_parent_data) {
-> >> +                     .fw_name = "xtal",
-> >> +             },
-> >> +             .num_parents = 1,
-> >>        },
-> >> +};
-> >> +
-> >> +static const struct pll_mult_table axg_pcie_pll_params_table[] = {
-> >> +     PLL_MULT(200),
-> >>        { /* sentinel */ },
-> >>   };
-> >>
-
-[...]
-
-> >>
-> >> -static const struct pll_params_table sys_pll_params_table[] = {
-> >> -     PLL_PARAMS(50, 1),
-> >> -     PLL_PARAMS(51, 1),
-> >> -     PLL_PARAMS(52, 1),
-> >> -     PLL_PARAMS(53, 1),
-> >> -     PLL_PARAMS(54, 1),
-> >> -     PLL_PARAMS(55, 1),
-> >> -     PLL_PARAMS(56, 1),
-> >> -     PLL_PARAMS(57, 1),
-> >> -     PLL_PARAMS(58, 1),
-> >> -     PLL_PARAMS(59, 1),
-> >> -     PLL_PARAMS(60, 1),
-> >> -     PLL_PARAMS(61, 1),
-> >> -     PLL_PARAMS(62, 1),
-> >> -     PLL_PARAMS(63, 1),
-> >> -     PLL_PARAMS(64, 1),
-> >> -     PLL_PARAMS(65, 1),
-> >> -     PLL_PARAMS(66, 1),
-> >> -     PLL_PARAMS(67, 1),
-> >> -     PLL_PARAMS(68, 1),
-> >> -     PLL_PARAMS(84, 1),
-> >> +static const struct pll_mult_table sys_pll_params_table[] = {
-> >> +     PLL_MULT(50),
-> >> +     PLL_MULT(51),
-> >> +     PLL_MULT(52),
-> >> +     PLL_MULT(53),
-> >> +     PLL_MULT(54),
-> >> +     PLL_MULT(55),
-> >> +     PLL_MULT(56),
-> >> +     PLL_MULT(57),
-> >> +     PLL_MULT(58),
-> >> +     PLL_MULT(59),
-> >> +     PLL_MULT(60),
-> >> +     PLL_MULT(61),
-> >> +     PLL_MULT(62),
-> >> +     PLL_MULT(63),
-> >> +     PLL_MULT(64),
-> >> +     PLL_MULT(65),
-> >> +     PLL_MULT(66),
-> >> +     PLL_MULT(67),
-> >> +     PLL_MULT(68),
-> >> +     PLL_MULT(84),
-> >>        { /* sentinel */ },
-> >>   };
-> >>
-> >> +static const struct clk_div_table meson8b_fixed_prediv_div_table[] = {
-> >> +     { .val = 4, .div = 4 },
-> > Previous table was showing a prediv of 1 ... here it jumps to 4 without
-> > an explanation !
-> >
-> > Also, it is a RO clock, so what is the point ?
-> 
-> 
-> This is similar to the AXG PCIe PLL case. The pre-divider is fixed at 4,
-> which lets this fixed PLL output 2550MHz and gives optimal bandwidth.
-> The table was used so the fixed PLL DCO rate can be calculated correctly.
-> Without the table or `CLK_DIVIDER_ONE_BASED`, the divider would be 
-> interpreted as 5,
-> leading to wrong DCO rate calculation.
-
-But you are hidding a fix in a rework then.
-
-Your rework should keep the prediv as it was.
-Then you can change explaining clearly why you are doing it, with a proper fixes tag.
-
--- 
-Jerome
-
+Konrad
