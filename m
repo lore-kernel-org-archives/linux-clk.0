@@ -1,99 +1,47 @@
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.remote-ip=100.103.45.18
 ARC-Seal: i=1; d=subspace.kernel.org; s=arc20261015; a=rsa-sha256; cv=none;
-	t=1795860579;
-	b=z0y7Jk/D9reQ/UCYXe/3brdkhygzhGHcarv3GR1VpX4hTdhnFs2xf/Z7vNcremPmHUYD
-	 sC3oEFccUJf1uX1YLVwakZp83leBNxWvXBHoO5SvByjwpw+to1Y8aZnmaTLRxXnBxjJkU
-	 mvRlkFIWCtAU6yMC8OcYv0EsiaCXq/ia4EpHc3tfSo8rWpRzxJ1qZdCBenWtEtx5JciJK
-	 i8KWUOf0jmU+COFxv/9IGEaSUweV2sqwb2T0scudO1qhgKYViuAyTjsFdCEcQ0X89BSbX
-	 VE995h7o2Pf/SQ3i/JtsR9Dwng8AckfoptoPPAic23LVKI3W11EO4GrjWpaOo6rgrEg==
+	t=1795862134;
+	b=mWIMi7hljIR1beHFiYNOrUNxVHvd2LGNHVSBxrO1DFfYRWwkv33ywccHIcizbDkmruSR
+	 3QwHJJfh9UMyTCJQhjUsOuGSWHRxW5hrkcwB8deAxXYBI0Gi6yB3FEGLhGfvcHfs+PUgK
+	 4uHkbNxpm8Xb5eVzDB9paNfPEEeI4uYMSmDUDaHisfPgEpr3xU/FL7RAZBdwA9XFnEn4t
+	 ROmaqR5Qb9Cyy3hGS7+CNAc+AxdDl/argA8C977JgyLCsrccep2CrwDx692E1i2/uuu2+
+	 r4j9lN0dxTXCPhsGNr9wSy46/c0tA+TZzVf8ccBMOzndOasIfvOd7/i+S094gK7DHTQ==
 ARC-Message-Signature: i=1; d=subspace.kernel.org; s=arc20261015;
-	a=rsa-sha256; c=relaxed/relaxed; t=1795860579;
-	h=DMARC-Filter:Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Forwarded-Encrypted:X-Gm-Message-State:X-Gm-Gg:X-Received:Received:
-	 From:To:Cc:Subject:Date:Message-Id:X-Mailer:MIME-Version:
-	 Content-Transfer-Encoding;
-	bh=3jFkQl+1kffZkQUkv18i3cnYxd2zz1oEQ3A2zDQZ/xs=;
-	b=c2kll/QUg1JcS6nCO6FO/eIkRZm1HP9E+hbwFwsToJQOvtv4NAVq0rExDbsfv7oY8QXK
-	 MvubXap89zDYAZ0l5+mw4kmZc+mYmn6lxCdbKx/DNpB5JrX6MKygmn3I4coKOijzzXvtl
-	 XfFfsH2QMQV9cQxUc72rvBDlFdlwCTrGhcaxg4GOgjNb7COGjwUVTxvz3vZHNDbSnJWcR
-	 P+nj47Nfum/GMwNZ7DKG8A0VQkbP85RS2YnNnITD054A6wv/0BT5++lBprMPZz7BLhCbB
-	 hxKXBrHyX4+t4Y/YRxFO9inMqf9p8gGXWBgttTPxn4ngo8GzqzWWpcnBc3TDWB/GT8w==
+	a=rsa-sha256; c=relaxed/relaxed; t=1795862134;
+	h=Received:DKIM-Signature:Message-ID:Date:MIME-Version:User-Agent:
+	 Subject:To:Cc:References:From:Content-Language:Autocrypt:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding;
+	bh=aBKW1ICYNfGMQxVpp4JVetndoiFKYUuXJkf+oEE1yts=;
+	b=yVnffCuU05zVbBWo/ZiFx1JBNQokjVVj69dWsbo33vrYdAfa2bVRIIYgkpDq6wt0cmmY
+	 4acokskKQyl1z/tbAMYL7zRN6dPsgjAT+tKdxtsJFPu68w1T1irGV3TWVxkQa+q+qHxUv
+	 1Nf3bjopUPri5B4NnzDq4fOyxdd3KA3SGcp/w0jfS9kwgQoDKLY1/ncv2EA4cgjhZz3lY
+	 U2ybuKikTW2SMxNILEd1hcYc6deNxvuZUTlT0SPins7vGTMK9zweDHKQQc/P//nZugSZx
+	 pYKLESmTo7a96+Dvdjr2Lip7Pacby+oIha72KX5jky2yfRSFMh6JnMTveZDxByvhIug==
 ARC-Authentication-Results: i=1; smtp.subspace.kernel.org; 
-	dmarc=pass header.from=gmail.com;
-	spf=pass smtp.mailfrom=gmail.com;
-	dkim=pass header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=QRcuHncE;
-	arc=none smtp.remote-ip=209.85.128.51
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	dkim=pass header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=dNzl9tdV;
+	arc=none smtp.remote-ip=100.103.45.18
+Received: from smtp.kernel.org (quasi.space.kernel.org [100.103.45.18])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1EFD606A31C
-	for <linux-clk@vger.kernel.org>; Sat, 28 Nov 2026 10:09:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.4.2 smtp.subspace.kernel.org D1EFD606A31C
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C680B606A31C;
+	Sat, 28 Nov 2026 10:35:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20260707 header.b=QRcuHncE
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4a35ac4475dso63325655e9.2
-        for <linux-clk@vger.kernel.org>; Sat, 28 Nov 2026 02:09:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20260707; t=1795860577; x=1796465377; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
-        bh=3jFkQl+1kffZkQUkv18i3cnYxd2zz1oEQ3A2zDQZ/xs=;
-        b=QRcuHncEDc8jX2CaVQr9tB0YRx8yimBZsVErESyXrG8bQXBU4H7Wk8vm2VCt9OqcA/
-         rgNZdYjTTzbpbBp/L+SePcvq4qh4Pba+NQH3SHFxrnmXizvPvWEENXJeNXzc8s6DkJgx
-         JPBC3SMKgjBvj1r70K1QD/+uU/GsP2EK7CdA63BnG0wjA14TZfIGyKEmY9rn2MEU7APp
-         kg/Dk4F7QRFsWaqwUDpGyPs32nn3lOKGOzyJlefVuVagrVNrZvCKoaC/pDVdis9WYLsi
-         1HGRz/YZanKjjEr2Kdw1+WKT3AdeGGa9jFtwMw7eXlVZZSHd+wk/R3YjaXoCanfb6crL
-         N1oQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20260707; t=1795860577; x=1796465377;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to:content-type;
-        bh=3jFkQl+1kffZkQUkv18i3cnYxd2zz1oEQ3A2zDQZ/xs=;
-        b=2GtKHw3pqYZdEBBRIEJwvBaUog/Tz4b39nnqSE5uYG0aheODgBOZdgf9gJ3pCMNSKH
-         juVO8xoFyxR5KXuj6TUjuaX2V0RWDFMQzuTQZ//YZngKzcv6J/o+30NlGcaNH6pg2xCv
-         MfgaDP4msVvPsxoiVnMoPqItwhCzTIJLdcHmgegJpYrViNGIi+C8SMeivgd+tV7Jo7NS
-         ug1aSzYybc0YTMe9iH3IJkC9uEGszHwjdzENV+ZDFWzZdeJUA4rQfnYX3YpHXm6PmoYc
-         T69bpAM/ks3FvO9ApVyh+pgHQdWcE9pFbpTQ5vafsGkKkFfDN+7XgbFirt3Jjd84BuE3
-         nO7A==
-X-Forwarded-Encrypted: i=1; AL+hErFkjCHQdknufyM7h5gpMKtDhzKUpbMYlHMZq4tZK5xKmc2z6yr7K3YYQdBarI/mHhwMVeyjacVuwzI=@vger.kernel.org
-X-Gm-Message-State: APuU4Z/bjPmFYajtUyw0Ii8F1/U5KWJBgdKoy83oXPLIyXvKo6Otq3fr
-	JKV8lHUB0bc7JJ1iFKSCKuI9EYptjKvkr0hwr1ov+z6ncfQiXIU5vQfD
-X-Gm-Gg: AZFdTZd7fEDayK69Kwf7Pi8KvTpwC0X30RJUw9YVlGTfd+yv6qfSBbD97kX37ihg6kp
-	MIZj2MeIwgzdxFRYIAZe4rMaN8oVQdXkDeEECyPuwhJC0xF+nm1U8g7SgaFVMNF2wD/UYai6ydT
-	EVcrGqeBWLJmuEoJXlrj9sG3vCp16F1e2VWLHPOIIFFFyAFVzgUJ0Z3nDrZlhBFw8ESuTstkRt5
-	+IYroZYt5fP1lR9PM+G6I2vRWCdUUAdgBE8obYXDgXjHeNSckh958o5hPC45apMkfnwKO3BcqA4
-	lAQAhpPFustjLaYLdPAX3Sw21J3UZxFQ1e7IjJEFIVlprj2dEH2KKybVF85N86jSU2xtx4oxEsK
-	vqpf8wVTsZS9FEeVbldKgUDmXDZsxQfq3AD4hzqFOXZO4VdcBI5ZYU4V2PQTILKKYoU8Urbx9hS
-	CM8pyO7CB3yy0JCY3IoBBY0YIBYRalBlxTvaBm5e/R8yWq5K0E0+FRus8yh40UUDJ7W/AGwoifC
-	Wwl3lGFBqJ1RTWqxtBb+HB4YcuzyKeBEhYJKLEpODejTvjv1+wSoxUjqyvfhH4VR0uCdnTO99xn
-	9LWcoLAk2QHThSjPrINglqLzWDxsqNauMgk7xSeKpqUkw0I7wMjdTDcorNNPqmAjvYvei76PEL/
-	hdMnE0Sw9NKpOiZURYzqtvkeOyRqRQf3oxCrEQfSV7+lt5P9Zjziqd6XfIY/U77KAoG0=
-X-Received: by 2002:a05:600c:a55:b0:49f:ce78:356d with SMTP id 5b1f17b1804b1-4bb88827db0mr588682865e9.30.1795860576991;
-        Sat, 28 Nov 2026 02:09:36 -0800 (PST)
-Received: from localhost.localdomain (dynamic-095-117-034-170.95.117.pool.telefonica.de. [95.117.34.170])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4bb884a15absm698641065e9.9.2026.11.28.02.09.35
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Sat, 28 Nov 2026 02:09:35 -0800 (PST)
-From: Karl Mehltretter <kmehltretter@gmail.com>
-To: Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Karl Mehltretter <kmehltretter@gmail.com>,
-	Brian Masney <bmasney+clk@redhat.com>,
-	Jerome Brunet <jbrunet+clk@baylibre.com>,
-	Thierry Reding <treding@nvidia.com>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	linux-clk@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] clk: tegra: Fix Tegra210 IQC2 clock lookup
-Date: Sat, 28 Nov 2026 11:08:09 +0100
-Message-Id: <20261128100809.97430-1-kmehltretter@gmail.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.a=rsa-sha256 header.s=k20260515 header.b=dNzl9tdV
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D36D31F00893;
+	Sat, 28 Nov 2026 10:35:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel.org;
+	s=k20260515; t=1795862134;
+	bh=aBKW1ICYNfGMQxVpp4JVetndoiFKYUuXJkf+oEE1yts=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=dNzl9tdVzSUIYBrBTWPJHgydoOT0aWXxW48ydh540XacM0M8/ff6Ja/mrCrK2pax2
+	 E7O9QG7OZN9nZaTLszPCMTfnBOs5eczoJS6ZkmAf4HC7G5qoiIogjNpxJeBq+S52ci
+	 asi3MBJz84Fz3FHasB/FYm1J2ENNuGeFltRjS82mAv3M1dN1qpYUp1qZ4qjj0xAKOa
+	 iVN1Mnb+EY0DMAGENZNgVjPoU/VNb5WcL170zYZazqLBHCDNr1MgO7t5jVWnWuI/qD
+	 JFtqd/wH2fTYaVR0wozgQhHXja5yjvrTPW52AuYrEXvnE1tk+kzZB/w0nmc3Bwx379
+	 JcC+TQuivibkw==
+Message-ID: <efc24aac-70f6-439a-8d5d-2de1dcce9821@kernel.org>
+Date: Sat, 28 Nov 2026 10:35:29 +0000
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Post: <mailto:linux-clk@vger.kernel.org>
@@ -103,51 +51,87 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 List-Owner: <mailto:linux-clk+owner@vger.kernel.org>
 Precedence: list
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 0/7] Enable front and rear cameras on Xiaomi Mi A1
+ (tissot)
+To: Hikmah Gumelar <hikmahgumelar@gmail.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+ Brian Masney <bmasney+clk@redhat.com>,
+ Jerome Brunet <jbrunet+clk@baylibre.com>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ Abel Vesa <abelvesa@kernel.org>
+References: <__OIHsqpwOqb8kxVYcd2PoPvNYDhN8XO6vyXiYMCCK6o3sfyJ1gl1GNdhcGYhdfBf43tQmn6Dt6cWXcSD1uiPA==@protonmail.internalid>
+ <20261127134507.125513-1-hikmahgumelar@gmail.com>
+ <012855be-7a95-436f-b0ab-11ae3134ced8@kernel.org>
+ <usmhiLIDutYU2qMwKDA2JD_eerKmIm1DhH1J9mWHtDxq6fV84KcRoeen48y1ll_FanU9Yqlo9nP87AfrkKgupw==@protonmail.internalid>
+ <CADA=zOPWzK7Rq+CwY0izzjYdXGvTGKdSZMk2OUgN6_7oYV2xng@mail.gmail.com>
+From: Bryan O'Donoghue <bod@kernel.org>
+Content-Language: en-GB
+Autocrypt: addr=bod@kernel.org; keydata=
+ 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
+In-Reply-To: <CADA=zOPWzK7Rq+CwY0izzjYdXGvTGKdSZMk2OUgN6_7oYV2xng@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-gate_clks[] uses tegra_clk_iqc1 for both iqc1 and iqc2. On Tegra210,
-gate_clk_init() overwrites the TEGRA210_CLK_IQC1 provider entry with
-iqc2 and leaves TEGRA210_CLK_IQC2 unpopulated, so looking up
-TEGRA210_CLK_IQC2 fails with -EINVAL.
+On 27/11/2026 16:32, Hikmah Gumelar wrote:
+> For the gcc-msm8953 change, I will drop the board-specific reference and
+> update the commit message to explain the basis for using P_GPLL0 with a
+> divider of 8 (including comparison with similar Qualcomm GCC drivers like
+> gcc-msm8939.c and verification on MSM8953 hardware).
+> 
+> I'll re-spin with these adjustments.
 
-Use tegra_clk_iqc2 for the iqc2 gate.
+Your best data-source is either published documentation or the 
+downstream sources.
 
-Signed-off-by: Karl Mehltretter <kmehltretter@gmail.com>
-Reviewed-by: Mikko Perttunen <mperttunen@nvidia.com>
-Reviewed-by: Thierry Reding <treding@nvidia.com>
+I assume one of those is where we get this change from so, basically 
+that's what needs to be shown as the basis of your proposed change.
+
 ---
-Assisted by an LLM.
-
-Changes in v2:
-- Drop the Fixes tag since no IQC driver uses these lookups (Thierry).
-- Add review tags from Mikko and Thierry.
-
-v1: https://lore.kernel.org/r/20261024110113.63341-1-kmehltretter@gmail.com/
-
-Tested on a Jetson Nano 4GB (Tegra210) with a small probe module that
-calls of_clk_get_from_provider() on the Tegra210 CAR node. Unpatched,
-TEGRA210_CLK_IQC2 (220) returns -EINVAL and TEGRA210_CLK_IQC1 (221)
-resolves to iqc2. With this patch on 5b0764a53235, ID 220 resolves to
-iqc2 and ID 221 resolves to iqc1.
-
- drivers/clk/tegra/clk-tegra-periph.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
-index 4dcf7f7..47bb657 100644
---- a/drivers/clk/tegra/clk-tegra-periph.c
-+++ b/drivers/clk/tegra/clk-tegra-periph.c
-@@ -813,7 +813,7 @@ static struct tegra_periph_init_data gate_clks[] = {
- 	GATE("apb2ape", "clk_m", 107, 0, tegra_clk_apb2ape, 0),
- 	GATE("cec", "pclk", 136, 0, tegra_clk_cec, 0),
- 	GATE("iqc1", "clk_m", 221, 0, tegra_clk_iqc1, 0),
--	GATE("iqc2", "clk_m", 220, 0, tegra_clk_iqc1, 0),
-+	GATE("iqc2", "clk_m", 220, 0, tegra_clk_iqc2, 0),
- 	GATE("pll_a_out_adsp", "pll_a", 188, 0, tegra_clk_pll_a_out_adsp, 0),
- 	GATE("pll_a_out0_out_adsp", "pll_a", 188, 0, tegra_clk_pll_a_out0_out_adsp, 0),
- 	GATE("adsp", "aclk", 199, 0, tegra_clk_adsp, 0),
-
-base-commit: 5b0764a53235d3c77e1ed674e836e1b3fe1a4b1f
--- 
-2.39.5 (Apple Git-154)
-
+bod
